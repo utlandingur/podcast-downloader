@@ -5,7 +5,6 @@ import { SearchResult } from "./ui/searchResults";
 
 const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
   if (!searchTerm) return [];
-  console.log("searching for", searchTerm);
   const podcasts = await lookupPodcasts(searchTerm, 6);
   return podcasts.map((podcast) => ({
     name: podcast.name,

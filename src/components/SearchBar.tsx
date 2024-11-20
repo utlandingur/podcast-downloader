@@ -34,7 +34,7 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
 
   const handleOnChange = useCallback((searchTerm: string): void => {
     setSearchTerm(searchTerm);
-    setShowPopover(searchTerm !== "");
+    if (showPopover !== (searchTerm !== "")) setShowPopover(!showPopover);
   }, []);
 
   useEffect(() => {
