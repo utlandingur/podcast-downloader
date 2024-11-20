@@ -1,13 +1,12 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchBar as UI } from "./ui/searchBar";
 import { lookupPodcasts } from "@/serverActions/lookupPodcasts";
 import { useQuery } from "@tanstack/react-query";
 
 export const PodcastSearchBar = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
-
+  const [showPopover, setShowPopover] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: searchResults = [], isLoading } = useQuery({
@@ -25,23 +24,17 @@ export const PodcastSearchBar = () => {
     staleTime: 5 * 60 * 1000, // Cache results for 5 minutes
   });
 
-  useEffect(() => {
-    if (searchTerm) {
-      setShowSearchResults(true);
-    } else {
-      setShowSearchResults(false);
-    }
-  }, [searchTerm]);
-
-  const handleSearch: React.MouseEventHandler<HTMLButtonElement> = () => {
-    console.log("searching for", searchTerm);
-  };
-
   const handleEscape = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
-      setShowSearchResults(false);
+      setShowPopover(false);
     }
   };
+
+  const handleOnChange = useCallback((searchTerm: string): void => {
+    setSearchTerm(searchTerm);
+    if (searchTerm === "") setShowPopover(false);
+    else setShowPopover(true);
+  }, []);
 
   useEffect(() => {
     document.addEventListener("keydown", handleEscape);
@@ -53,12 +46,11 @@ export const PodcastSearchBar = () => {
   return (
     <UI
       searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-      handleSearch={handleSearch}
+      setSearchTerm={handleOnChange}
       searchResults={searchResults}
-      showSearchResults={showSearchResults}
       ref={inputRef}
       isLoading={isLoading}
+      showPopover={showPopover}
     />
   );
 };
