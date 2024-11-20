@@ -1,64 +1,20 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { SearchBar as UI } from "./ui/searchBar";
 import { lookupPodcasts } from "@/serverActions/lookupPodcasts";
-import { useQuery } from "@tanstack/react-query";
+import { SearchBar } from "./SearchBar";
+import { SearchResult } from "./ui/searchResults";
+
+const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
+  if (!searchTerm) return [];
+  console.log("searching for", searchTerm);
+  const podcasts = await lookupPodcasts(searchTerm, 6);
+  return podcasts.map((podcast) => ({
+    name: podcast.name,
+    label: podcast.name,
+    image: podcast.artwork[100],
+    handleOnClick: () => console.log("clicked", podcast),
+  }));
+};
 
 export const PodcastSearchBar = () => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const { data: searchResults = [], isLoading } = useQuery({
-    queryKey: ["search", searchTerm],
-    queryFn: async () => {
-      if (!searchTerm) return [];
-      const podcasts = await lookupPodcasts(searchTerm, 6);
-      return podcasts.map((podcast) => ({
-        name: podcast.name,
-        label: podcast.name,
-        image: podcast.artwork[100],
-        handleOnClick: () => console.log("clicked", podcast),
-      }));
-    },
-    staleTime: 5 * 60 * 1000, // Cache results for 5 minutes
-  });
-
-  useEffect(() => {
-    if (searchTerm) {
-      setShowSearchResults(true);
-    } else {
-      setShowSearchResults(false);
-    }
-  }, [searchTerm]);
-
-  const handleSearch: React.MouseEventHandler<HTMLButtonElement> = () => {
-    console.log("searching for", searchTerm);
-  };
-
-  const handleEscape = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      setShowSearchResults(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, []);
-
-  return (
-    <UI
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-      handleSearch={handleSearch}
-      searchResults={searchResults}
-      showSearchResults={showSearchResults}
-      ref={inputRef}
-      isLoading={isLoading}
-    />
-  );
+  return <SearchBar searchQuery={podcastSearch} />;
 };
