@@ -3,9 +3,10 @@ import { Button } from "./button";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { forwardRef } from "react";
+import Image from "next/image";
 
 export type SearchResult = {
-  value: string;
+  name: string;
   label: string;
   image?: string;
   handleOnClick?: () => void;
@@ -17,6 +18,7 @@ type SearchBarProps = {
   handleSearch: React.MouseEventHandler<HTMLButtonElement>;
   searchResults: SearchResult[];
   showSearchResults: boolean;
+  isLoading?: boolean;
 };
 
 const WIDTH = "w-72 sm:w-96";
@@ -29,6 +31,7 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
       handleSearch,
       searchResults,
       showSearchResults,
+      isLoading,
     },
     ref
   ) => {
@@ -39,7 +42,14 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
         className={cn("flex gap-2 hover:bg-slate-100")}
         onClick={result.handleOnClick}
       >
-        <img tabIndex={-1} src={result.image} />
+        {result.image && (
+          <Image
+            src={result.image}
+            tabIndex={-1}
+            alt={`Image for podcast ${result.name}`}
+          />
+        )}
+
         <div tabIndex={-1}>{result.label}</div>
       </div>
     ));

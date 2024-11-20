@@ -10,6 +10,15 @@ export type Podcast = {
   };
 };
 
+type PodcastSearchResponse = {
+  collectionName: string;
+  feedUrl: string;
+  artworkUrl30: string;
+  artworkUrl60: string;
+  artworkUrl100: string;
+  artworkUrl600: string;
+};
+
 export const lookupPodcasts = async (
   searchTerm: string,
   limit: number = 6
@@ -19,15 +28,17 @@ export const lookupPodcasts = async (
     { cache: "force-cache" }
   );
   const data = await response.json();
-  const podcasts: Podcast[] = data.results.map((podcast: any) => ({
-    name: podcast.collectionName,
-    feedUrl: podcast.feedUrl,
-    artwork: {
-      30: podcast.artworkUrl30,
-      60: podcast.artworkUrl60,
-      100: podcast.artworkUrl100,
-      600: podcast.artworkUrl600,
-    },
-  }));
+  const podcasts: Podcast[] = data.results.map(
+    (podcast: PodcastSearchResponse) => ({
+      name: podcast.collectionName,
+      feedUrl: podcast.feedUrl,
+      artwork: {
+        30: podcast.artworkUrl30,
+        60: podcast.artworkUrl60,
+        100: podcast.artworkUrl100,
+        600: podcast.artworkUrl600,
+      },
+    })
+  );
   return podcasts;
 };

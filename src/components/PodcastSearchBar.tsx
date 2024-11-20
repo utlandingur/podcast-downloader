@@ -4,21 +4,19 @@ import { SearchBar as UI } from "./ui/searchBar";
 import { lookupPodcasts } from "@/serverActions/lookupPodcasts";
 import { useQuery } from "@tanstack/react-query";
 
-type PodcastSearchBarProps = {};
-
-export const PodcastSearchBar = ({}: PodcastSearchBarProps) => {
+export const PodcastSearchBar = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data: searchResults = [] } = useQuery({
+  const { data: searchResults = [], isLoading } = useQuery({
     queryKey: ["search", searchTerm],
     queryFn: async () => {
       if (!searchTerm) return [];
       const podcasts = await lookupPodcasts(searchTerm, 6);
       return podcasts.map((podcast) => ({
-        value: podcast.name,
+        name: podcast.name,
         label: podcast.name,
         image: podcast.artwork[100],
         handleOnClick: () => console.log("clicked", podcast),
@@ -60,6 +58,7 @@ export const PodcastSearchBar = ({}: PodcastSearchBarProps) => {
       searchResults={searchResults}
       showSearchResults={showSearchResults}
       ref={inputRef}
+      isLoading={isLoading}
     />
   );
 };
