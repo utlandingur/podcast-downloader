@@ -21,7 +21,21 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
     enabled: searchTerm.length > 0 && enabled,
     queryFn: async ({ queryKey }: { queryKey: [string, string] }) => {
       const [, searchTerm] = queryKey;
-      return await searchQuery(searchTerm);
+      const results = await searchQuery(searchTerm);
+      const tempResults = results.map((result) => {
+        const tempOnClick = result.handleOnClick;
+        return {
+          ...result,
+          handleOnClick: () => {
+            if (tempOnClick) {
+              tempOnClick?.();
+              setShowPopover(false);
+            }
+          },
+        };
+      });
+      console.log(tempResults);
+      return tempResults;
     },
     staleTime: 5 * 60 * 1000, // Cache results for 5 minutes
   });
