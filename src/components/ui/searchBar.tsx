@@ -74,6 +74,7 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={cn("self-center")}
                 ref={ref}
+                aria-label="Search"
               />
               {handleSearch && <Button onClick={handleSearch}>Search</Button>}
             </div>
