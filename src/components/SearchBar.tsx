@@ -1,5 +1,5 @@
 "use client";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchInput as UI } from "./ui/searchInput";
 import { useQuery } from "@tanstack/react-query";
 import { SearchResult, SearchResults } from "./ui/searchResults";
@@ -18,7 +18,6 @@ const WIDTH = "w-72 sm:w-96";
 export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showPopover, setShowPopover] = useState<boolean>(false);
-  const [resultsInFocus, setResultsInFocus] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +33,10 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
 
   const handleEscape = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
+      if (resultsRef.current?.contains(document.activeElement)) {
+        console.log("resultsRef.current", resultsRef.current);
+        inputRef?.current?.focus();
+      }
       setShowPopover(false);
     }
   };
