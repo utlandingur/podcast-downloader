@@ -32,6 +32,7 @@ import {
 } from "@/serverActions/downloadPodcastEpisodes";
 import { PodcastEpisode } from "@/types/podcasts";
 import { useDownloadPodcasts } from "@/hooks/useDownloadPodcasts";
+import { LoadingSpinner } from "../ui/loadingSpinner";
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
@@ -73,6 +74,7 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
         trackName: episodeName,
         episodeUrl: url,
       } = episode;
+      console.log("episode", episode);
       return { name, episodeName, url };
     });
     downloadPodcastEpisodes(downloadData);
@@ -182,7 +184,7 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
           aria-disabled={Object.keys(rowSelection).length === 0}
           onClick={handleDownload}
         >
-          Download
+          {!isLoading ? "Download" : <LoadingSpinner />}
         </Button>
       </div>
       <div className="flex-1 text-sm text-muted-foreground">

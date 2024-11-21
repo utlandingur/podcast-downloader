@@ -26,14 +26,19 @@
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "lucide-react": "^0.460.0",
+    "lzma-native": "^8.0.6",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
+    "stream": "^0.0.3",
+    "stream-to-string": "^1.2.1",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "web-streams-polyfill": "^4.0.0"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
+    "@types/lzma-native": "^4.0.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
