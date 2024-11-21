@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { lookupPodcast } from "@/serverActions/lookupPodcast";
 import { lookupPodcastEpisodes } from "@/serverActions/looksPodcastEpisodes";
-import { PodcastEpisodeTable } from "@/components/podcastEpisodeTable";
 import { PodcastOverview } from "@/components/podcastOverview";
 
 type PodcastPageProps = {
@@ -17,10 +16,10 @@ export default async function PodcastPage(props: PodcastPageProps) {
   const { id } = await props.params;
   const decodedId = decodeURIComponent(id);
 
-  const podcast = await lookupPodcast(decodedId);
+  // const podcast = await lookupPodcast(decodedId);
 
-  const { collectionName, artworkUrl100, artworkUrl600, feedUrl, trackCount } =
-    podcast;
+  // const { collectionName, artworkUrl100, artworkUrl600, feedUrl, trackCount } =
+  //   podcast;
 
   const podcastEpisodes = await lookupPodcastEpisodes(decodedId);
 

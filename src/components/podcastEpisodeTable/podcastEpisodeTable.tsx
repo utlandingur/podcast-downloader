@@ -1,6 +1,6 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -31,24 +31,21 @@ import {
   downloadPodcastEpisodes,
 } from "@/serverActions/downloadPodcastEpisodes";
 import { PodcastEpisode } from "@/types/podcasts";
+import { useDownloadPodcasts } from "@/hooks/useDownloadPodcasts";
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 };
 
-export function DataTable<TData extends PodcastEpisode, TValue>({
+export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    console.log("rowSelection", rowSelection);
-  }, [rowSelection]);
+  const { downloadPodcastEpisodes, isLoading } = useDownloadPodcasts();
 
   const table = useReactTable({
     data,
@@ -74,14 +71,11 @@ export function DataTable<TData extends PodcastEpisode, TValue>({
       const {
         collectionName: name,
         trackName: episodeName,
-        trackViewUrl: url,
+        episodeUrl: url,
       } = episode;
       return { name, episodeName, url };
     });
-    setLoading(true);
-    const response = await downloadPodcastEpisodes(downloadData);
-    // do something with response
-    setLoading(false);
+    downloadPodcastEpisodes(downloadData);
   };
 
   return (

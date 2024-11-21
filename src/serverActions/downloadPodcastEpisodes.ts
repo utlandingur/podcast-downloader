@@ -1,13 +1,16 @@
 "use server";
+import base64js from "base64-js";
+
 const downloadPodcastEpisode = async (downloadInfo: downloadInfo) => {
   const { name, episodeName, url } = downloadInfo;
+
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Failed to download podcast episode");
-    const blob = await response.blob();
-    console.log("blob", blob);
+    const arrayBuffer = await response.arrayBuffer();
+    return arrayBuffer;
   } catch (error) {
-    console.error("error", error);
+    throw new Error(`Failed to download episode: ${episodeName}`);
   }
 };
 
@@ -19,13 +22,20 @@ export type downloadInfo = {
 
 export const downloadPodcastEpisodes = async (podcasts: downloadInfo[]) => {
   try {
-    await Promise.all(
+    const responses: ArrayBuffer[] = await Promise.all(
       podcasts.map((podcast) => downloadPodcastEpisode(podcast))
     );
-    console.log("All episodes downloaded");
-    return { success: true, errors: [] };
+    return responses.map((arrayBuffer) => ({
+      data: encodeBase64(arrayBuffer), // Base64 encoded data
+    }));
   } catch (error) {
     console.error("Error downloading episodes:", error);
-    return { success: false, errors: ["failed to download"] };
+    return null;
   }
+};
+
+// Utility function to encode data to base64
+const encodeBase64 = (arrayBuffer: ArrayBuffer) => {
+  // Convert ArrayBuffer to base64 using base64-js
+  return base64js.fromByteArray(new Uint8Array(arrayBuffer));
 };
