@@ -26,19 +26,25 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  downloadInfo,
+  downloadPodcastEpisodes,
+} from "@/serverActions/downloadPodcastEpisodes";
+import { PodcastEpisode } from "@/types/podcasts";
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 };
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends PodcastEpisode, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log("rowSelection", rowSelection);
@@ -61,10 +67,21 @@ export function DataTable<TData, TValue>({
   });
 
   // finish this
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const selectedRows = table.getSelectedRowModel().rows;
     const selectedData = selectedRows.map((row) => row.original);
-    console.log("Selected Data:", selectedData);
+    const downloadData: downloadInfo[] = selectedData.map((episode) => {
+      const {
+        collectionName: name,
+        trackName: episodeName,
+        trackViewUrl: url,
+      } = episode;
+      return { name, episodeName, url };
+    });
+    setLoading(true);
+    const response = await downloadPodcastEpisodes(downloadData);
+    // do something with response
+    setLoading(false);
   };
 
   return (

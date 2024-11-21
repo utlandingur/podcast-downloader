@@ -21,4 +21,5 @@ export type PodcastEpisode = {
   trackTimeMillis: number;
   trackCount: string;
   trackViewUrl: string;
+  episodeUrl: string;
 };
