@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "./loadingSpinner";
-import { PopoverContent } from "./popover";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
@@ -14,13 +13,11 @@ export type SearchResult = {
 type SearchResultsProps = {
   isLoading: boolean;
   searchResults: SearchResult[];
-  width?: string;
 };
 
 export const SearchResults = ({
   isLoading,
   searchResults,
-  width = "w-72 sm:w-96",
 }: SearchResultsProps) => {
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
 
@@ -97,26 +94,14 @@ export const SearchResults = ({
     };
   }, [searchResults]);
 
-  return (
-    <PopoverContent
-      side="bottom"
-      sideOffset={4}
-      className={cn(
-        `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${width}`
-      )}
-      onOpenAutoFocus={(e) => e.preventDefault()}
-    >
-      <div className="grid gap-2 p-2">
-        {isLoading ? (
-          <div className={cn("justify-self-center")}>
-            <LoadingSpinner />
-          </div>
-        ) : (
-          <Results />
-        )}
+  if (isLoading)
+    return (
+      <div className={cn("justify-self-center")}>
+        <LoadingSpinner />
       </div>
-    </PopoverContent>
-  );
+    );
+
+  return <Results />;
 };
 
 type SearchResultProps = {

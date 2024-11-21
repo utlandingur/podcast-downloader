@@ -1,6 +1,6 @@
 "use client";
 import { lookupPodcasts } from "@/serverActions/lookupPodcasts";
-import { SearchBar } from "./SearchBar";
+import { SearchBar } from "./searchBar";
 import { SearchResult } from "./ui/searchResults";
 
 const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {

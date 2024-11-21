@@ -1,8 +1,10 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { SearchBar as UI } from "./ui/searchBar";
+import { use, useCallback, useEffect, useRef, useState } from "react";
+import { SearchInput as UI } from "./ui/searchInput";
 import { useQuery } from "@tanstack/react-query";
-import { SearchResult } from "./ui/searchResults";
+import { SearchResult, SearchResults } from "./ui/searchResults";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { cn } from "@/lib/utils";
 
 type SearchBarProps = {
   searchQuery: (searchTerm: string) => Promise<SearchResult[]>;
@@ -11,10 +13,14 @@ type SearchBarProps = {
   queryKey?: string[];
 };
 
+const WIDTH = "w-72 sm:w-96";
+
 export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showPopover, setShowPopover] = useState<boolean>(false);
+  const [resultsInFocus, setResultsInFocus] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const { data: searchResults = [], isLoading } = useQuery({
     queryKey: ["search", searchTerm],
@@ -32,11 +38,6 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
     }
   };
 
-  const handleOnChange = useCallback((searchTerm: string): void => {
-    setSearchTerm(searchTerm);
-    if (showPopover !== (searchTerm !== "")) setShowPopover(!showPopover);
-  }, []);
-
   useEffect(() => {
     document.addEventListener("keydown", handleEscape);
     return () => {
@@ -44,14 +45,45 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
     };
   }, []);
 
+  const handleOnChange = useCallback((newSearchTerm: string): void => {
+    setSearchTerm(newSearchTerm);
+    if (newSearchTerm === "" || !newSearchTerm) setShowPopover(false);
+    else setShowPopover(true);
+  }, []);
+
   return (
-    <UI
-      searchTerm={searchTerm}
-      setSearchTerm={handleOnChange}
-      searchResults={searchResults}
-      ref={inputRef}
-      isLoading={isLoading}
-      showPopover={showPopover}
-    />
+    <div className="flex w-full justify-center gap-2">
+      <Popover open={showPopover}>
+        <PopoverTrigger asChild>
+          <div className={cn(`flex gap-4 ${WIDTH}`)}>
+            <UI
+              searchTerm={searchTerm}
+              setSearchTerm={handleOnChange}
+              searchResults={searchResults}
+              ref={inputRef}
+              width={WIDTH}
+            />
+          </div>
+        </PopoverTrigger>
+        {showPopover && (
+          <PopoverContent
+            side="bottom"
+            sideOffset={4}
+            className={cn(
+              `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${WIDTH}`
+            )}
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            ref={resultsRef}
+          >
+            <div className="grid gap-2 p-2">
+              <SearchResults
+                isLoading={isLoading ? true : false}
+                searchResults={searchResults}
+              />
+            </div>
+          </PopoverContent>
+        )}
+      </Popover>
+    </div>
   );
 };
