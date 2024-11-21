@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { lookupPodcast } from "@/serverActions/lookupPodcast";
 import { lookupPodcastEpisodes } from "@/serverActions/looksPodcastEpisodes";
+import { PodcastEpisodeTable } from "@/components/podcastEpisodeTable";
+import { PodcastOverview } from "@/components/podcastOverview";
 
 type PodcastPageProps = {
   params: {
@@ -35,6 +37,7 @@ export default async function PodcastPage(props: PodcastPageProps) {
       >
         <Suspense fallback={<div>Loading...</div>}>
           <PodcastSearchBar />
+          <PodcastOverview podcastEpisodes={podcastEpisodes} />
         </Suspense>
       </div>
     </main>

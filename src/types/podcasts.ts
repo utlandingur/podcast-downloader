@@ -9,7 +9,7 @@ export type Podcast = {
   trackCount: string;
 };
 
-export type PodcastTrack = {
+export type PodcastEpisode = {
   trackName: string;
   trackId: string;
   collectionId: string;

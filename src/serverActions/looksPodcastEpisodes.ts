@@ -1,14 +1,13 @@
-import type { PodcastTrack } from "@/types/podcasts";
+import type { PodcastEpisode } from "@/types/podcasts";
 
 export const lookupPodcastEpisodes = async (
   collectionId: string
-): Promise<PodcastTrack[]> => {
-  const response = await fetch(
-    `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode
-      `,
-    { cache: "force-cache" }
-  );
+): Promise<PodcastEpisode[]> => {
+  const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode`;
+  const response = await fetch(url, { cache: "force-cache" });
+  console.log("url", url);
+
   const data = await response.json();
-  const results: PodcastTrack[] = data.results;
+  const results: PodcastEpisode[] = data.results;
   return data.results;
 };
