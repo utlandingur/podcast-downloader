@@ -20,16 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-// import { downloadInfo } from "@/serverActions/downloadPodcastEpisodes";
+
 import { PodcastEpisode } from "@/types/podcasts";
-// import { useDownloadPodcasts } from "@/hooks/useDownloadPodcasts";
-// import { LoadingSpinner } from "../ui/loadingSpinner";
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
@@ -42,8 +34,6 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-  // const { downloadPodcastEpisodes, isLoading } = useDownloadPodcasts();
 
   const table = useReactTable({
     data,
@@ -52,60 +42,15 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnVisibility,
-      rowSelection,
     },
     getPaginationRowModel: getPaginationRowModel(), // this defaults to 10 per screen
   });
 
-  // finish this
-  const handleDownload = async () => {
-    // const selectedRows = table.getSelectedRowModel().rows;
-    // const selectedData = selectedRows.map((row) => row.original);
-    // const downloadData: downloadInfo[] = selectedData.map((episode) => {
-    //   const {
-    //     collectionName: name,
-    //     trackName: episodeName,
-    //     episodeUrl: url,
-    //   } = episode;
-    //   return { name, episodeName, url };
-    // });
-    // downloadPodcastEpisodes(downloadData);
-  };
-
   return (
-    <div>
-      <div className="flex items-center py-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Column Visibility
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+    <div className="sm:p-4">
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -175,13 +120,6 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
             Next
           </Button>
         </div>
-        <Button
-          variant={Object.keys(rowSelection).length > 0 ? "default" : "outline"}
-          aria-disabled={Object.keys(rowSelection).length === 0}
-          onClick={handleDownload}
-        >
-          {/* {!isLoading ? "Download" : <LoadingSpinner />} */}
-        </Button>
       </div>
       <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of{" "}

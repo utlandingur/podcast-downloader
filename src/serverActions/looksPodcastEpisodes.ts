@@ -5,9 +5,9 @@ export const lookupPodcastEpisodes = async (
 ): Promise<PodcastEpisode[]> => {
   const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode`;
   const response = await fetch(url, { cache: "force-cache" });
-  console.log("url", url);
 
   const data = await response.json();
-  // const results: PodcastEpisode[] = data.results;
-  return data.results;
+  const results: PodcastEpisode[] = data.results;
+
+  return results;
 };

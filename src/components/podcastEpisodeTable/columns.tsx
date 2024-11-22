@@ -1,37 +1,27 @@
-import { PodcastEpisode } from "@/types/podcasts";
+import { PodcastEpisode as BasePodcastEpisode } from "@/types/podcasts";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Link } from "lucide-react";
 import { ArrowUpDown } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-
 import { Button } from "@/components/ui/button";
+import { DownloadPodcastButton } from "../downloadPodcastButton";
+
+interface PodcastEpisode extends BasePodcastEpisode {
+  downloadState?: "readyToDownload" | "downloading" | "downloaded" | "error";
+}
 
 export const columns: ColumnDef<PodcastEpisode>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "trackName",
     header: "Episode",
+    cell: ({ getValue }) => {
+      const trackName = getValue<string>();
+      const maxLength = 40;
+      const truncatedTrackName =
+        trackName.length > maxLength
+          ? trackName.slice(0, maxLength).trim() + "..."
+          : trackName;
+
+      return truncatedTrackName;
+    },
   },
 
   {
@@ -42,7 +32,7 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Release Date
+          Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -60,37 +50,24 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
     },
   },
   {
-    accessorKey: "trackTimeMillis",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Length
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ getValue }) => {
-      const millis = getValue<number>();
-      const minutes = Math.floor(millis / 6000 / 10); // Convert milliseconds to minutes
-      return <div className="text-center">{minutes} min</div>;
-    },
-  },
-  {
-    accessorKey: "trackViewUrl",
-    header: "View in iTunes",
-    cell: ({ getValue }) => {
+    accessorKey: "episodeUrl",
+    header: "Download",
+    cell: ({ getValue, row }) => {
       const url = getValue<string>();
+      const filename = `${row.original.collectionName}-episode-${row.original.trackName}.mp3`;
+
+      const updateLocalState = (
+        state: "readyToDownload" | "downloading" | "downloaded" | "error"
+      ) => {
+        row.original.downloadState = state;
+      };
       return (
-        <div className="flex justify-center">
-          <a href={url} target="_blank">
-            <Button size={"icon"} variant={"outline"}>
-              <Link />
-            </Button>
-          </a>
-        </div>
+        <DownloadPodcastButton
+          updateLocalState={updateLocalState}
+          url={url}
+          fileName={filename}
+          existingState={row.original.downloadState ?? "readyToDownload"}
+        />
       );
     },
   },
