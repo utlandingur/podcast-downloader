@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "./loadingSpinner";
-import { PopoverContent } from "./popover";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
@@ -14,114 +13,82 @@ export type SearchResult = {
 type SearchResultsProps = {
   isLoading: boolean;
   searchResults: SearchResult[];
-  width?: string;
 };
 
 export const SearchResults = ({
   isLoading,
   searchResults,
-  width = "w-72 sm:w-96",
 }: SearchResultsProps) => {
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+  const resultContainer = useRef<HTMLButtonElement | null>(null);
 
-  const SearchResult = ({
-    result,
-    isFocused,
-    onFocus,
-    onClick,
-  }: SearchResultProps) => {
-    const buttonRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-      if (isFocused && buttonRef.current) {
-        buttonRef.current.focus();
-      }
-    }, [isFocused]);
-
-    return (
-      <button
-        tabIndex={0}
-        className={cn(
-          "grid grid-cols-[100px_auto] gap-2 hover:bg-slate-100 items-center"
-        )}
-        onFocus={onFocus}
-        ref={buttonRef}
-        onClick={onClick}
-        aria-label={`Select ${result.name}`}
-      >
-        {result.image && (
-          <Image
-            src={result.image}
-            tabIndex={-1}
-            alt={`Image for podcast ${result.name}`}
-            width={100}
-            height={100}
-            className={cn("rounded-md")}
-          />
-        )}
-
-        <div tabIndex={-1} className={cn("w-full")}>
-          {result.label}
-        </div>
-      </button>
-    );
-  };
+  useEffect(() => {
+    if (!resultContainer.current) return;
+    // resultContainer.current.focus();
+    resultContainer.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  }, [focusedIndex]);
 
   const Results = () => {
     return searchResults.length > 0
       ? searchResults.map((result, index) => (
-          <SearchResult
+          <button
+            tabIndex={0}
+            className={cn(
+              "grid grid-cols-[100px_auto] gap-2 hover:bg-slate-100 items-center cursor-pointer"
+            )}
+            ref={index === focusedIndex ? resultContainer : null}
+            onClick={result.handleOnClick}
+            aria-label={`Select ${result.name}`}
             key={index}
-            result={result}
-            isFocused={focusedIndex === index}
-            onFocus={() => setFocusedIndex(index)}
-            onClick={() => result.handleOnClick?.()}
-          />
+          >
+            {result.image && (
+              <Image
+                src={result.image}
+                tabIndex={-1}
+                alt={`Image for podcast ${result.name}`}
+                width={100}
+                height={100}
+                className={cn("rounded-md")}
+              />
+            )}
+
+            <div tabIndex={-1} className={cn("w-full")}>
+              {result.label}
+            </div>
+          </button>
         ))
       : " No results found";
   };
 
   // Handle keydown events for arrow navigation and Enter to "click"
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "ArrowDown") {
-      setFocusedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
-    } else if (event.key === "ArrowUp") {
-      setFocusedIndex((prev) => Math.max(0, prev - 1));
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const { key } = event;
+    let nextIndexCount = 0;
+    if (key === "ArrowDown") {
+      nextIndexCount = (focusedIndex + 1) % (searchResults.length - 1);
     }
+    if (key === "ArrowUp") {
+      nextIndexCount = (focusedIndex - 1) % (searchResults.length - 1);
+    }
+    if (key === "Enter") {
+      searchResults[focusedIndex].handleOnClick?.();
+    }
+    setFocusedIndex(nextIndexCount);
   };
 
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [searchResults]);
+  if (isLoading)
+    return (
+      <div className={cn("justify-self-center")}>
+        <LoadingSpinner />
+      </div>
+    );
 
   return (
-    <PopoverContent
-      side="bottom"
-      sideOffset={4}
-      className={cn(
-        `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${width}`
-      )}
-      onOpenAutoFocus={(e) => e.preventDefault()}
-    >
-      <div className="grid gap-2 p-2">
-        {isLoading ? (
-          <div className={cn("justify-self-center")}>
-            <LoadingSpinner />
-          </div>
-        ) : (
-          <Results />
-        )}
-      </div>
-    </PopoverContent>
+    <div onKeyDown={handleKeyDown}>
+      <Results />
+    </div>
   );
-};
-
-type SearchResultProps = {
-  result: SearchResult;
-  isFocused: boolean; // Add isFocused prop to determine if this result is focused
-  onFocus: () => void; // Function to update focus
-  onClick: () => void; // Handle click event
 };

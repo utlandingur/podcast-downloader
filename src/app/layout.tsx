@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/globals.css";
 import { QueryClientProvider } from "@/providers/QueryClientProvider";
+import { PageLoadProvider } from "@/providers/pageLoadProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,7 +16,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <QueryClientProvider>{children}</QueryClientProvider>
+        <QueryClientProvider>
+          <PageLoadProvider>{children}</PageLoadProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

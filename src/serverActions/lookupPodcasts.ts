@@ -1,23 +1,6 @@
 "use server";
-export type Podcast = {
-  name: string;
-  feedUrl: string;
-  artwork: {
-    30: string;
-    60: string;
-    100: string;
-    600: string;
-  };
-};
 
-type PodcastSearchResponse = {
-  collectionName: string;
-  feedUrl: string;
-  artworkUrl30: string;
-  artworkUrl60: string;
-  artworkUrl100: string;
-  artworkUrl600: string;
-};
+import { Podcast } from "@/types/podcasts";
 
 export const lookupPodcasts = async (
   searchTerm: string,
@@ -28,17 +11,6 @@ export const lookupPodcasts = async (
     { cache: "force-cache" }
   );
   const data = await response.json();
-  const podcasts: Podcast[] = data.results.map(
-    (podcast: PodcastSearchResponse) => ({
-      name: podcast.collectionName,
-      feedUrl: podcast.feedUrl,
-      artwork: {
-        30: podcast.artworkUrl30,
-        60: podcast.artworkUrl60,
-        100: podcast.artworkUrl100,
-        600: podcast.artworkUrl600,
-      },
-    })
-  );
-  return podcasts;
+
+  return data.results;
 };
