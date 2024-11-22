@@ -127,7 +127,6 @@ export const SearchBar = ({
               setSearchTerm={handleNewSearchTerm}
               searchResults={searchResults}
               ref={inputRef}
-              width={width}
             />
           </div>
         </PopoverTrigger>

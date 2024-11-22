@@ -26,9 +26,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { downloadInfo } from "@/serverActions/downloadPodcastEpisodes";
+// import { downloadInfo } from "@/serverActions/downloadPodcastEpisodes";
 import { PodcastEpisode } from "@/types/podcasts";
-import { useDownloadPodcasts } from "@/hooks/useDownloadPodcasts";
+// import { useDownloadPodcasts } from "@/hooks/useDownloadPodcasts";
 import { LoadingSpinner } from "../ui/loadingSpinner";
 
 type DataTableProps<TData, TValue> = {
@@ -43,7 +43,7 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const { downloadPodcastEpisodes, isLoading } = useDownloadPodcasts();
+  // const { downloadPodcastEpisodes, isLoading } = useDownloadPodcasts();
 
   const table = useReactTable({
     data,
@@ -63,17 +63,17 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
 
   // finish this
   const handleDownload = async () => {
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedData = selectedRows.map((row) => row.original);
-    const downloadData: downloadInfo[] = selectedData.map((episode) => {
-      const {
-        collectionName: name,
-        trackName: episodeName,
-        episodeUrl: url,
-      } = episode;
-      return { name, episodeName, url };
-    });
-    downloadPodcastEpisodes(downloadData);
+    // const selectedRows = table.getSelectedRowModel().rows;
+    // const selectedData = selectedRows.map((row) => row.original);
+    // const downloadData: downloadInfo[] = selectedData.map((episode) => {
+    //   const {
+    //     collectionName: name,
+    //     trackName: episodeName,
+    //     episodeUrl: url,
+    //   } = episode;
+    //   return { name, episodeName, url };
+    // });
+    // downloadPodcastEpisodes(downloadData);
   };
 
   return (
