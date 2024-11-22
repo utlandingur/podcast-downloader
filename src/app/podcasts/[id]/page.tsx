@@ -5,14 +5,13 @@ import { cn } from "@/lib/utils";
 import { lookupPodcastEpisodes } from "@/serverActions/looksPodcastEpisodes";
 import { PodcastOverview } from "@/components/podcastOverview";
 
-type PodcastPageProps = {
-  params: {
-    id: string;
-  };
-};
+type Params = Promise<{
+  id: string;
+}>;
 
-export default async function PodcastPage({ params }: PodcastPageProps) {
-  const { id } = params;
+export default async function PodcastPage({ params }: { params: Params }) {
+  const id = (await params).id;
+
   const decodedId = decodeURIComponent(id);
 
   // const podcast = await lookupPodcast(decodedId);
