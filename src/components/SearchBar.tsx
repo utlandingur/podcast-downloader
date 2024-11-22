@@ -13,11 +13,14 @@ type SearchBarProps = {
   staleTime?: number;
   enabled?: boolean;
   queryKey?: string[];
+  width?: string;
 };
 
-const WIDTH = "w-72 sm:w-96";
-
-export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
+export const SearchBar = ({
+  enabled = true,
+  searchQuery,
+  width = "w-72 sm:w-96",
+}: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
@@ -70,6 +73,7 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
     }
 
     if (key === "Enter" && focusedIndex !== -1) {
+      setShowPopover(false);
       searchResults[focusedIndex].handleOnClick?.();
     }
 
@@ -87,7 +91,10 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
               }`
             )}
             ref={index === focusedIndex ? resultContainer : null}
-            onClick={result.handleOnClick}
+            onClick={() => {
+              setShowPopover(false);
+              result.handleOnClick?.();
+            }}
             aria-label={`Select ${result.name}`}
             key={index}
           >
@@ -114,13 +121,13 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
     <div className="flex w-full justify-center gap-2" onKeyDown={handleKeyDown}>
       <Popover open={showPopover}>
         <PopoverTrigger asChild>
-          <div className={cn(`flex gap-4 ${WIDTH}`)}>
+          <div className={cn(`flex gap-4 ${width}`)}>
             <UI
               searchTerm={searchTerm}
               setSearchTerm={handleNewSearchTerm}
               searchResults={searchResults}
               ref={inputRef}
-              width={WIDTH}
+              width={width}
             />
           </div>
         </PopoverTrigger>
@@ -129,7 +136,7 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
             side="bottom"
             sideOffset={4}
             className={cn(
-              `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${WIDTH}`
+              `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${width}`
             )}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >

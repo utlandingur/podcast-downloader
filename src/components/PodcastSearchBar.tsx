@@ -3,9 +3,11 @@ import { lookupPodcasts } from "@/serverActions/lookupPodcasts";
 import { SearchResult } from "./ui/searchResults";
 import { useRouter } from "next/navigation";
 import { SearchBar } from "@/components/searchBar";
+import { usePageLoad } from "@/providers/pageLoadProvider";
 
 export const PodcastSearchBar = () => {
   const router = useRouter();
+  const { startLoading } = usePageLoad();
 
   const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
     if (!searchTerm) return [];
@@ -14,8 +16,10 @@ export const PodcastSearchBar = () => {
       name: podcast.collectionName,
       label: podcast.collectionName,
       image: podcast.artworkUrl100,
-      handleOnClick: () =>
-        router.push(`/podcasts/${JSON.stringify(podcast.collectionId)}`),
+      handleOnClick: () => {
+        startLoading();
+        router.push(`/podcasts/${JSON.stringify(podcast.collectionId)}`);
+      },
     }));
   };
 

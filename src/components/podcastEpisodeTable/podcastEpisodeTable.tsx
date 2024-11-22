@@ -74,7 +74,6 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
         trackName: episodeName,
         episodeUrl: url,
       } = episode;
-      console.log("episode", episode);
       return { name, episodeName, url };
     });
     downloadPodcastEpisodes(downloadData);

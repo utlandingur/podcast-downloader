@@ -23,7 +23,6 @@ export const SearchResults = ({
   const resultContainer = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    console.log("focusedIndex", focusedIndex);
     if (!resultContainer.current) return;
     // resultContainer.current.focus();
     resultContainer.current.scrollIntoView({
@@ -66,22 +65,15 @@ export const SearchResults = ({
 
   // Handle keydown events for arrow navigation and Enter to "click"
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    console.log("event key", event.key);
     const { key } = event;
     let nextIndexCount = 0;
-    console.log("current focusedIndex", focusedIndex);
     if (key === "ArrowDown") {
       nextIndexCount = (focusedIndex + 1) % (searchResults.length - 1);
-      console.log("nextIndexCount", nextIndexCount);
     }
     if (key === "ArrowUp") {
       nextIndexCount = (focusedIndex - 1) % (searchResults.length - 1);
     }
     if (key === "Escape") {
-      // if (resultsRef.current?.contains(document.activeElement)) {
-      // console.log("resultsRef.current", resultsRef.current);
-      // inputRef?.current?.focus();
-      // setShowPopover(false);
     }
     if (key === "Enter") {
       searchResults[focusedIndex].handleOnClick?.();
