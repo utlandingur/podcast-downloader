@@ -12,7 +12,7 @@ type PodcastPageProps = {
 };
 
 export default async function PodcastPage(props: PodcastPageProps) {
-  const { id } = await props.params;
+  const { id } = props.params;
   const decodedId = decodeURIComponent(id);
 
   // const podcast = await lookupPodcast(decodedId);

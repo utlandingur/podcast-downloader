@@ -180,7 +180,7 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
           aria-disabled={Object.keys(rowSelection).length === 0}
           onClick={handleDownload}
         >
-          {!isLoading ? "Download" : <LoadingSpinner />}
+          {/* {!isLoading ? "Download" : <LoadingSpinner />} */}
         </Button>
       </div>
       <div className="flex-1 text-sm text-muted-foreground">
