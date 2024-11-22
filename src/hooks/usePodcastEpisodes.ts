@@ -8,7 +8,8 @@ export const usePodcastEpisodes = (id: string) => {
     queryFn: async ({ queryKey }: { queryKey: [string, string] }) => {
       const [, id] = queryKey;
       const episodes = await lookupPodcastEpisodes(id);
-      return episodes;
+      if (!episodes || episodes.length === 1) return [];
+      return episodes.slice(1); // Remove the first episode, which is the podcast itself
     },
     staleTime: 60 * 60 * 1000, // Cache results for 1 hour
   });
