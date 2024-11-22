@@ -2,9 +2,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchInput as UI } from "./ui/searchInput";
 import { useQuery } from "@tanstack/react-query";
-import { SearchResult, SearchResults } from "./ui/searchResults";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
+import { LoadingSpinner } from "@/components/ui/loadingSpinner";
+import Image from "next/image";
+import { SearchResult } from "./ui/searchResults";
 
 type SearchBarProps = {
   searchQuery: (searchTerm: string) => Promise<SearchResult[]>;
@@ -18,8 +20,9 @@ const WIDTH = "w-72 sm:w-96";
 export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showPopover, setShowPopover] = useState<boolean>(false);
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
+  const resultContainer = useRef<HTMLButtonElement | null>(null);
 
   const { data: searchResults = [], isLoading } = useQuery({
     queryKey: ["search", searchTerm],
@@ -31,37 +34,90 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
     staleTime: 5 * 60 * 1000, // Cache results for 5 minutes
   });
 
-  const handleEscape = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      if (resultsRef.current?.contains(document.activeElement)) {
-        console.log("resultsRef.current", resultsRef.current);
-        inputRef?.current?.focus();
-      }
-      setShowPopover(false);
-    }
-  };
-
   useEffect(() => {
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, []);
+    if (!resultContainer.current) return;
+    // resultContainer.current.focus();
+    resultContainer.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  }, [focusedIndex]);
 
-  const handleOnChange = useCallback((newSearchTerm: string): void => {
+  const handleNewSearchTerm = useCallback((newSearchTerm: string): void => {
     setSearchTerm(newSearchTerm);
     if (newSearchTerm === "" || !newSearchTerm) setShowPopover(false);
     else setShowPopover(true);
   }, []);
 
+  // Handle keydown events for arrow navigation and Enter to "click"
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const { key } = event;
+    let nextIndexCount = focusedIndex;
+
+    if (key === "ArrowDown") {
+      event.preventDefault();
+      nextIndexCount = (focusedIndex + 1) % searchResults.length;
+    }
+
+    if (key === "ArrowUp") {
+      event.preventDefault();
+      nextIndexCount =
+        (focusedIndex - 1 + searchResults.length) % searchResults.length;
+    }
+
+    if (key === "Escape") {
+      setShowPopover(false);
+    }
+
+    if (key === "Enter" && focusedIndex !== -1) {
+      searchResults[focusedIndex].handleOnClick?.();
+    }
+
+    setFocusedIndex(nextIndexCount);
+  };
+
+  const Results = () => {
+    return searchResults.length > 0
+      ? searchResults.map((result, index) => (
+          <button
+            tabIndex={0}
+            className={cn(
+              `grid grid-cols-[100px_auto] gap-2 hover:bg-slate-100 items-center cursor-pointer ${
+                focusedIndex === index ? "bg-slate-100" : ""
+              }`
+            )}
+            ref={index === focusedIndex ? resultContainer : null}
+            onClick={result.handleOnClick}
+            aria-label={`Select ${result.name}`}
+            key={index}
+          >
+            {result.image && (
+              <Image
+                src={result.image}
+                tabIndex={-1}
+                alt={`Image for podcast ${result.name}`}
+                width={100}
+                height={100}
+                className={cn("rounded-md")}
+              />
+            )}
+
+            <div tabIndex={-1} className={cn("w-full")}>
+              {result.label}
+            </div>
+          </button>
+        ))
+      : " No results found";
+  };
+
   return (
-    <div className="flex w-full justify-center gap-2">
+    <div className="flex w-full justify-center gap-2" onKeyDown={handleKeyDown}>
       <Popover open={showPopover}>
         <PopoverTrigger asChild>
           <div className={cn(`flex gap-4 ${WIDTH}`)}>
             <UI
               searchTerm={searchTerm}
-              setSearchTerm={handleOnChange}
+              setSearchTerm={handleNewSearchTerm}
               searchResults={searchResults}
               ref={inputRef}
               width={WIDTH}
@@ -76,13 +132,15 @@ export const SearchBar = ({ enabled = true, searchQuery }: SearchBarProps) => {
               `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${WIDTH}`
             )}
             onOpenAutoFocus={(e) => e.preventDefault()}
-            ref={resultsRef}
           >
             <div className="grid gap-2 p-2">
-              <SearchResults
-                isLoading={isLoading ? true : false}
-                searchResults={searchResults}
-              />
+              {isLoading ? (
+                <div className={cn("justify-self-center")}>
+                  <LoadingSpinner />
+                </div>
+              ) : (
+                <Results />
+              )}
             </div>
           </PopoverContent>
         )}

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "./loadingSpinner";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 
 export type SearchResult = {
   name: string;
@@ -20,79 +20,74 @@ export const SearchResults = ({
   searchResults,
 }: SearchResultsProps) => {
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+  const resultContainer = useRef<HTMLButtonElement | null>(null);
 
-  const SearchResult = ({
-    result,
-    isFocused,
-    onFocus,
-    onClick,
-  }: SearchResultProps) => {
-    const buttonRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-      if (isFocused && buttonRef.current) {
-        buttonRef.current.focus();
-      }
-    }, [isFocused]);
-
-    return (
-      <button
-        tabIndex={0}
-        className={cn(
-          "grid grid-cols-[100px_auto] gap-2 hover:bg-slate-100 items-center"
-        )}
-        onFocus={onFocus}
-        ref={buttonRef}
-        onClick={onClick}
-        aria-label={`Select ${result.name}`}
-      >
-        {result.image && (
-          <Image
-            src={result.image}
-            tabIndex={-1}
-            alt={`Image for podcast ${result.name}`}
-            width={100}
-            height={100}
-            className={cn("rounded-md")}
-          />
-        )}
-
-        <div tabIndex={-1} className={cn("w-full")}>
-          {result.label}
-        </div>
-      </button>
-    );
-  };
+  useEffect(() => {
+    console.log("focusedIndex", focusedIndex);
+    if (!resultContainer.current) return;
+    // resultContainer.current.focus();
+    resultContainer.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  }, [focusedIndex]);
 
   const Results = () => {
     return searchResults.length > 0
       ? searchResults.map((result, index) => (
-          <SearchResult
+          <button
+            tabIndex={0}
+            className={cn(
+              "grid grid-cols-[100px_auto] gap-2 hover:bg-slate-100 items-center cursor-pointer"
+            )}
+            ref={index === focusedIndex ? resultContainer : null}
+            onClick={result.handleOnClick}
+            aria-label={`Select ${result.name}`}
             key={index}
-            result={result}
-            isFocused={focusedIndex === index}
-            onFocus={() => setFocusedIndex(index)}
-            onClick={() => result.handleOnClick?.()}
-          />
+          >
+            {result.image && (
+              <Image
+                src={result.image}
+                tabIndex={-1}
+                alt={`Image for podcast ${result.name}`}
+                width={100}
+                height={100}
+                className={cn("rounded-md")}
+              />
+            )}
+
+            <div tabIndex={-1} className={cn("w-full")}>
+              {result.label}
+            </div>
+          </button>
         ))
       : " No results found";
   };
 
   // Handle keydown events for arrow navigation and Enter to "click"
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "ArrowDown") {
-      setFocusedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
-    } else if (event.key === "ArrowUp") {
-      setFocusedIndex((prev) => Math.max(0, prev - 1));
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    console.log("event key", event.key);
+    const { key } = event;
+    let nextIndexCount = 0;
+    console.log("current focusedIndex", focusedIndex);
+    if (key === "ArrowDown") {
+      nextIndexCount = (focusedIndex + 1) % (searchResults.length - 1);
+      console.log("nextIndexCount", nextIndexCount);
     }
+    if (key === "ArrowUp") {
+      nextIndexCount = (focusedIndex - 1) % (searchResults.length - 1);
+    }
+    if (key === "Escape") {
+      // if (resultsRef.current?.contains(document.activeElement)) {
+      // console.log("resultsRef.current", resultsRef.current);
+      // inputRef?.current?.focus();
+      // setShowPopover(false);
+    }
+    if (key === "Enter") {
+      searchResults[focusedIndex].handleOnClick?.();
+    }
+    setFocusedIndex((prev) => nextIndexCount);
   };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [searchResults]);
 
   if (isLoading)
     return (
@@ -101,7 +96,11 @@ export const SearchResults = ({
       </div>
     );
 
-  return <Results />;
+  return (
+    <div onKeyDown={handleKeyDown}>
+      <Results />
+    </div>
+  );
 };
 
 type SearchResultProps = {
@@ -109,4 +108,5 @@ type SearchResultProps = {
   isFocused: boolean; // Add isFocused prop to determine if this result is focused
   onFocus: () => void; // Function to update focus
   onClick: () => void; // Handle click event
+  index: number; // Index of the result
 };
