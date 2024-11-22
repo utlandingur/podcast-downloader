@@ -179,6 +179,7 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
           variant={Object.keys(rowSelection).length > 0 ? "default" : "outline"}
           aria-disabled={Object.keys(rowSelection).length === 0}
           onClick={handleDownload}
+          aria-label="Download selected episodes"
         >
           {/* {!isLoading ? "Download" : <LoadingSpinner />} */}
         </Button>

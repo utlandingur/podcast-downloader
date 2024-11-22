@@ -8,11 +8,10 @@ type SearchInputProps = {
   searchTerm: string;
   setSearchTerm: (string: string) => void;
   handleSearch?: React.MouseEventHandler<HTMLButtonElement>;
-  searchResults: SearchResult[];
 };
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ searchTerm, setSearchTerm, handleSearch }, ref) => {
+  ({ searchTerm, setSearchTerm, handleSearch, ...props }, ref) => {
     return (
       <>
         <Input
@@ -22,7 +21,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           onChange={(e) => setSearchTerm(e.target.value)}
           className={cn("self-center")}
           ref={ref}
-          aria-label="Search"
+          {...props}
         />
         {handleSearch && <Button onClick={handleSearch}>Search</Button>}
       </>

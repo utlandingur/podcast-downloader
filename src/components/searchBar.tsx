@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SearchInput as UI } from "./ui/searchInput";
+import { SearchInput } from "./ui/searchInput";
 import { useQuery } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
@@ -121,11 +121,13 @@ export const SearchBar = ({
     <div className="flex w-full justify-center gap-2" onKeyDown={handleKeyDown}>
       <Popover open={showPopover}>
         <PopoverTrigger asChild>
-          <div className={cn(`flex gap-4 ${width}`)}>
-            <UI
+          <div
+            className={cn(`flex gap-4 ${width}`)}
+            aria-label="Podcast searchbar"
+          >
+            <SearchInput
               searchTerm={searchTerm}
               setSearchTerm={handleNewSearchTerm}
-              searchResults={searchResults}
               ref={inputRef}
             />
           </div>
