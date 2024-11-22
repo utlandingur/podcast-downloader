@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "./loadingSpinner";
 import Image from "next/image";
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export type SearchResult = {
   name: string;
@@ -73,12 +73,10 @@ export const SearchResults = ({
     if (key === "ArrowUp") {
       nextIndexCount = (focusedIndex - 1) % (searchResults.length - 1);
     }
-    if (key === "Escape") {
-    }
     if (key === "Enter") {
       searchResults[focusedIndex].handleOnClick?.();
     }
-    setFocusedIndex((prev) => nextIndexCount);
+    setFocusedIndex(nextIndexCount);
   };
 
   if (isLoading)
@@ -93,12 +91,4 @@ export const SearchResults = ({
       <Results />
     </div>
   );
-};
-
-type SearchResultProps = {
-  result: SearchResult;
-  isFocused: boolean; // Add isFocused prop to determine if this result is focused
-  onFocus: () => void; // Function to update focus
-  onClick: () => void; // Handle click event
-  index: number; // Index of the result
 };

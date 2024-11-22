@@ -9,14 +9,10 @@ type SearchInputProps = {
   setSearchTerm: (string: string) => void;
   handleSearch?: React.MouseEventHandler<HTMLButtonElement>;
   searchResults: SearchResult[];
-  width?: string;
 };
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  (
-    { searchTerm, setSearchTerm, handleSearch, width = "w-72 sm:w-96" },
-    ref
-  ) => {
+  ({ searchTerm, setSearchTerm, handleSearch }, ref) => {
     return (
       <>
         <Input

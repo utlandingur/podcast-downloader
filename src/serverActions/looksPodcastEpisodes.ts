@@ -8,6 +8,6 @@ export const lookupPodcastEpisodes = async (
   console.log("url", url);
 
   const data = await response.json();
-  const results: PodcastEpisode[] = data.results;
+  // const results: PodcastEpisode[] = data.results;
   return data.results;
 };

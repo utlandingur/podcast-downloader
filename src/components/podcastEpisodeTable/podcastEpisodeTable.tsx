@@ -1,6 +1,6 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -26,10 +26,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  downloadInfo,
-  downloadPodcastEpisodes,
-} from "@/serverActions/downloadPodcastEpisodes";
+import { downloadInfo } from "@/serverActions/downloadPodcastEpisodes";
 import { PodcastEpisode } from "@/types/podcasts";
 import { useDownloadPodcasts } from "@/hooks/useDownloadPodcasts";
 import { LoadingSpinner } from "../ui/loadingSpinner";

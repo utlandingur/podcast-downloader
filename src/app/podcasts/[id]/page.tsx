@@ -2,7 +2,6 @@ import { PodcastSearchBar } from "@/components/podcastSearchBar";
 import { geistSans, geistMono } from "@/app/fonts";
 import { Suspense } from "react";
 import { cn } from "@/lib/utils";
-import { lookupPodcast } from "@/serverActions/lookupPodcast";
 import { lookupPodcastEpisodes } from "@/serverActions/looksPodcastEpisodes";
 import { PodcastOverview } from "@/components/podcastOverview";
 
