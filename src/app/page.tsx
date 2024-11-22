@@ -1,4 +1,4 @@
-import { PodcastSearchBar } from "@/components/google";
+import { PodcastSearchBar } from "@/components/podcastSearchBar";
 
 import { geistSans, geistMono } from "./fonts";
 import { Suspense } from "react";
