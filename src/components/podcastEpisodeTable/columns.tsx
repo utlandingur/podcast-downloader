@@ -41,6 +41,7 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          aria-label="Sort by release date"
         >
           Release Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -66,6 +67,7 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          aria-label="Sort by episode length"
         >
           Length
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -81,12 +83,16 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
   {
     accessorKey: "trackViewUrl",
     header: "View in iTunes",
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
       const url = getValue<string>();
       return (
         <div className="flex justify-center">
           <a href={url} target="_blank">
-            <Button size={"icon"} variant={"outline"}>
+            <Button
+              size={"icon"}
+              variant={"outline"}
+              aria-label={`View track in iTunes: ${row.original.trackName}`}
+            >
               <Link />
             </Button>
           </a>
