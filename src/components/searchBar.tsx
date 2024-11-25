@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
-import Image from "next/image";
 import { SearchResult } from "./ui/searchResults";
 
 type SearchBarProps = {
@@ -99,7 +98,7 @@ export const SearchBar = ({
             key={index}
           >
             {result.image && (
-              <Image
+              <img
                 src={result.image}
                 tabIndex={-1}
                 alt={`Image for podcast ${result.name}`}

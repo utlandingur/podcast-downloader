@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "./loadingSpinner";
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
 export type SearchResult = {
@@ -45,7 +44,7 @@ export const SearchResults = ({
             key={index}
           >
             {result.image && (
-              <Image
+              <img
                 src={result.image}
                 tabIndex={-1}
                 alt={`Image for podcast ${result.name}`}
