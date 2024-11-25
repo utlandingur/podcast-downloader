@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@/providers/QueryClientProvider";
 import { PageLoadProvider } from "@/providers/pageLoadProvider";
 import { ThemeProvider } from "@/providers/themeProvider";
 import { Header } from "@/components/header";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,6 +33,7 @@ export default async function RootLayout({
             <PageLoadProvider>{children}</PageLoadProvider>
           </QueryClientProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
