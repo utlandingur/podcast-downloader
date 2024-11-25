@@ -4,11 +4,11 @@ import { useState } from "react";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import { Button } from "./ui/button";
 
+export type DownloadState = "readyToDownload" | "downloading" | "downloaded";
+
 type DownloadPodcastButtonProps = {
-  existingState: "readyToDownload" | "downloading" | "downloaded" | "error";
-  updateLocalState: (
-    state: "readyToDownload" | "downloading" | "downloaded" | "error"
-  ) => void;
+  existingState: DownloadState;
+  updateLocalState: (state: DownloadState) => void;
   url: string;
   fileName: string;
 };
@@ -19,9 +19,10 @@ export const DownloadPodcastButton = ({
   url,
   fileName,
 }: DownloadPodcastButtonProps) => {
-  const [downloadState, setDownloadState] = useState<
-    "readyToDownload" | "downloading" | "downloaded" | "error"
-  >(existingState ?? "readyToDownload");
+  const [downloadState, setDownloadState] = useState<DownloadState>(
+    existingState ?? "readyToDownload"
+  );
+
   const handleDownload = async () => {
     setDownloadState("downloading");
     updateLocalState("downloading");
@@ -37,20 +38,18 @@ export const DownloadPodcastButton = ({
 
       anchor.href = blobUrl;
       anchor.download = fileName;
-      anchor.click();
+      await anchor.click();
 
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
     } catch {
-      setDownloadState("error");
-      updateLocalState("error");
+      // Open the URL in a new tab if there's an error (likely CORS)
+      window.open(url, "_blank");
     } finally {
       // Clean up the anchor element
       anchor.remove();
-      if (existingState !== "error") {
-        setDownloadState("downloaded");
-        updateLocalState("downloaded");
-      }
+      setDownloadState("downloaded");
+      updateLocalState("downloaded");
     }
   };
 
@@ -62,23 +61,24 @@ export const DownloadPodcastButton = ({
   };
 
   const buttonStyle: Record<
-    "readyToDownload" | "downloading" | "downloaded" | "error",
+    DownloadState,
     "default" | "ghost" | "destructive"
   > = {
     readyToDownload: "default",
     downloading: "default",
     downloaded: "ghost",
-    error: "destructive",
   };
 
-  const buttonAriaLabel: Record<
-    "readyToDownload" | "downloading" | "downloaded" | "error",
-    string
-  > = {
+  const buttonAriaLabel: Record<DownloadState, string> = {
     readyToDownload: "Download episode",
     downloading: "Downloading episode",
     downloaded: "Downloaded",
-    error: "Error downloading episode",
+  };
+
+  const handleOnClick = {
+    readyToDownload: handleDownload,
+    downloading: undefined,
+    downloaded: undefined,
   };
 
   return (
@@ -86,11 +86,7 @@ export const DownloadPodcastButton = ({
       <Button
         size={"icon"}
         variant={buttonStyle[downloadState]}
-        onClick={
-          downloadState === "readyToDownload" || downloadState === "error"
-            ? handleDownload
-            : undefined
-        }
+        onClick={handleOnClick[downloadState]}
         aria-disabled={downloadState !== "readyToDownload"}
         aria-label={buttonAriaLabel[downloadState]}
       >

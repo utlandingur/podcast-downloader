@@ -2,10 +2,10 @@ import { PodcastEpisode as BasePodcastEpisode } from "@/types/podcasts";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DownloadPodcastButton } from "../downloadPodcastButton";
+import { DownloadPodcastButton, DownloadState } from "../downloadPodcastButton";
 
 interface PodcastEpisode extends BasePodcastEpisode {
-  downloadState?: "readyToDownload" | "downloading" | "downloaded" | "error";
+  downloadState?: DownloadState;
 }
 
 export const columns: ColumnDef<PodcastEpisode>[] = [
@@ -56,9 +56,7 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
       const url = getValue<string>();
       const filename = `${row.original.collectionName}-episode-${row.original.trackName}.mp3`;
 
-      const updateLocalState = (
-        state: "readyToDownload" | "downloading" | "downloaded" | "error"
-      ) => {
+      const updateLocalState = (state: DownloadState) => {
         row.original.downloadState = state;
       };
       return (

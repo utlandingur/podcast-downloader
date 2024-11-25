@@ -1,9 +1,9 @@
 "use client";
 import { lookupPodcasts } from "@/serverActions/lookupPodcasts";
-import { SearchResult } from "./ui/searchResults";
 import { useRouter } from "next/navigation";
 import { SearchBar } from "@/components/searchBar";
 import { usePageLoad } from "@/providers/pageLoadProvider";
+import type { SearchResult } from "@/components/searchBar";
 
 export const PodcastSearchBar = () => {
   const router = useRouter();

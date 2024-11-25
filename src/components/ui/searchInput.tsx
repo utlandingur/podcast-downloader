@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Input } from "./input";
 import { forwardRef } from "react";
-import { SearchResult } from "./searchResults";
+import { SearchResult } from "../searchBar";
 
 type SearchInputProps = {
   searchTerm: string;
