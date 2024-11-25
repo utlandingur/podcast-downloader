@@ -18,5 +18,12 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
       </div>
     );
 
-  return <PodcastEpisodeTable columns={columns} data={podcastEpisodes} />;
+  const podCastName = podcastEpisodes[0].collectionName;
+  return (
+    <>
+      <h1>{podCastName}</h1>
+      <p className="text-center">{`Download your favourite podcast episodes from ${podCastName} as an mp3 file.`}</p>
+      <PodcastEpisodeTable columns={columns} data={podcastEpisodes} />
+    </>
+  );
 };

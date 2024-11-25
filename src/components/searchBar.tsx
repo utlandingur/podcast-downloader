@@ -1,11 +1,19 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SearchInput as UI } from "./ui/searchInput";
+import { SearchInput } from "./ui/searchInput";
 import { useQuery } from "@tanstack/react-query";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
-import { SearchResult } from "./ui/searchResults";
+import { useTheme } from "next-themes";
+import { ClassValue } from "clsx";
+
+export type SearchResult = {
+  name: string;
+  label: string;
+  image?: string;
+  handleOnClick?: () => void;
+};
 
 type SearchBarProps = {
   searchQuery: (searchTerm: string) => Promise<SearchResult[]>;
@@ -24,7 +32,7 @@ export const SearchBar = ({
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resultContainer = useRef<HTMLButtonElement | null>(null);
+  const resultContainer = useRef<HTMLDivElement | null>(null);
 
   const { data: searchResults = [], isLoading } = useQuery({
     queryKey: ["search", searchTerm],
@@ -38,7 +46,6 @@ export const SearchBar = ({
 
   useEffect(() => {
     if (!resultContainer.current) return;
-    // resultContainer.current.focus();
     resultContainer.current.scrollIntoView({
       behavior: "smooth",
       block: "nearest",
@@ -80,14 +87,20 @@ export const SearchBar = ({
   };
 
   const Results = () => {
+    const { systemTheme } = useTheme();
+    const hoverStyles: ClassValue =
+      systemTheme === "dark" ? "hover:bg-slate-600" : "hover:bg-slate-100";
+    const focusStyles: ClassValue =
+      systemTheme === "dark" ? "bg-slate-800" : "bg-slate-200";
+
     return searchResults.length > 0
       ? searchResults.map((result, index) => (
-          <button
+          <div
             tabIndex={0}
             className={cn(
-              `grid grid-cols-[100px_auto] gap-2 hover:bg-slate-100 items-center cursor-pointer ${
-                focusedIndex === index ? "bg-slate-100" : ""
-              }`
+              `grid grid-cols-[100px_auto] gap-2 items-center cursor-pointer ${
+                focusedIndex === index ? focusStyles : ""
+              } hover:bg-red ${hoverStyles}`
             )}
             ref={index === focusedIndex ? resultContainer : null}
             onClick={() => {
@@ -99,19 +112,21 @@ export const SearchBar = ({
           >
             {result.image && (
               <img
+                key={result.image}
                 src={result.image}
                 tabIndex={-1}
                 alt={`Image for podcast ${result.name}`}
                 width={100}
                 height={100}
                 className={cn("rounded-md")}
+                loading="lazy"
               />
             )}
 
             <div tabIndex={-1} className={cn("w-full")}>
               {result.label}
             </div>
-          </button>
+          </div>
         ))
       : " No results found";
   };
@@ -121,7 +136,7 @@ export const SearchBar = ({
       <Popover open={showPopover}>
         <PopoverTrigger asChild>
           <div className={cn(`flex gap-4 ${width}`)}>
-            <UI
+            <SearchInput
               searchTerm={searchTerm}
               setSearchTerm={handleNewSearchTerm}
               searchResults={searchResults}

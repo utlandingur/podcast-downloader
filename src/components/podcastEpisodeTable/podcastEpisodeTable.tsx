@@ -50,7 +50,7 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
   });
 
   return (
-    <div className="sm:p-4">
+    <div className="sm:p-4 w-full sm:w-[600px]">
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -101,7 +101,7 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className=" flex justify-between py-4">
+      <div className=" flex justify-end py-4">
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
@@ -120,10 +120,6 @@ export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
             Next
           </Button>
         </div>
-      </div>
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
     </div>
   );

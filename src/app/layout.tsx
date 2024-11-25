@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "@/globals.css";
 import { QueryClientProvider } from "@/providers/QueryClientProvider";
 import { PageLoadProvider } from "@/providers/pageLoadProvider";
+import { ThemeProvider } from "@/providers/themeProvider";
+import { Header } from "@/components/header";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,11 +16,22 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      suppressHydrationWarning // officially recommended by next-themes...
+    >
       <body>
-        <QueryClientProvider>
-          <PageLoadProvider>{children}</PageLoadProvider>
-        </QueryClientProvider>
+        <Header />
+        <ThemeProvider
+          attribute="class" // Ensures theme is applied using a class
+          defaultTheme="system" // Default theme used during SSR
+          enableSystem={true} // Optional: Enables system preference detection
+          disableTransitionOnChange // Optional: Prevents transition effects during hydration
+        >
+          <QueryClientProvider>
+            <PageLoadProvider>{children}</PageLoadProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
