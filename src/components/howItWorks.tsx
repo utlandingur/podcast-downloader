@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 export const HowItWorks = () => {
   return (
     <div className={cn("flex flex-col gap-8")}>
-      <section id="faq" className={cn("m-y-2")}>
+      <section id="faq" className={cn("m-y-2 flex flex-col gap-2")}>
         <h2>FAQs</h2>
         <div className={cn("flex flex-col gap-8")}>
           <div>
@@ -11,7 +11,8 @@ export const HowItWorks = () => {
             <p>
               Simply search for your favorite podcast in the search bar above,
               select an episode, and download it directly as an MP3 file. The
-              process is seamless and straightforward.
+              process is seamless, straightforward, and compatible with most
+              devices.
             </p>
           </div>
           <div>
@@ -24,32 +25,42 @@ export const HowItWorks = () => {
           </div>
           <div>
             <h3>Is PodcastToMp3.com free?</h3>
-            <p>Yes, our service is completely free to use!</p>
+            <p>
+              Yes, our service is completely free to use! No hidden fees or
+              subscriptions required.
+            </p>
           </div>
           <div>
             <h3>Do you host podcast files on your servers?</h3>
             <p>
               No, we don’t host or serve any files. Downloads are facilitated
-              directly from the original podcast source.
+              directly from the original podcast source for a reliable and
+              secure experience.
             </p>
           </div>
         </div>
       </section>
 
-      <section id="benefits" className={cn("m-y-2")}>
+      <section id="benefits" className={cn("m-y-2 flex flex-col ")}>
         <h2>Why Use PodcastToMp3.com?</h2>
         <ul className={cn("flex flex-col gap-4 pt-4")}>
           <li>Fast and easy-to-use platform for downloading podcasts.</li>
           <li>
+            Download podcasts to your waterproof headphones for swimming or
+            exercise.
+          </li>
+          <li>
+            Enjoy episodes offline during long flights, road trips, commuting or
+            workouts.
+          </li>
+          <li>
             Direct downloads from the original podcast source ensure security
             and reliability.
           </li>
-          <li>Compatible with all devices and players.</li>
-          <li>No need to sign up or install any software.</li>
           <li>
-            Perfect for offline listening during commutes, workouts, or
-            traveling.
+            Compatible with all devices and MP3 players, including older ones.
           </li>
+          <li>No need to sign up or install any software.</li>
         </ul>
       </section>
     </div>

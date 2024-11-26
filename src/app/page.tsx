@@ -47,27 +47,36 @@ export const metadata: Metadata = {
 export default async function Home() {
   return (
     <main
-      className={`flex flex-col gap-8 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full gap-8 items-center justify-start sm:justify-center p-8 sm:px-4 text-center`}
+      className={`flex flex-col gap-8 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center p-8 sm:px-4 text-center`}
     >
-      <h1>Download podcasts as mp3</h1>
-      <p>
-        Easily convert and download podcasts into MP3 format for offline
-        listening. Discover your favorite shows and take them wherever you go!
-      </p>
-      <section id="how it works" className={cn("m-y-2")}>
-        <h2>How it works</h2>
+      <div
+        className={cn("max-w-[600px] flex flex-col gap-8 p-4 sm:px-4 w-full")}
+      >
+        <h1>Download podcasts as mp3</h1>
         <p>
-          1. Search for your favourite podcast.
-          <br />
-          2. Download episodes as mp3 files.
+          Easily convert and download podcasts into MP3 format for offline
+          listening. Discover your favorite shows and take them wherever you go!
         </p>
-      </section>
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className={cn("pb-12")}>
-          <PodcastSearchBar />
-        </div>
-      </Suspense>
-      <HowItWorks />
+        <section id="how it works" className={cn("m-y-2")}>
+          <h2>How it works</h2>
+          <p>
+            1. Search for your favourite podcast.
+            <br />
+            2. Download episodes as mp3 files.
+          </p>
+          <br />
+          <p>
+            It’s that simple! Our platform makes it easy for you to enjoy
+            podcasts on any device.
+          </p>
+        </section>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className={cn("p-12")}>
+            <PodcastSearchBar />
+          </div>
+        </Suspense>
+        <HowItWorks />
+      </div>
     </main>
   );
 }

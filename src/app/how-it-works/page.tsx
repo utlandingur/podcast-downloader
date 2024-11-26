@@ -48,15 +48,18 @@ export default async function HowItWorksPage() {
     <main
       className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full  items-center justify-start sm:justify-center p-8 sm:px-4 text-center`}
     >
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className={cn("p-4")}>
-          <PodcastSearchBar />
-        </div>
-      </Suspense>
-      <h1 hidden aria-hidden>
-        How it works
-      </h1>
-      <HowItWorks />
+      <div
+        className={cn("max-w-[600px] flex flex-col gap-8 p-4 sm:px-4 w-full")}
+      >
+        <h1>Search for a podcast to download</h1>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className={cn("p-4")}>
+            <PodcastSearchBar />
+          </div>
+        </Suspense>
+
+        <HowItWorks />
+      </div>
     </main>
   );
 }

@@ -134,7 +134,7 @@ export const SearchBar = ({
   return (
     <div className="flex w-full justify-center gap-2" onKeyDown={handleKeyDown}>
       <Popover open={showPopover}>
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild aria-label="Searchbar">
           <div className={cn(`flex gap-4 ${width}`)}>
             <SearchInput
               searchTerm={searchTerm}
