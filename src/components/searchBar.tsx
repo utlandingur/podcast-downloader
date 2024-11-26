@@ -132,39 +132,51 @@ export const SearchBar = ({
   };
 
   return (
-    <div className="flex w-full justify-center gap-2" onKeyDown={handleKeyDown}>
-      <Popover open={showPopover}>
-        <PopoverTrigger asChild aria-label="Searchbar">
-          <div className={cn(`flex gap-4 ${width}`)}>
-            <SearchInput
-              searchTerm={searchTerm}
-              setSearchTerm={handleNewSearchTerm}
-              searchResults={searchResults}
-              ref={inputRef}
-            />
-          </div>
-        </PopoverTrigger>
-        {showPopover && (
-          <PopoverContent
-            side="bottom"
-            sideOffset={4}
-            className={cn(
-              `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${width}`
-            )}
-            onOpenAutoFocus={(e) => e.preventDefault()}
-          >
-            <div className="grid gap-2 p-2">
-              {isLoading ? (
-                <div className={cn("justify-self-center")}>
-                  <LoadingSpinner />
-                </div>
-              ) : (
-                <Results />
-              )}
+    <div className={cn("flex gap-8 flex-col items-center")}>
+      <div
+        className="flex w-full justify-center gap-2"
+        onKeyDown={handleKeyDown}
+      >
+        <Popover open={showPopover}>
+          <PopoverTrigger asChild aria-label="Searchbar">
+            <div className={cn(`flex gap-4 ${width}`)}>
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={handleNewSearchTerm}
+                searchResults={searchResults}
+                ref={inputRef}
+              />
             </div>
-          </PopoverContent>
-        )}
-      </Popover>
+          </PopoverTrigger>
+          {showPopover && (
+            <PopoverContent
+              side="bottom"
+              sideOffset={4}
+              className={cn(
+                `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${width}`
+              )}
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
+              <div className="grid gap-2 p-2">
+                {isLoading ? (
+                  <div className={cn("justify-self-center")}>
+                    <LoadingSpinner />
+                  </div>
+                ) : (
+                  <Results />
+                )}
+              </div>
+            </PopoverContent>
+          )}
+        </Popover>
+      </div>
+
+      <a href="https://www.buymeacoffee.com/utlandingur">
+        <img
+          src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=utlandingur&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff"
+          className={cn("h-9")}
+        />
+      </a>
     </div>
   );
 };
