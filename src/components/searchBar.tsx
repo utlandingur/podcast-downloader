@@ -138,7 +138,7 @@ export const SearchBar = ({
         onKeyDown={handleKeyDown}
       >
         <Popover open={showPopover}>
-          <PopoverTrigger asChild aria-label="Searchbar">
+          <PopoverTrigger asChild aria-label="Searchbar input">
             <div className={cn(`flex gap-4 ${width}`)}>
               <SearchInput
                 searchTerm={searchTerm}
@@ -171,10 +171,15 @@ export const SearchBar = ({
         </Popover>
       </div>
 
-      <a href="https://www.buymeacoffee.com/utlandingur">
+      <a
+        href="https://www.buymeacoffee.com/utlandingur"
+        role="button"
+        aria-label="Buy me a coffee"
+      >
         <img
           src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=utlandingur&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff"
           className={cn("h-9")}
+          alt="Buy me a coffee button"
         />
       </a>
     </div>
