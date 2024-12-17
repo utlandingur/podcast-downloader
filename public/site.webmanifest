@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "PodcastToMp3",
+  "short_name": "PodcastToMp3",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
