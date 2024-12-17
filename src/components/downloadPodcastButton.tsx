@@ -3,7 +3,6 @@ import { Check, Download, X } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import { Button } from "./ui/button";
-import { track } from "@vercel/analytics/react";
 
 export type DownloadState = "readyToDownload" | "downloading" | "downloaded";
 
@@ -43,11 +42,9 @@ export const DownloadPodcastButton = ({
 
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
-      track("Downloaded episode");
     } catch {
       // Open the URL in a new tab if there's an error (likely CORS)
       window.open(url, "_blank");
-      track("Opened episode in new window");
     } finally {
       // Clean up the anchor element
       anchor.remove();
