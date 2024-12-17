@@ -24,14 +24,14 @@ export const metadata: Metadata = {
     description:
       "Step-by-step guide on how to convert and download podcasts as MP3 files. Easily download your favorite podcast episodes.",
     url: "https://podcasttomp3.com/how-it-works",
-    // images: [
-    //   {
-    //     url: "https://podcasttomp3.com/images/og-how-it-works.jpg", // Replace with an image specific to the "How it Works" page
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "How it Works - PodcastToMp3", // Descriptive alt text
-    //   },
-    // ],
+    images: [
+      {
+        url: "https://podcasttomp3.com/assets/screenshot.png", // Replace with an image specific to the "How it Works" page
+        width: 1200,
+        height: 630,
+        alt: "How it Works - PodcastToMp3", // Descriptive alt text
+      },
+    ],
     siteName: "PodcastToMp3",
   },
   twitter: {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: "How it Works - PodcastToMp3",
     description:
       "Step-by-step guide on how to convert and download podcasts as MP3 files. Easily download your favorite podcast episodes.",
-    // images: ["https://podcasttomp3.com/images/og-how-it-works.jpg"], // Twitter card image
+    images: ["https://podcasttomp3.com/assets/screenshot.png"], // Twitter card image
   },
 };
 

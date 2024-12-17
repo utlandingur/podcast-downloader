@@ -25,14 +25,14 @@ export const metadata: Metadata = {
     description:
       "Convert and download your favorite podcasts as MP3 files. Perfect for offline listening!",
     url: "https://podcasttomp3.com",
-    // images: [
-    //   {
-    //     url: "https://podcasttomp3.com/images/og-image.jpg",
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "PodcastToMp3 website preview",
-    //   },
-    // ],
+    images: [
+      {
+        url: "https://podcasttomp3.com/assets/screenshot.png",
+        width: 1200,
+        height: 630,
+        alt: "PodcastToMp3 website preview",
+      },
+    ],
     siteName: "PodcastToMp3",
   },
   twitter: {
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "PodcastToMp3 - Download Podcasts as MP3",
     description:
       "Easily convert and download podcasts into MP3 format for offline listening. Discover your favorite shows and take them wherever you go!",
-    // images: ["https://podcasttomp3.com/images/og-image.jpg"],
+    images: ["https://podcasttomp3.com/assets/screenshot.png"],
   },
 };
 
