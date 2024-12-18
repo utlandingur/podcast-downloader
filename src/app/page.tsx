@@ -71,7 +71,8 @@ export default async function Home() {
           </p>
         </section>
         <Suspense fallback={<div>Loading...</div>}>
-          <div className={cn("p-12")}>
+          <div className={cn("flex flex-col gap-4 py-16")}>
+            <h2>Search for a podcast</h2>
             <PodcastSearchBar />
           </div>
         </Suspense>

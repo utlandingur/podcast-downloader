@@ -52,7 +52,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   return (
     <main
-      className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-dvh`}
+      className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full`}
     >
       <Suspense
         fallback={

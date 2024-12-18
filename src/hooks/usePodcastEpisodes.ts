@@ -8,6 +8,7 @@ export const usePodcastEpisodes = (id: string) => {
     queryFn: async ({ queryKey }: { queryKey: [string, string] }) => {
       const [, id] = queryKey;
       const episodes = await lookupPodcastEpisodes(id);
+      console.log(episodes);
       if (!episodes || episodes.length === 1) return [];
       return episodes.slice(1); // Remove the first episode, which is the podcast itself
     },

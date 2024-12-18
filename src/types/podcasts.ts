@@ -15,7 +15,7 @@ export type PodcastEpisode = {
   collectionId: string;
   collectionName: string;
   feedUrl: string;
-  artworkUrl100: string;
+  artworkUrl160: string;
   artworkUrl600: string;
   releaseDate: Date;
   trackTimeMillis: number;
