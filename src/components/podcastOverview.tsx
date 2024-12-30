@@ -5,6 +5,7 @@ import { usePodcastEpisodes } from "@/hooks/usePodcastEpisodes";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { SocialShareLinks } from "./socialShareLinks";
 
 type PodcastOverviewProps = {
   id: string;
@@ -34,6 +35,10 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
       />
       <p className="text-center">{`Download your favourite podcast episodes from ${podCastName} as an mp3 file.`}</p>
       <PodcastEpisodeTable columns={columns} data={podcastEpisodes} />
+      <SocialShareLinks
+        url={"https://podcasttomp3.com/podcasts/" + id}
+        title={"Download mp3s for podcast: " + podCastName}
+      />
     </>
   );
 };
