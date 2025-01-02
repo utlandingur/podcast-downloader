@@ -1,3 +1,5 @@
+import { DownloadState } from "@/components/downloadPodcastButton";
+
 export type Podcast = {
   collectionName: string;
   feedUrl: string;

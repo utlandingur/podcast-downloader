@@ -71,7 +71,7 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
         alt={`Artwork for ${podcast.title}`}
       />
       <p className="text-center">{`Download your favourite podcast episodes from ${podcast.title} as an mp3 file.`}</p>
-      <ViewEpisodes data={episodes} podcastName={podcast.title} />
+      <ViewEpisodes episodes={episodes} podcastName={podcast.title} />
       <SocialShareLinks
         url={"https://podcasttomp3.com/podcasts/" + id}
         title={"Download mp3s for podcast: " + podcast.title}
