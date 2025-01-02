@@ -15,7 +15,7 @@ export const PodcastSearchBar = () => {
     return podcasts.map((podcast) => ({
       name: podcast.title,
       label: podcast.title,
-      image: podcast.image,
+      image: podcast.podcastImageUrl,
       handleOnClick: () => {
         startLoading();
         router.push(`/podcasts/v2/${JSON.stringify(podcast.id)}`);
