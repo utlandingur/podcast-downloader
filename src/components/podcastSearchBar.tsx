@@ -1,5 +1,5 @@
 "use client";
-import { lookupPodcasts } from "@/serverActions/lookupPodcasts";
+import { lookupPodcastsV2 } from "@/utils/lookupPodcasts";
 import { useRouter } from "next/navigation";
 import { SearchBar } from "@/components/searchBar";
 import { usePageLoad } from "@/providers/pageLoadProvider";
@@ -11,14 +11,14 @@ export const PodcastSearchBar = () => {
 
   const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
     if (!searchTerm) return [];
-    const podcasts = await lookupPodcasts(searchTerm, 6);
+    const podcasts = await lookupPodcastsV2(searchTerm, 6);
     return podcasts.map((podcast) => ({
-      name: podcast.collectionName,
-      label: podcast.collectionName,
-      image: podcast.artworkUrl100,
+      name: podcast.title,
+      label: podcast.title,
+      image: podcast.image,
       handleOnClick: () => {
         startLoading();
-        router.push(`/podcasts/${JSON.stringify(podcast.collectionId)}`);
+        router.push(`/podcasts/v2/${JSON.stringify(podcast.id)}`);
       },
     }));
   };
