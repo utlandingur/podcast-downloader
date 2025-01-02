@@ -50,7 +50,7 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
     header: "Download",
     cell: ({ getValue, row }) => {
       const url = getValue<string>();
-      const filename = `${row.original.podcastName}-episode-${row.original.episodeName}.mp3`;
+      const filename = `${row.original.collectionName}-episode-${row.original.episodeName}.mp3`;
 
       const updateLocalState = (state: DownloadState) => {
         row.original.downloadState = state;
