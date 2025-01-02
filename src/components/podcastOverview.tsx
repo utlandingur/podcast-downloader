@@ -80,7 +80,7 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
         width={100}
         height={100}
         className="rounded-md"
-        src={podcast.podcastImageUrl}
+        src={podcast.image}
         alt={`Artwork for ${podcast.title}`}
       />
       <p className="text-center">{`Download your favourite podcast episodes from ${podcast.title} as an mp3 file.`}</p>

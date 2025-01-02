@@ -34,7 +34,7 @@ export type PodcastV2 = {
   title: string;
   feedUrl: string;
   description: string;
-  podcastImageUrl: string;
+  image: string;
   language: string;
   type: number; // 0:RSS, 1:Atom
   dead: boolean; // Once the feed is marked dead, checked once per month.

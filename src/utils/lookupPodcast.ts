@@ -40,7 +40,7 @@ export const lookupPodcastV2 = async (
     title,
     description,
     feedUrl: url,
-    podcastImageUrl: image,
+    image,
     language,
     type,
     dead,
