@@ -21,14 +21,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
-import type { PodcastEpisode } from "@/types/podcasts";
+import type { EnrichedEpisodeV2 } from "@/types/podcasts";
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 };
 
-export function PodcastEpisodeTable<TData extends PodcastEpisode, TValue>({
+export function PodcastEpisodeTableV2<TData extends EnrichedEpisodeV2, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
