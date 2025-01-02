@@ -11,11 +11,6 @@ const getItemSize = (_index: number) => {
   return 160;
 };
 
-// type Dates = {
-//   from?: Date;
-//   to?: Date;
-// };
-
 export const ViewEpisodes = ({
   episodes,
   podcastName,
@@ -24,10 +19,7 @@ export const ViewEpisodes = ({
   podcastName: string;
 }) => {
   const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
-  //   const [dates, setDates] = useState<Dates>({
-  //     from: undefined,
-  //     to: undefined,
-  //   });
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAscending, setIsAscending] = useState(false);
 
@@ -39,17 +31,6 @@ export const ViewEpisodes = ({
           return false;
         }
       }
-      //   if (dates.from && episode.datePublished < dates.from) {
-      //     return false;
-      //   }
-      //   if (dates.to) {
-      //     const nextDay = new Date(dates.to);
-      //     nextDay.setDate(nextDay.getDate() + 1);
-
-      //     if (episode.datePublished > nextDay) {
-      //       return false;
-      //     }
-      //   }
       return true;
     });
     if (isAscending) {
@@ -128,7 +109,7 @@ export const ViewEpisodes = ({
       </div>
 
       <List
-        height={600} // Total height of the container in pixels.
+        height={400} // Total height of the container in pixels.
         itemCount={filteredEpisodes.length} // Total number of episodes.
         itemSize={getItemSize} // Function returning height of each item.
         width={"100%"} // Total width of the container in pixels.

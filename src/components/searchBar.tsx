@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import { useTheme } from "next-themes";
 import { ClassValue } from "clsx";
+import Image from "next/image";
 
 export type SearchResult = {
   name: string;
@@ -179,10 +180,12 @@ export const SearchBar = ({
         role="button"
         aria-label="Buy me a coffee"
       >
-        <img
+        <Image
           src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=utlandingur&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff"
           className={cn("h-9")}
           alt="Buy me a coffee button"
+          width={235}
+          height={50}
         />
       </a>
     </div>
