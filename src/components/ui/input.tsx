@@ -1,6 +1,6 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -14,9 +14,49 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         ref={ref}
         {...props}
       />
-    )
+    );
   }
-)
-Input.displayName = "Input"
+);
+Input.displayName = "Input";
 
-export { Input }
+interface DebouncedInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+  value: string | number;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  debounce?: number;
+}
+
+export const DebouncedInput = React.forwardRef<
+  HTMLInputElement,
+  DebouncedInputProps
+>(({ value: initialValue, onChange, debounce = 500, ...props }, ref) => {
+  const [value, setValue] = React.useState(initialValue);
+
+  React.useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      const event = {
+        target: { value },
+      } as React.ChangeEvent<HTMLInputElement>;
+      onChange(event);
+    }, debounce);
+
+    return () => clearTimeout(timeout);
+  }, [value, debounce, onChange]);
+
+  return (
+    <Input
+      {...props}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      ref={ref}
+    />
+  );
+});
+
+DebouncedInput.displayName = "Input";
+
+export { Input };

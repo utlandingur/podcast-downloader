@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
-import { Input } from "./input";
+import { DebouncedInput } from "./input";
 import { forwardRef } from "react";
 import { SearchResult } from "../searchBar";
 
@@ -15,7 +15,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ({ searchTerm, setSearchTerm, handleSearch }, ref) => {
     return (
       <>
-        <Input
+        <DebouncedInput
           type="search"
           placeholder="Search..."
           value={searchTerm}
