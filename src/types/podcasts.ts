@@ -41,6 +41,12 @@ export type PodcastV2 = {
   trackCount: string;
 };
 
+export type PodcastsSearchResponseV2 = {
+  title: string;
+  image: string;
+  id: number;
+};
+
 enum TranscriptType {
   ApplicationJson = "application/json",
   ApplicationSrt = "application/srt",

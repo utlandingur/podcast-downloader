@@ -4,17 +4,17 @@ import { cn } from "@/lib/utils";
 import { DownloadPodcastButton, DownloadState } from "./downloadPodcastButton";
 import DOMPurify from "dompurify";
 import { useMemo, useState } from "react";
-import { DatePicker } from "./ui/datePicker";
 import { DebouncedInput } from "./ui/input";
+import { SortToggle } from "./ui/sortToggle";
 
 const getItemSize = (_index: number) => {
-  return 200;
+  return 160;
 };
 
-type Dates = {
-  from?: Date;
-  to?: Date;
-};
+// type Dates = {
+//   from?: Date;
+//   to?: Date;
+// };
 
 export const ViewEpisodes = ({
   episodes,
@@ -24,29 +24,39 @@ export const ViewEpisodes = ({
   podcastName: string;
 }) => {
   const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
-  const [dates, setDates] = useState<Dates>({
-    from: undefined,
-    to: undefined,
-  });
+  //   const [dates, setDates] = useState<Dates>({
+  //     from: undefined,
+  //     to: undefined,
+  //   });
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isAscending, setIsAscending] = useState(false);
 
   const filteredEpisodes = useMemo(() => {
-    return episodes.filter((episode) => {
+    const filtered = episodes.filter((episode) => {
       if (searchTerm) {
         const searchRegex = new RegExp(searchTerm, "i");
         if (!searchRegex.test(episode.title)) {
           return false;
         }
       }
-      if (dates.from && episode.datePublished < dates.from) {
-        return false;
-      }
-      if (dates.to && episode.datePublished > dates.to) {
-        return false;
-      }
+      //   if (dates.from && episode.datePublished < dates.from) {
+      //     return false;
+      //   }
+      //   if (dates.to) {
+      //     const nextDay = new Date(dates.to);
+      //     nextDay.setDate(nextDay.getDate() + 1);
+
+      //     if (episode.datePublished > nextDay) {
+      //       return false;
+      //     }
+      //   }
       return true;
     });
-  }, [episodes, searchTerm, dates]);
+    if (isAscending) {
+      return filtered.toReversed();
+    }
+    return filtered;
+  }, [episodes, searchTerm, isAscending]);
 
   const handleUpdateDownloadState = (id: number, state: DownloadState) => {
     setEpisodeData((prev) => {
@@ -69,14 +79,21 @@ export const ViewEpisodes = ({
     const filename = `${podcastName}-episode-${episode?.title}.mp3`;
 
     return (
-      <div style={style} className={cn(`flex flex-col py-4 `)}>
+      <div
+        style={style}
+        className={cn(
+          `flex flex-col py-4 justify-center ${
+            index !== data.length - 1 && "border-b border-muted-foreground pt-4"
+          }`
+        )}
+      >
         <div className={cn("text-sm text-muted-foreground")}>
           {episode.datePublished.toLocaleDateString()}
         </div>
-        <div className={cn("")}>{episode.title}</div>
+        <div className={cn("line-clamp-2 text-ellipsis")}>{episode.title}</div>
         <div
           className={cn(
-            "line-clamp-3 text-ellipsis text-sm text-muted-foreground "
+            "line-clamp-2 text-ellipsis text-sm text-muted-foreground "
           )}
           dangerouslySetInnerHTML={{ __html: cleanDescription }}
         />
@@ -89,52 +106,27 @@ export const ViewEpisodes = ({
             fileName={filename}
           />
         </div>
-        <div
-          className={cn(
-            `${
-              index !== data.length - 1 &&
-              "border-b border-muted-foreground pt-4"
-            }`
-          )}
-        ></div>
       </div>
     );
   };
 
   return (
     <div className={cn("flex flex-col w-[98%] px-4 gap-4")}>
-      <div className={cn("flex flex-col gap-4 w-full justify-center")}>
-        <div className={cn("flex flex-col gap-2")}>
-          <div>Filter by date</div>
-          <div className={cn("flex gap-4")}>
-            <DatePicker
-              date={dates.from}
-              updateDate={(fromDate: Date | undefined) =>
-                setDates((prev) => {
-                  return { ...prev, from: fromDate };
-                })
-              }
-              placeholder="From"
-            />
-            <DatePicker
-              date={dates.to}
-              updateDate={(toDate: Date | undefined) =>
-                setDates((prev) => {
-                  return { ...prev, to: toDate };
-                })
-              }
-              placeholder="To"
-            />
-          </div>
+      <div className={cn("grid gap-4 w-full grid-cols-[auto] items-center")}>
+        <div className={cn("flex gap-4 items-center")}>
+          <div className={cn("min-w-14")}>Sort</div>
+          <SortToggle onToggle={setIsAscending} initialValue={isAscending} />
         </div>
-        <div className={cn("flex flex-col gap-2")}>
-          <div>Filter by title</div>
+        <div className={cn("flex gap-4 items-center")}>
+          <div className={cn("min-w-14")}>Search</div>
           <DebouncedInput
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className={cn("max-w-96")}
           />
         </div>
       </div>
+
       <List
         height={600} // Total height of the container in pixels.
         itemCount={filteredEpisodes.length} // Total number of episodes.

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { PodcastOverviewV2 } from "@/components/podcastOverview";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import type { Metadata } from "next";
+import { lookupPodcastV2 } from "@/utils/lookupPodcast";
 
 type Params = Promise<{
   id: string;

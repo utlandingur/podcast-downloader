@@ -10,8 +10,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SocialShareLinks } from "./socialShareLinks";
 import { usePodcastV2 } from "@/hooks/usePodcast";
-
-import { ViewEpisodes } from "./episodeData";
+import { ViewEpisodes } from "@/components/episodeData";
 
 type PodcastOverviewProps = {
   id: string;
@@ -62,7 +61,7 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
 
   return (
     <>
-      <h1 className={cn("text-center")}>{podcast.title}</h1>
+      <h1 className={cn("text-center line-clamp-5 w-full")}>{podcast.title}</h1>
       <Image
         width={100}
         height={100}
