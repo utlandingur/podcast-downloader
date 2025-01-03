@@ -1,27 +1,27 @@
-import type { PodcastEpisode } from "@/types/podcasts";
+import type { EnrichedEpisodeV2 } from "@/types/podcasts";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DownloadPodcastButton, DownloadState } from "../downloadPodcastButton";
 
-export const columns: ColumnDef<PodcastEpisode>[] = [
+export const columns: ColumnDef<EnrichedEpisodeV2>[] = [
   {
-    accessorKey: "trackName",
+    accessorKey: "title",
     header: "Episode",
     cell: ({ getValue }) => {
-      const trackName = getValue<string>();
+      const title = getValue<string>();
       const maxLength = 40;
-      const truncatedTrackName =
-        trackName.length > maxLength
-          ? trackName.slice(0, maxLength).trim() + "..."
-          : trackName;
+      const truncatedTitle =
+        title?.length > maxLength
+          ? title.slice(0, maxLength).trim() + "..."
+          : title;
 
-      return truncatedTrackName;
+      return truncatedTitle;
     },
   },
 
   {
-    accessorKey: "releaseDate",
+    accessorKey: "datePublished",
     header: ({ column }) => {
       return (
         <Button
@@ -34,13 +34,13 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
       );
     },
     cell: ({ getValue }) => {
-      const value = getValue<string>();
-      const date = new Date(value);
-      const year = date.getFullYear();
-      const month = date.getMonth();
+      const date = getValue<Date>();
+      const day = date?.getDate();
+      const year = date?.getFullYear();
+      const month = date?.getMonth() + 1;
       return (
         <div className="text-center">
-          {month}/{year}
+          {day}-{month}-{year}
         </div>
       );
     },
@@ -50,16 +50,15 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
     header: "Download",
     cell: ({ getValue, row }) => {
       const url = getValue<string>();
-      const filename = `${row.original.collectionName}-episode-${row.original.episodeName}.mp3`;
+      const filename = `${row.original.podcastName}-episode-${row.original.title}.mp3`;
 
-      const updateLocalState = (_id: number, state: DownloadState) => {
+      const updateLocalState = (state: DownloadState) => {
         row.original.downloadState = state;
       };
       return (
         <DownloadPodcastButton
           updateLocalState={updateLocalState}
           url={url}
-          id={row.original.trackId}
           fileName={filename}
           existingState={row.original.downloadState ?? "readyToDownload"}
         />

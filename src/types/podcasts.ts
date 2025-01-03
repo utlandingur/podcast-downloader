@@ -1,5 +1,6 @@
 import { DownloadState } from "@/components/downloadPodcastButton";
 
+//---- API V1 uses itunes ---- //
 export type Podcast = {
   collectionName: string;
   feedUrl: string;
@@ -18,12 +19,13 @@ export type PodcastEpisode = {
   collectionName: string;
   feedUrl: string;
   artworkUrl160: string;
-  artworkUrl600: string;
+  podcastImageUrl: string;
   releaseDate: Date;
   trackTimeMillis: number;
   trackCount: string;
   trackViewUrl: string;
   episodeUrl: string;
+  downloadState?: DownloadState;
 };
 
 //---- API V2 uses PodcastIndex.org---- //
@@ -40,6 +42,7 @@ export type PodcastV2 = {
   newestItemPubdate: number;
   trackCount: string;
 };
+
 
 export type PodcastsSearchResponseV2 = {
   title: string;

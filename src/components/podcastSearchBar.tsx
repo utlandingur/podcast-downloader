@@ -14,6 +14,7 @@ export const PodcastSearchBar = () => {
     if (!searchTerm) return [];
     const podcasts = await lookupPodcastsV2(searchTerm, 6);
     return podcasts.map((podcast: PodcastsSearchResponseV2) => ({
+
       name: podcast.title,
       label: podcast.title,
       image: podcast.image,

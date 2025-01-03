@@ -1,6 +1,7 @@
 "use client";
 import { PodcastEpisodeTable } from "./podcastEpisodeTable/podcastEpisodeTable";
 import { columns } from "./podcastEpisodeTable/columns";
+
 import {
   usePodcastEpisodes,
   usePodcastEpisodesV2,
@@ -11,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { SocialShareLinks } from "./socialShareLinks";
 import { usePodcastV2 } from "@/hooks/usePodcast";
 import { ViewEpisodes } from "@/components/episodeData";
+
 
 type PodcastOverviewProps = {
   id: string;
@@ -62,6 +64,7 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
   return (
     <>
       <h1 className={cn("text-center line-clamp-5 w-full")}>{podcast.title}</h1>
+
       <Image
         width={100}
         height={100}
@@ -71,6 +74,7 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
       />
       <p className="text-center">{`Download your favourite podcast episodes from ${podcast.title} as an mp3 file.`}</p>
       <ViewEpisodes episodes={episodes} podcastName={podcast.title} />
+
       <SocialShareLinks
         url={"https://podcasttomp3.com/podcasts/" + id}
         title={"Download mp3s for podcast: " + podcast.title}

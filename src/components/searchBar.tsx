@@ -98,7 +98,7 @@ export const SearchBar = ({
           <div
             tabIndex={0}
             className={cn(
-              `grid grid-cols-[100px_auto] gap-2 items-center cursor-pointer ${
+              `grid grid-cols-[100px_auto] gap-2 items-center cursor-pointer rounded-md ${
                 focusedIndex === index ? focusStyles : ""
               } hover:bg-red ${hoverStyles}`
             )}
