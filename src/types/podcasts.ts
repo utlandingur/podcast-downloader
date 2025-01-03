@@ -13,7 +13,7 @@ export type Podcast = {
 
 export type PodcastEpisode = {
   trackName: string;
-  trackId: string;
+  trackId: number;
   collectionId: string;
   collectionName: string;
   feedUrl: string;

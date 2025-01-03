@@ -56,13 +56,14 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
       const url = getValue<string>();
       const filename = `${row.original.collectionName}-episode-${row.original.trackName}.mp3`;
 
-      const updateLocalState = (state: DownloadState) => {
+      const updateLocalState = (_id: number, state: DownloadState) => {
         row.original.downloadState = state;
       };
       return (
         <DownloadPodcastButton
           updateLocalState={updateLocalState}
           url={url}
+          id={row.original.trackId}
           fileName={filename}
           existingState={row.original.downloadState ?? "readyToDownload"}
         />
