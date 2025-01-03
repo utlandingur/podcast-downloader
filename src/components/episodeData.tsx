@@ -6,10 +6,7 @@ import DOMPurify from "dompurify";
 import { useMemo, useState } from "react";
 import { DebouncedInput } from "./ui/input";
 import { SortToggle } from "./ui/sortToggle";
-
-const getItemSize = (_index: number) => {
-  return 160;
-};
+import { useLocalState } from "react-session-hooks";
 
 export const ViewEpisodes = ({
   episodes,
@@ -18,13 +15,14 @@ export const ViewEpisodes = ({
   episodes: PodcastEpisodeV2[];
   podcastName: string;
 }) => {
-  const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
-
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAscending, setIsAscending] = useState(false);
+  const [episodeData, setEpisodeData, loading] = useLocalState<
+    PodcastEpisodeV2[]
+  >(podcastName, episodes);
 
   const filteredEpisodes = useMemo(() => {
-    const filtered = episodes.filter((episode) => {
+    const filtered = (episodeData || []).filter((episode) => {
       if (searchTerm) {
         const searchRegex = new RegExp(searchTerm, "i");
         if (!searchRegex.test(episode.title)) {
@@ -37,10 +35,20 @@ export const ViewEpisodes = ({
       return filtered.toReversed();
     }
     return filtered;
-  }, [episodes, searchTerm, isAscending]);
+  }, [episodeData, searchTerm, isAscending]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (episodeData?.length === 0 || episodeData === null) {
+    return <div>No episodes found</div>;
+  }
 
   const handleUpdateDownloadState = (id: number, state: DownloadState) => {
     setEpisodeData((prev) => {
+      if (!prev) return null;
+
       const newData = [...prev];
       const indexToUpdate = prev.findIndex((episode) => episode.id === id);
       newData[indexToUpdate].downloadState = state;
@@ -59,6 +67,8 @@ export const ViewEpisodes = ({
     const cleanDescription = DOMPurify.sanitize(episode?.description);
     const filename = `${podcastName}-episode-${episode?.title}.mp3`;
 
+    const datePublished = new Date(episode.datePublished); // its a string after being stringified from local storage
+
     return (
       <div
         style={style}
@@ -69,9 +79,11 @@ export const ViewEpisodes = ({
         )}
       >
         <div className={cn("text-sm text-muted-foreground")}>
-          {episode.datePublished.toLocaleDateString()}
+          {datePublished.toLocaleDateString()}
         </div>
-        <div className={cn("line-clamp-2 text-ellipsis")}>{episode.title}</div>
+        <div className={cn("line-clamp-1 m:line-clamp-2 text-ellipsis")}>
+          {episode?.title}
+        </div>
         <div
           className={cn(
             "line-clamp-2 text-ellipsis text-sm text-muted-foreground "
@@ -91,6 +103,37 @@ export const ViewEpisodes = ({
     );
   };
 
+  const EpisodeList = ({
+    episodesToDisplay,
+  }: {
+    episodesToDisplay: PodcastEpisodeV2[];
+  }) => {
+    const ITEM_SIZE = 160;
+
+    const getItemSize = (_index: number) => {
+      return ITEM_SIZE;
+    };
+
+    return (
+      <List
+        height={Math.min(640, ITEM_SIZE * episodesToDisplay.length)} // Total height of the container in pixels.
+        itemCount={episodesToDisplay.length} // Total number of episodes.
+        itemSize={getItemSize} // Function returning height of each item.
+        width={"100%"} // Total width of the container in pixels.
+        itemData={episodesToDisplay} // Pass episodes as data for the Row component.
+        style={{
+          overflowY: "scroll", // Allow scrolling
+          scrollbarWidth: "none", // Firefox specific to hide scrollbar
+          msOverflowStyle: "none", // Internet Explorer/Edge specific to hide scrollbar
+        }}
+        key={episodesToDisplay.length}
+        itemKey={(index, data) => data[index].id}
+      >
+        {Row}
+      </List>
+    );
+  };
+
   return (
     <div className={cn("flex flex-col w-[98%] px-4 gap-4")}>
       <div className={cn("grid gap-4 w-full grid-cols-[auto] items-center")}>
@@ -107,23 +150,11 @@ export const ViewEpisodes = ({
           />
         </div>
       </div>
-
-      <List
-        height={400} // Total height of the container in pixels.
-        itemCount={filteredEpisodes.length} // Total number of episodes.
-        itemSize={getItemSize} // Function returning height of each item.
-        width={"100%"} // Total width of the container in pixels.
-        itemData={filteredEpisodes} // Pass episodes as data for the Row component.
-        style={{
-          overflowY: "scroll", // Allow scrolling
-          scrollbarWidth: "none", // Firefox specific to hide scrollbar
-          msOverflowStyle: "none", // Internet Explorer/Edge specific to hide scrollbar
-        }}
-        key={filteredEpisodes.length}
-        itemKey={(index, data) => data[index].id}
-      >
-        {Row}
-      </List>
+      {filteredEpisodes.length > 0 ? (
+        <EpisodeList episodesToDisplay={filteredEpisodes} />
+      ) : (
+        <div>No episodes found</div>
+      )}
     </div>
   );
 };

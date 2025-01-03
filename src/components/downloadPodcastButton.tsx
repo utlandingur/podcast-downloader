@@ -80,7 +80,7 @@ export const DownloadPodcastButton = ({
   const handleOnClick = {
     readyToDownload: handleDownload,
     downloading: undefined,
-    downloaded: undefined,
+    downloaded: handleDownload,
   };
 
   return (
@@ -88,7 +88,7 @@ export const DownloadPodcastButton = ({
       size={"sm"}
       variant={buttonStyle[downloadState]}
       onClick={handleOnClick[downloadState]}
-      aria-disabled={downloadState !== "readyToDownload"}
+      aria-disabled={downloadState === "downloading"}
       aria-label={buttonAriaLabel[downloadState]}
     >
       {downloadIcon[downloadState]}
