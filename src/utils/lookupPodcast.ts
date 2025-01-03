@@ -36,7 +36,8 @@ export const lookupPodcastV2 = async (
     id,
   } = data.feed;
 
-  return {
+
+  const podcast: PodcastV2 = {
     title,
     description,
     feedUrl: url,
@@ -49,4 +50,5 @@ export const lookupPodcastV2 = async (
     trackCount,
     id,
   };
+  return podcast;
 };

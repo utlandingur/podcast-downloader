@@ -1,5 +1,6 @@
 "use client";
 import { PodcastEpisodeTable } from "./podcastEpisodeTable/podcastEpisodeTable";
+import { columns } from "./podcastEpisodeTable/columns";
 
 import {
   usePodcastEpisodes,
@@ -10,10 +11,8 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SocialShareLinks } from "./socialShareLinks";
 import { usePodcastV2 } from "@/hooks/usePodcast";
-import { EnrichedEpisodeV2 } from "@/types/podcasts";
-import { PodcastEpisodeTableV2 } from "./podcastEpisodeTableV2/podcastEpisodeTableV2";
-import { columns as columnsV2 } from "./podcastEpisodeTableV2/columns";
-import { columns } from "./podcastEpisodeTable/columns";
+import { ViewEpisodes } from "@/components/episodeData";
+
 
 type PodcastOverviewProps = {
   id: string;
@@ -62,20 +61,10 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
       </div>
     );
 
-  console.log("episodes", episodes);
-
-  const enrichedEpisodes: EnrichedEpisodeV2[] = episodes.map((episode) => {
-    return {
-      ...episode,
-      podcastName: podcast.title,
-    };
-  });
-
-  console.log("enrichedEpisodes", enrichedEpisodes);
-
   return (
     <>
-      <h1 className={cn("text-center")}>{podcast.title}</h1>
+      <h1 className={cn("text-center line-clamp-5 w-full")}>{podcast.title}</h1>
+
       <Image
         width={100}
         height={100}
@@ -84,7 +73,8 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
         alt={`Artwork for ${podcast.title}`}
       />
       <p className="text-center">{`Download your favourite podcast episodes from ${podcast.title} as an mp3 file.`}</p>
-      <PodcastEpisodeTableV2 columns={columnsV2} data={enrichedEpisodes} />
+      <ViewEpisodes episodes={episodes} podcastName={podcast.title} />
+
       <SocialShareLinks
         url={"https://podcasttomp3.com/podcasts/" + id}
         title={"Download mp3s for podcast: " + podcast.title}

@@ -8,7 +8,8 @@ export type DownloadState = "readyToDownload" | "downloading" | "downloaded";
 
 type DownloadPodcastButtonProps = {
   existingState: DownloadState;
-  updateLocalState: (state: DownloadState) => void;
+  updateLocalState: (id: number, state: DownloadState) => void;
+  id: number;
   url: string;
   fileName: string;
 };
@@ -17,6 +18,7 @@ export const DownloadPodcastButton = ({
   existingState,
   updateLocalState,
   url,
+  id,
   fileName,
 }: DownloadPodcastButtonProps) => {
   const [downloadState, setDownloadState] = useState<DownloadState>(
@@ -25,7 +27,7 @@ export const DownloadPodcastButton = ({
 
   const handleDownload = async () => {
     setDownloadState("downloading");
-    updateLocalState("downloading");
+    updateLocalState(id, "downloading");
     const anchor = document.createElement("a");
 
     try {
@@ -49,7 +51,7 @@ export const DownloadPodcastButton = ({
       // Clean up the anchor element
       anchor.remove();
       setDownloadState("downloaded");
-      updateLocalState("downloaded");
+      updateLocalState(id, "downloaded");
     }
   };
 
@@ -78,20 +80,20 @@ export const DownloadPodcastButton = ({
   const handleOnClick = {
     readyToDownload: handleDownload,
     downloading: undefined,
-    downloaded: undefined,
+    downloaded: handleDownload,
   };
 
   return (
-    <div className="flex justify-center">
-      <Button
-        size={"icon"}
-        variant={buttonStyle[downloadState]}
-        onClick={handleOnClick[downloadState]}
-        aria-disabled={downloadState !== "readyToDownload"}
-        aria-label={buttonAriaLabel[downloadState]}
-      >
-        {downloadIcon[downloadState]}
-      </Button>
-    </div>
+    <Button
+      size={"sm"}
+      variant={buttonStyle[downloadState]}
+      onClick={handleOnClick[downloadState]}
+      aria-disabled={downloadState === "downloading"}
+      aria-label={buttonAriaLabel[downloadState]}
+    >
+      {downloadIcon[downloadState]}
+      {downloadState === "readyToDownload" && "Download"}
+      {downloadState === "downloaded" && "Downloaded"}
+    </Button>
   );
 };

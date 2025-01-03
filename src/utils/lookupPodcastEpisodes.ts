@@ -45,7 +45,9 @@ export const lookupPodcastEpisodesV2 = async (
     }
 
     const episodes = data.items.map((item: PodcastEpisodeResponseV2) => {
-      const { description, datePublished, episode, enclosureUrl, title } = item;
+
+      const { description, datePublished, episode, enclosureUrl, title, id } =
+        item;
 
       const podcastEpisode: PodcastEpisodeV2 = {
         description,
@@ -53,6 +55,8 @@ export const lookupPodcastEpisodesV2 = async (
         episodeNumber: episode,
         episodeUrl: enclosureUrl,
         title,
+        id,
+
       };
       return podcastEpisode;
     });

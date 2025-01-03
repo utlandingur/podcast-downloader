@@ -13,8 +13,8 @@ export type Podcast = {
 };
 
 export type PodcastEpisode = {
-  episodeName: string;
-  trackId: string;
+  trackName: string;
+  trackId: number;
   collectionId: string;
   collectionName: string;
   feedUrl: string;
@@ -43,6 +43,13 @@ export type PodcastV2 = {
   trackCount: string;
 };
 
+
+export type PodcastsSearchResponseV2 = {
+  title: string;
+  image: string;
+  id: number;
+};
+
 enum TranscriptType {
   ApplicationJson = "application/json",
   ApplicationSrt = "application/srt",
@@ -54,6 +61,7 @@ enum TranscriptType {
 
 export type PodcastEpisodeResponseV2 = {
   title: string;
+  id: number;
   description: string;
   datePublished: string;
   feedImage: string;
@@ -71,6 +79,7 @@ export type PodcastEpisodeV2 = {
   datePublished: Date;
   episodeNumber: number | null; // episode number
   language?: string;
+  id: number;
   episodeUrl: string;
   transcriptUrl?: URL | null;
   transcripts?: { url: URL; type: TranscriptType }[];

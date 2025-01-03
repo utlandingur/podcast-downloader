@@ -1,9 +1,10 @@
 "use client";
-import { lookupPodcastsV2 } from "@/utils/lookupPodcasts";
 import { useRouter } from "next/navigation";
 import { SearchBar } from "@/components/searchBar";
 import { usePageLoad } from "@/providers/pageLoadProvider";
 import type { SearchResult } from "@/components/searchBar";
+import { lookupPodcastsV2 } from "@/utils/lookupPodcasts";
+import { PodcastsSearchResponseV2 } from "@/types/podcasts";
 
 export const PodcastSearchBar = () => {
   const router = useRouter();
@@ -12,7 +13,8 @@ export const PodcastSearchBar = () => {
   const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
     if (!searchTerm) return [];
     const podcasts = await lookupPodcastsV2(searchTerm, 6);
-    return podcasts.map((podcast) => ({
+    return podcasts.map((podcast: PodcastsSearchResponseV2) => ({
+
       name: podcast.title,
       label: podcast.title,
       image: podcast.image,
