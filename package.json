@@ -31,7 +31,6 @@
     "react": "19.0.0-rc-66855b96-20241106",
     "react-day-picker": "^8.10.1",
     "react-dom": "19.0.0-rc-66855b96-20241106",
-    "react-session-hooks": "^1.0.8",
     "react-share": "^5.1.2",
     "react-window": "^1.8.11",
     "tailwind-merge": "^2.5.4",

@@ -6,7 +6,6 @@ import DOMPurify from "dompurify";
 import { useMemo, useState } from "react";
 import { DebouncedInput } from "./ui/input";
 import { SortToggle } from "./ui/sortToggle";
-import { useLocalState } from "react-session-hooks";
 
 export const ViewEpisodes = ({
   episodes,
@@ -17,9 +16,7 @@ export const ViewEpisodes = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAscending, setIsAscending] = useState(false);
-  const [episodeData, setEpisodeData, loading] = useLocalState<
-    PodcastEpisodeV2[]
-  >(podcastName, episodes);
+  const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
 
   const filteredEpisodes = useMemo(() => {
     const filtered = (episodeData || []).filter((episode) => {
@@ -37,18 +34,8 @@ export const ViewEpisodes = ({
     return filtered;
   }, [episodeData, searchTerm, isAscending]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (episodeData?.length === 0 || episodeData === null) {
-    return <div>No episodes found</div>;
-  }
-
   const handleUpdateDownloadState = (id: number, state: DownloadState) => {
     setEpisodeData((prev) => {
-      if (!prev) return null;
-
       const newData = [...prev];
       const indexToUpdate = prev.findIndex((episode) => episode.id === id);
       newData[indexToUpdate].downloadState = state;
@@ -135,7 +122,7 @@ export const ViewEpisodes = ({
   };
 
   return (
-    <div className={cn("flex flex-col w-[98%] px-4 gap-4")}>
+    <div className={cn("flex flex-col w-[98%] px-4 gap-4 max-w-[720]")}>
       <div className={cn("grid gap-4 w-full grid-cols-[auto] items-center")}>
         <div className={cn("flex gap-4 items-center")}>
           <div className={cn("min-w-14")}>Sort</div>
