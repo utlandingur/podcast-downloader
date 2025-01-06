@@ -122,7 +122,7 @@ export const ViewEpisodes = ({
   };
 
   return (
-    <div className={cn("flex flex-col w-[98%] px-4 gap-4 max-w-[720]")}>
+    <div className={cn("flex flex-col w-[98%] px-4 gap-4 max-w-[720px]")}>
       <div className={cn("grid gap-4 w-full grid-cols-[auto] items-center")}>
         <div className={cn("flex gap-4 items-center")}>
           <div className={cn("min-w-14")}>Sort</div>
