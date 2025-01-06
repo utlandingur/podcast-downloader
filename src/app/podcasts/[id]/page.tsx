@@ -7,7 +7,6 @@ import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import type { Metadata } from "next";
 import type { PodcastEpisode } from "@/types/podcasts";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
 
 type Params = Promise<{
   id: string;
