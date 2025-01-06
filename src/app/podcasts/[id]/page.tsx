@@ -6,6 +6,7 @@ import { PodcastOverview } from "@/components/podcastOverview";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import type { Metadata } from "next";
 import type { PodcastEpisode } from "@/types/podcasts";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type Params = Promise<{
   id: string;
@@ -54,6 +55,17 @@ export default async function PodcastPage({ params }: { params: Params }) {
     <main
       className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full`}
     >
+      <div className={cn("px-8 pt-8 max-w-[720px] self-center")}>
+        <Alert className={cn("bg-black text-secondary")}>
+          <AlertTitle className={cn("font-black")}>
+            🎉 Version 2 is Here!
+          </AlertTitle>
+          <AlertDescription>
+            You may have bookmarked this page. Search for your podcast again to
+            access all episodes, improved search, and future updates!
+          </AlertDescription>
+        </Alert>
+      </div>
       <Suspense
         fallback={
           <div className="flex justify-center items-center">
