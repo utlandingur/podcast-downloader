@@ -1,9 +1,10 @@
+"use server";
 import type {
   PodcastEpisode,
   PodcastEpisodeResponseV2,
   PodcastEpisodeV2,
 } from "@/types/podcasts";
-import { getPodcastIndexHeaders } from "../serverActions/getPodcastIndexHeaders";
+import { getPodcastIndexHeaders } from "./getPodcastIndexHeaders";
 
 export const lookupPodcastEpisodes = async (
   collectionId: string
@@ -45,7 +46,6 @@ export const lookupPodcastEpisodesV2 = async (
     }
 
     const episodes = data.items.map((item: PodcastEpisodeResponseV2) => {
-
       const { description, datePublished, episode, enclosureUrl, title, id } =
         item;
 
@@ -56,7 +56,6 @@ export const lookupPodcastEpisodesV2 = async (
         episodeUrl: enclosureUrl,
         title,
         id,
-
       };
       return podcastEpisode;
     });

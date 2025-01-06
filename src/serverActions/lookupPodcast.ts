@@ -1,5 +1,6 @@
+"use server";
 import type { PodcastV2 } from "@/types/podcasts";
-import { getPodcastIndexHeaders } from "../serverActions/getPodcastIndexHeaders";
+import { getPodcastIndexHeaders } from "./getPodcastIndexHeaders";
 
 export const lookupPodcastV2 = async (
   podcastId: string
@@ -11,7 +12,6 @@ export const lookupPodcastV2 = async (
   urlEndpoint.searchParams.append("fulltext", "true"); // If present, return the full text value of any text fields (ex: description). If not provided, field value is truncated to 100 words.
 
   const response = await fetch(urlEndpoint, {
-    cache: "force-cache",
     headers: await getPodcastIndexHeaders(),
     method: "GET",
   });
@@ -35,7 +35,6 @@ export const lookupPodcastV2 = async (
     trackCount,
     id,
   } = data.feed;
-
 
   const podcast: PodcastV2 = {
     title,
