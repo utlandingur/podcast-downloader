@@ -2,7 +2,7 @@
 import {
   lookupPodcastEpisodes,
   lookupPodcastEpisodesV2,
-} from "@/utils/lookupPodcastEpisodes";
+} from "@/serverActions/lookupPodcastEpisodes";
 
 import { useQuery } from "@tanstack/react-query";
 
