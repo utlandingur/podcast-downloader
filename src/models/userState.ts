@@ -1,4 +1,3 @@
-"use server";
 import { InferSchemaType, Schema, Document, models, model } from "mongoose";
 
 import { podcastStateSchema } from "@/models/podcastState";
