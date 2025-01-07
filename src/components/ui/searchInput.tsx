@@ -20,7 +20,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={cn("self-center")}
+          className={cn("self-center border-accent-foreground")}
           ref={ref}
         />
         {handleSearch && <Button onClick={handleSearch}>Search</Button>}
