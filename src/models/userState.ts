@@ -1,7 +1,7 @@
 "use server";
 import { InferSchemaType, Schema, Document, models, model } from "mongoose";
 
-import { PodcastStateType, podcastStateSchema } from "@/models/podcastState";
+import { podcastStateSchema } from "@/models/podcastState";
 
 const userStateSchema = new Schema(
   {
