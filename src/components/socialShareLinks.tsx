@@ -20,7 +20,7 @@ export const SocialShareLinks = ({ url, title }: SocialShareLinksProps) => (
   <div className={cn("flex flex-col gap-4")}>
     <h2>Share on social</h2>
     <div className={cn("flex w-full gap-4 justify-center")}>
-      <FacebookShareButton url={url}>
+      <FacebookShareButton url={url} aria-label="Share on Facebook Button">
         <FacebookIcon size={32} round />
       </FacebookShareButton>
 
@@ -28,15 +28,25 @@ export const SocialShareLinks = ({ url, title }: SocialShareLinksProps) => (
         url={url}
         title={title}
         hashtags={["downloadPodcasts", "podcasts", "mp3"]}
+        aria-label="Share on Twitter Button"
       >
         <TwitterIcon size={32} round />
       </TwitterShareButton>
 
-      <WhatsappShareButton url={url} title={title} separator=" - ">
+      <WhatsappShareButton
+        url={url}
+        title={title}
+        separator=" - "
+        aria-label="Share on Whatsapp Button"
+      >
         <WhatsappIcon size={32} round />
       </WhatsappShareButton>
 
-      <RedditShareButton url={url} title={title}>
+      <RedditShareButton
+        url={url}
+        title={title}
+        aria-label="Share on Reddit Button"
+      >
         <RedditIcon size={32} round />
       </RedditShareButton>
     </div>
