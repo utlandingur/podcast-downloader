@@ -73,7 +73,8 @@ export default async function PodcastPage({ params }: { params: Params }) {
           </div>
         }
       >
-        <div className={cn("p-8")}>
+        <div className={cn("p-8 flex flex-col items-center gap-4")}>
+          <h2 className={cn("text-xl")}>Search for another podcast</h2>
           <PodcastSearchBar />
         </div>
         <div
