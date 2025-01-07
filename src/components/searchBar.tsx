@@ -170,10 +170,12 @@ export const SearchBar = ({
           )}
         </Popover>
       </div>
-      <p>
-        If you love this site, please consider buying me a coffee. It helps pays
-        the bills and keep me motivated.
-      </p>
+      <div className={cn("text-center")}>
+        <p>
+          If you love this site, please consider buying me a coffee. It helps
+          pays the bills and keep me motivated.
+        </p>
+      </div>
       <a
         href="https://www.buymeacoffee.com/utlandingur"
         role="button"
