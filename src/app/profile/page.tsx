@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
-import { Main } from "@/components/ui/main";
+import { geistSans, geistMono } from "../fonts";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -19,13 +19,15 @@ export default async function PodcastPage() {
   }
 
   return (
-    <Main>
+    <main
+      className={`flex flex-col gap-8 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center p-8 sm:px-4 text-center`}
+    >
       <h1>Your profile </h1>
       <p>Welcome back, {user?.name}! </p>
       <p>
         I&apos;m currently working on showing your favourites here in a single
         filterable list. Check back later!
       </p>
-    </Main>
+    </main>
   );
 }
