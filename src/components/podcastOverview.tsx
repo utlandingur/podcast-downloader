@@ -15,6 +15,10 @@ import { ViewEpisodes } from "@/components/episodeData";
 
 type PodcastOverviewProps = {
   id: string;
+};
+
+type PodcastOverviewV2Props = {
+  id: string;
   userEmail: string | null;
 };
 
@@ -50,7 +54,10 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
   );
 };
 
-export const PodcastOverviewV2 = ({ id, userEmail }: PodcastOverviewProps) => {
+export const PodcastOverviewV2 = ({
+  id,
+  userEmail,
+}: PodcastOverviewV2Props) => {
   const { data: episodes } = usePodcastEpisodesV2(id);
   const { data: podcast } = usePodcastV2(id);
 
