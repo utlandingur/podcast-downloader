@@ -1,18 +1,6 @@
+import { getUser } from "@/serverActions/userActions";
 import NextAuth from "next-auth";
-import { connectToDatabase } from "@/lib/db";
-import { User, UserDocument } from "@/models/user";
 import Google from "next-auth/providers/google";
-
-export async function getUser(email: string): Promise<UserDocument | null> {
-  try {
-    await connectToDatabase();
-    const user: UserDocument | null = await User.findOne({ email });
-    return user;
-  } catch (error) {
-    console.log("Error fetching user", error);
-    return null;
-  }
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [Google],
@@ -30,6 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async session({ session }) {
       const user = await getUser(session.user.email);
+      console.log("User in session callback", user);
       //add user to session
       if (!user) {
         return session;

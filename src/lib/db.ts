@@ -1,4 +1,3 @@
-"use server";
 import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -13,6 +12,7 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   }
 
   if (cachedConnection) {
+    console.log("=> using cached database instance");
     return cachedConnection;
   }
 

@@ -20,42 +20,44 @@ describe("User Functions", () => {
   });
 
   test("toggleFavouritePodcast should toggle the favourited state", async () => {
-    const user = await findOrCreateUser("user1");
+    let localUser = await findOrCreateUser("user1");
 
     const podcastId = "podcast1";
-    await toggleFavouritePodcast(user, podcastId, true);
+    localUser = await toggleFavouritePodcast(localUser, podcastId, true);
     let updatedUser = await User.findOne({ email: "user1" });
-    expect(user.info[0].favourited).toBe(true);
+    expect(localUser.info[0].favourited).toBe(true);
     expect(updatedUser.info[0].favourited).toBe(true);
 
-    await toggleFavouritePodcast(user, podcastId, false);
+    localUser = await toggleFavouritePodcast(localUser, podcastId, false);
     updatedUser = await User.findOne({ email: "user1" });
-    expect(user.info[0].favourited).toBe(false);
+    expect(localUser.info[0].favourited).toBe(false);
     expect(updatedUser.info[0].favourited).toBe(false);
   });
 
   test("addDownloadedEpisode should add an episode to the podcast", async () => {
-    const user = await findOrCreateUser("user2");
+    let localUser = await findOrCreateUser("user2");
 
     const podcastId = "podcast2";
     const episodeId = "episode1";
 
-    await addDownloadedEpisode(user, podcastId, episodeId);
+    localUser = await addDownloadedEpisode(localUser, podcastId, episodeId);
     let updatedUser = await User.findOne({ email: "user2" });
     let updatedPodcastState = updatedUser.info.find(
       (podcast: any) => podcast.podcast_id === podcastId
     );
-
+    expect(localUser.info[0].downloaded_episodes).toContain(episodeId);
     expect(updatedPodcastState.downloaded_episodes).toContain(episodeId);
 
-    // Add the same episode again, it shouldn't be added twice
-    await addDownloadedEpisode(user, podcastId, episodeId);
+    localUser = await addDownloadedEpisode(localUser, podcastId, episodeId);
     updatedUser = await User.findOne({ email: "user2" });
     updatedPodcastState = updatedUser.info.find(
       (podcast: any) => podcast.podcast_id === podcastId
     );
     expect(updatedPodcastState.downloaded_episodes).toContain(episodeId);
+    expect(localUser.info[0].downloaded_episodes).toContain(episodeId);
+
     expect(updatedPodcastState.downloaded_episodes).toHaveLength(1);
+    expect(localUser.info[0].downloaded_episodes).toHaveLength(1);
   });
 
   test("findOrCreateUser should create a new user state if not found", async () => {

@@ -1,9 +1,7 @@
 import { PodcastSearchBar } from "@/components/podcastSearchBar";
-
 import { geistSans, geistMono } from "./fonts";
 import { Suspense } from "react";
 import { cn } from "@/lib/utils";
-
 import type { Metadata } from "next";
 import { HowItWorks } from "@/components/howItWorks";
 import { SocialShareLinks } from "@/components/socialShareLinks";
@@ -77,7 +75,6 @@ export default async function Home() {
             <PodcastSearchBar />
           </div>
         </Suspense>
-
         <HowItWorks />
         <SocialShareLinks
           url="https://podcasttomp3.com"

@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
-jest.mock("../src/serverActions/mongooseConnector", () => ({
+jest.mock("../src/lib/db", () => ({
   connectToDatabase: jest.fn(),
 }));
 
