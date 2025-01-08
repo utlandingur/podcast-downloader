@@ -14,5 +14,5 @@ export type PodcastStateType = InferSchemaType<typeof podcastStateSchema>;
 export type PodcastStateDocument = PodcastStateType & Document;
 
 export const PodcastState =
-  models.PodcastState ||
+  models?.PodcastState ||
   model<PodcastStateDocument>("PodcastState", podcastStateSchema);
