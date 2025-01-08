@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { HowItWorks } from "@/components/howItWorks";
 import { SocialShareLinks } from "@/components/socialShareLinks";
+import GoogleSignInButton from "@/components/googleSignInButton";
+import SignOutButton from "@/components/signOutButton";
 
 export const metadata: Metadata = {
   title: "PodcastToMp3 - Download Podcasts as MP3",
@@ -77,7 +79,8 @@ export default async function Home() {
             <PodcastSearchBar />
           </div>
         </Suspense>
-
+        <GoogleSignInButton />
+        <SignOutButton />
         <HowItWorks />
         <SocialShareLinks
           url="https://podcasttomp3.com"

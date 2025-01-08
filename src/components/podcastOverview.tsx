@@ -13,9 +13,9 @@ import { SocialShareLinks } from "./socialShareLinks";
 import { usePodcastV2 } from "@/hooks/usePodcast";
 import { ViewEpisodes } from "@/components/episodeData";
 
-
 type PodcastOverviewProps = {
   id: string;
+  userEmail: string | null;
 };
 
 export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
@@ -50,7 +50,7 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
   );
 };
 
-export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
+export const PodcastOverviewV2 = ({ id, userEmail }: PodcastOverviewProps) => {
   const { data: episodes } = usePodcastEpisodesV2(id);
   const { data: podcast } = usePodcastV2(id);
 
@@ -73,7 +73,12 @@ export const PodcastOverviewV2 = ({ id }: PodcastOverviewProps) => {
         alt={`Artwork for ${podcast.title}`}
       />
       <p className="text-center">{`Download your favourite podcast episodes from ${podcast.title} as an mp3 file.`}</p>
-      <ViewEpisodes episodes={episodes} podcastName={podcast.title} />
+      <ViewEpisodes
+        episodes={episodes}
+        podcastName={podcast.title}
+        userEmail={userEmail}
+        podcastId={podcast.id.toString()}
+      />
 
       <SocialShareLinks
         url={"https://podcasttomp3.com/podcasts/" + id}

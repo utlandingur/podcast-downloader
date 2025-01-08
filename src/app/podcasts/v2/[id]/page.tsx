@@ -6,6 +6,7 @@ import { PodcastOverviewV2 } from "@/components/podcastOverview";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import type { Metadata } from "next";
 import { lookupPodcastV2 } from "@/serverActions/lookupPodcast";
+import { auth } from "../../../../../auth";
 
 type Params = Promise<{
   id: string;
@@ -41,6 +42,8 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   if (!decodedId) return <div>Page not found</div>;
 
+  const session = await auth();
+
   return (
     <main
       className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full`}
@@ -61,7 +64,10 @@ export default async function PodcastPage({ params }: { params: Params }) {
             "flex flex-col h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8"
           )}
         >
-          <PodcastOverviewV2 id={decodedId} />
+          <PodcastOverviewV2
+            id={decodedId}
+            userEmail={session?.user?.email ?? null}
+          />
         </div>
       </Suspense>
     </main>

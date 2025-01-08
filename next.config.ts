@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
+  serverExternalPackages: ["mongoose"], // Updated key for external server packages
+  webpack: (config) => {
+    config.experiments = {
+      topLevelAwait: true, // Enables top-level await
+    };
+    return config;
+  },
 };
 
 export default nextConfig;
+
+module.exports = nextConfig;
