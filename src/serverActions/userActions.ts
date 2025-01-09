@@ -1,7 +1,7 @@
 "use server";
 import { connectToDatabase } from "@/lib/db";
 import { PodcastStateType } from "@/models/podcastState";
-import { UserDocument, User, UserType } from "@/models/user";
+import { UserDocument, User, type PlainUserType } from "@/models/user";
 
 export async function getUser(email: string): Promise<UserDocument | null> {
   try {
@@ -15,10 +15,10 @@ export async function getUser(email: string): Promise<UserDocument | null> {
 }
 
 export const toggleFavouritePodcast = async (
-  user: UserType,
+  user: PlainUserType,
   podcastId: string,
   favourited: boolean
-): Promise<UserType> => {
+): Promise<PlainUserType> => {
   await connectToDatabase();
   const userDoc: UserDocument = await User.hydrate(user);
   const podcastState = userDoc.info.find(
@@ -35,10 +35,10 @@ export const toggleFavouritePodcast = async (
 };
 
 export const addDownloadedEpisode = async (
-  user: UserType,
+  user: PlainUserType,
   podcastId: string,
   episodeId: string
-): Promise<UserType> => {
+): Promise<PlainUserType> => {
   await connectToDatabase();
   const userDoc: UserDocument = User.hydrate(user);
   const podcastState = userDoc.info.find(
@@ -58,13 +58,15 @@ export const addDownloadedEpisode = async (
   return JSON.parse(JSON.stringify(userDoc));
 };
 
-export const findOrCreateUser = async (userId: string): Promise<UserType> => {
+export const findOrCreateUser = async (
+  userId: string
+): Promise<PlainUserType> => {
   await connectToDatabase();
   const user: UserDocument = await User.findOneAndUpdate(
     { email: userId }, // Filter by userId and podcastId
     { $setOnInsert: { email: userId } }, // Insert a new user state if not found
     { upsert: true, new: true }
   );
-  const data: UserType = JSON.parse(JSON.stringify(user));
+  const data: PlainUserType = JSON.parse(JSON.stringify(user));
   return data;
 };

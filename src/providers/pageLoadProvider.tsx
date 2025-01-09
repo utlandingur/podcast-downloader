@@ -41,7 +41,6 @@ export const PageLoadProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook to use the PageLoadContext
 export const usePageLoad = () => {
   const context = useContext(PageLoadContext);
   if (context === undefined) {

@@ -64,10 +64,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
             "flex flex-col h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8"
           )}
         >
-          <PodcastOverviewV2
-            id={decodedId}
-            userEmail={session?.user?.email ?? null}
-          />
+          <PodcastOverviewV2 id={decodedId} session={session} />
         </div>
       </Suspense>
     </main>

@@ -8,13 +8,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
     // maxAge: is 30 days by default
   },
-  pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signout",
-    error: "/auth/error",
-    verifyRequest: "/auth/verify-request",
-  },
-
   callbacks: {
     async session({ session }) {
       const user = await getUser(session.user.email);
