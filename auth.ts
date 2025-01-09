@@ -18,7 +18,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async session({ session }) {
       const user = await getUser(session.user.email);
-      console.log("User in session callback", user);
       //add user to session
       if (!user) {
         return session;
@@ -28,8 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       return session;
     },
-    async signIn({ user }) {
-      console.log("User signed in", user);
+    async signIn() {
       return true;
     },
   },

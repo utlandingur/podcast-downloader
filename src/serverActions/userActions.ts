@@ -54,7 +54,6 @@ export const addDownloadedEpisode = async (
   } else if (!podcastState.downloaded_episodes.includes(episodeId)) {
     podcastState.downloaded_episodes.push(episodeId);
   }
-  console.log("userDoc in addDOwnloadedEpisode", userDoc);
   await userDoc.save();
   return JSON.parse(JSON.stringify(userDoc));
 };

@@ -1,7 +1,7 @@
 import { PodcastEpisodeV2 } from "@/types/podcasts";
 import { cn } from "@/lib/utils";
 import { DownloadState } from "./downloadPodcastButton";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DebouncedInput } from "./ui/input";
 import { SortToggle } from "./ui/sortToggle";
 import { EpisodeList } from "./episodeList";
@@ -23,9 +23,6 @@ export const ViewEpisodes = ({
   const [isAscending, setIsAscending] = useState(false);
   const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
   const { user } = useUser(userEmail);
-  useEffect(() => {
-    console.log("user", user);
-  }, [user]);
 
   const filteredEpisodes = useMemo(() => {
     const filtered = (episodeData || []).filter((episode) => {

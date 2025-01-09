@@ -12,7 +12,6 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   }
 
   if (cachedConnection) {
-    console.log("=> using cached database instance");
     return cachedConnection;
   }
 
