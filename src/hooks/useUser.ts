@@ -1,30 +1,69 @@
 "use client";
-import { UserType } from "@/models/user";
-import { findOrCreateUser } from "@/serverActions/userActions";
-import { useEffect, useState } from "react";
+import type { PlainUserType } from "@/models/user";
+import {
+  addDownloadedEpisode,
+  findOrCreateUser,
+  toggleFavouritePodcast,
+} from "@/serverActions/userActions";
+import { create } from "zustand";
 
-export const useUser = (email: string | null) => {
-  const [user, setUser] = useState<UserType | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (!email) return;
-      setError(null); // Clear any previous error
-      setLoading(true);
-      try {
-        const user = await findOrCreateUser(email);
-        setUser(user);
-      } catch (error) {
-        setError("Error fetching user.");
-        console.error("Error fetching user:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, [email]);
-
-  return { user, loading, error };
+type UserState = {
+  user: PlainUserType | null;
+  loading: boolean;
+  error: string | null;
 };
+
+type UserStateActions = {
+  syncUser: (email: string | null) => Promise<void>;
+  addDownloadedEpisode: (podcastId: string, episodeId: string) => Promise<void>;
+  toggleFavouritePodcast: (
+    podcastId: string,
+    favourited: boolean
+  ) => Promise<void>;
+};
+
+export const useUserStore = create<UserState & UserStateActions>(
+  (set, get) => ({
+    user: null,
+    loading: false,
+    error: null,
+    syncUser: async (email: string | null) => {
+      if (email) {
+        try {
+          set({ loading: true });
+          const user = await findOrCreateUser(email);
+          set({ user });
+        } catch (error) {
+          set({ error: "Error fetching user." });
+          console.error("Error fetching user:", error);
+        } finally {
+          set({ loading: false });
+        }
+      } else {
+        set({ user: null });
+      }
+    },
+    addDownloadedEpisode: async (podcastId: string, episodeId: string) => {
+      const user = get().user;
+      if (user) {
+        const updatedUser = await addDownloadedEpisode(
+          user,
+          podcastId,
+          episodeId
+        );
+        set({ user: updatedUser });
+      }
+    },
+    toggleFavouritePodcast: async (podcastId: string, favourited: boolean) => {
+      const user = get().user;
+      if (user) {
+        const updatedUser = await toggleFavouritePodcast(
+          user,
+          podcastId,
+          favourited
+        );
+        set({ user: updatedUser });
+      }
+    },
+  })
+);

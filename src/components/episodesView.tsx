@@ -3,42 +3,50 @@ import { cn } from "@/lib/utils";
 import { DownloadState } from "./downloadPodcastButton";
 import { useMemo, useState } from "react";
 import { DebouncedInput } from "./ui/input";
-import { SortToggle } from "./ui/sortToggle";
 import { EpisodeList } from "./episodeList";
-import { addDownloadedEpisode } from "@/serverActions/userActions";
-import { useUser } from "@/hooks/useUser";
+import { useUserStore } from "@/hooks/useUser";
+import { Toggle } from "@/components/toggle";
+import { ArrowDownNarrowWide, ArrowUpNarrowWide } from "lucide-react";
 
-export const ViewEpisodes = ({
+export const EpisodesView = ({
   episodes,
   podcastName,
-  userEmail,
   podcastId,
 }: {
   episodes: PodcastEpisodeV2[];
   podcastName: string;
-  userEmail: string | null;
   podcastId: string;
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAscending, setIsAscending] = useState(false);
+  const [showDownloaded, setShowDownloaded] = useState(true);
   const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
-  const { user } = useUser(userEmail);
+  const { user, addDownloadedEpisode } = useUserStore((state) => state);
+
+  const infoIndex = useMemo(() => {
+    return user?.info.findIndex((info) => info.podcast_id === podcastId);
+  }, [user, podcastId]);
 
   const filteredEpisodes = useMemo(() => {
     const filtered = (episodeData || []).filter((episode) => {
+      // Filter by search term
       if (searchTerm) {
         const searchRegex = new RegExp(searchTerm, "i");
         if (!searchRegex.test(episode.title)) {
           return false;
         }
       }
+      // Filter by download state
+      if (!showDownloaded && episode.downloadState === "downloaded")
+        return false;
       return true;
     });
+    // Sort by date
     if (isAscending) {
       return filtered.toReversed();
     }
     return filtered;
-  }, [episodeData, searchTerm, isAscending]);
+  }, [episodeData, searchTerm, isAscending, showDownloaded]);
 
   const episodesToDisplay = useMemo(() => {
     const handleUpdateDownloadState = (id: number, state: DownloadState) => {
@@ -49,25 +57,58 @@ export const ViewEpisodes = ({
         return newData;
       });
       if (state === "downloaded" && user) {
-        addDownloadedEpisode(user, podcastId, id.toString());
+        addDownloadedEpisode(podcastId, id.toString());
       }
     };
 
     return filteredEpisodes.map((episode) => {
+      if (infoIndex && infoIndex !== -1) {
+        const isDownloaded = user?.info[infoIndex].downloaded_episodes.includes(
+          episode.id.toString()
+        );
+        if (isDownloaded) {
+          episode.downloadState = "downloaded";
+        }
+      }
       return {
         episode,
         updateDownloadState: handleUpdateDownloadState,
       };
     });
-  }, [filteredEpisodes, podcastId, user]);
+  }, [filteredEpisodes, podcastId, user, addDownloadedEpisode, infoIndex]);
 
   return (
     <div className={cn("flex flex-col w-[98%] px-4 gap-4 max-w-[720px]")}>
       <div className={cn("grid gap-4 w-full grid-cols-[auto] items-center")}>
-        <div className={cn("flex gap-4 items-center")}>
+        <div className={cn("flex gap-4 sm:items-center")}>
           <div className={cn("min-w-14")}>Sort</div>
-          <SortToggle onToggle={setIsAscending} initialValue={isAscending} />
+          {/* // Toggle to sort episodes in ascending or descending order */}
+          <div className={cn("flex flex-col sm:flex-row gap-2")}>
+            <Toggle
+              onToggle={setIsAscending}
+              initialValue={isAscending}
+              trueText={"Ascending"}
+              falseText={"Descending"}
+              label={"Sort Ascending"}
+              trueIcon={<ArrowUpNarrowWide className="h-4 w-4" />}
+              falseIcon={<ArrowDownNarrowWide className="h-4 w-4" />}
+            />
+          </div>
         </div>
+        <div className={cn("flex gap-4 sm:items-center")}>
+          <div className={cn("min-w-14")}>Filter</div>
+          {/* // Toggle to show or hide downloaded episodes */}
+          <Toggle
+            onToggle={setShowDownloaded}
+            initialValue={showDownloaded}
+            trueText={"Showing Downloaded"}
+            falseText={"Hiding Downloaded"}
+            label={"show or hide downloaded episodes"}
+            // falseIcon={<Check className="h-4 w-4" />}
+            // trueIcon={<X className="h-4 w-4" />}
+          />
+        </div>
+
         <div className={cn("flex gap-4 items-center")}>
           <div className={cn("min-w-14")}>Search</div>
           <DebouncedInput
