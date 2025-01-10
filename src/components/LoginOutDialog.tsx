@@ -39,6 +39,7 @@ export const LoginOutDialog = ({ showLogin }: LoginOutDialogProps) => {
         <DialogTrigger asChild>
           <Button variant="outline" size={"sm"}>
             <LogIn className={cn("h-4 w-4")} />
+            <div>Login</div>
           </Button>
         </DialogTrigger>
         <DialogContent className=" sm:max-w-[425px]">
@@ -64,6 +65,7 @@ export const LoginOutDialog = ({ showLogin }: LoginOutDialogProps) => {
     return (
       <Button variant="outline" size={"sm"} onClick={() => signOut()}>
         <LogOut className={cn("h-4 w-4")} />
+        <div>Logout</div>
       </Button>
     );
   }

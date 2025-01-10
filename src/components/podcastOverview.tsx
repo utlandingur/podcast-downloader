@@ -13,7 +13,7 @@ import { SocialShareLinks } from "./socialShareLinks";
 import { usePodcastV2 } from "@/hooks/usePodcast";
 import { EpisodesView } from "@/components/episodesView";
 import { Session } from "next-auth";
-import { useSyncUser } from "@/hooks/useInitialUserFetch";
+import { useSyncUser } from "@/hooks/useSyncUser";
 
 type PodcastOverviewProps = {
   id: string;
