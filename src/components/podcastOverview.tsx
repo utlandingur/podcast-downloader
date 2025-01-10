@@ -59,6 +59,7 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
 export const PodcastOverviewV2 = ({ id, session }: PodcastOverviewV2Props) => {
   const { data: episodes } = usePodcastEpisodesV2(id);
   const { data: podcast } = usePodcastV2(id);
+
   useSyncUser(session || null);
 
   if (!episodes || !podcast)

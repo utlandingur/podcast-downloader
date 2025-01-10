@@ -8,6 +8,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // maxAge: is 30 days by default
   },
   callbacks: {
+    async session({ session }) {
+      return session;
+    },
     async signIn() {
       return true;
     },

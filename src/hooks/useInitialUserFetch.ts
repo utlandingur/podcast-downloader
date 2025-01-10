@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserStore } from "@/hooks/useUser";
 import { Session } from "next-auth";
 
@@ -9,15 +9,12 @@ import { Session } from "next-auth";
  */
 export const useSyncUser = (session: Session | null) => {
   const { syncUser } = useUserStore((state) => state);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (loading) return;
-      setLoading(true);
       await syncUser(session?.user?.email || null);
-      setLoading(false);
     };
-    if (!loading) fetchUser();
-  }, [session, syncUser, loading]);
+    if (session?.user?.email) fetchUser();
+  }, [session, syncUser]);
+  return null;
 };
