@@ -43,7 +43,7 @@ describe("useUserStore", () => {
     });
 
     await waitFor(async () => {
-      await result.current.syncUser(mockSession);
+      await result.current.syncUser(mockSession.user?.email || null);
     });
 
     expect(findOrCreateUser).toHaveBeenCalledWith("test@test.com");

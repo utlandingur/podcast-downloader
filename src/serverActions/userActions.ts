@@ -3,17 +3,6 @@ import { connectToDatabase } from "@/lib/db";
 import { PodcastStateType } from "@/models/podcastState";
 import { UserDocument, User, type PlainUserType } from "@/models/user";
 
-export async function getUser(email: string): Promise<UserDocument | null> {
-  try {
-    await connectToDatabase();
-    const user: UserDocument | null = await User.findOne({ email });
-    return user;
-  } catch (error) {
-    console.error("Error fetching user", error);
-    return null;
-  }
-}
-
 export const toggleFavouritePodcast = async (
   user: PlainUserType,
   podcastId: string,
@@ -59,12 +48,12 @@ export const addDownloadedEpisode = async (
 };
 
 export const findOrCreateUser = async (
-  userId: string
+  email: string
 ): Promise<PlainUserType> => {
   await connectToDatabase();
   const user: UserDocument = await User.findOneAndUpdate(
-    { email: userId }, // Filter by userId and podcastId
-    { $setOnInsert: { email: userId } }, // Insert a new user state if not found
+    { email }, // Filter by userId and podcastId
+    { $setOnInsert: { email } }, // Insert a new user state if not found
     { upsert: true, new: true }
   );
   const data: PlainUserType = JSON.parse(JSON.stringify(user));

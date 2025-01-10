@@ -15,7 +15,7 @@ export const useSyncUser = (session: Session | null) => {
     const fetchUser = async () => {
       if (loading) return;
       setLoading(true);
-      await syncUser(session);
+      await syncUser(session?.user?.email || null);
       setLoading(false);
     };
     if (!loading) fetchUser();

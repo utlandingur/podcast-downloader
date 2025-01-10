@@ -5,7 +5,6 @@ import {
   findOrCreateUser,
   toggleFavouritePodcast,
 } from "@/serverActions/userActions";
-import { Session } from "next-auth";
 import { create } from "zustand";
 
 type UserState = {
@@ -15,7 +14,7 @@ type UserState = {
 };
 
 type UserStateActions = {
-  syncUser: (session: Session | null) => Promise<void>;
+  syncUser: (email: string | null) => Promise<void>;
   addDownloadedEpisode: (podcastId: string, episodeId: string) => Promise<void>;
   toggleFavouritePodcast: (
     podcastId: string,
@@ -28,9 +27,7 @@ export const useUserStore = create<UserState & UserStateActions>(
     user: null,
     loading: false,
     error: null,
-    syncUser: async (session: Session | null) => {
-      const email = session?.user?.email;
-
+    syncUser: async (email: string | null) => {
       if (email) {
         try {
           set({ loading: true });
