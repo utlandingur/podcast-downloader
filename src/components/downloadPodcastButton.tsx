@@ -53,11 +53,11 @@ export const DownloadPodcastButton = ({
 
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
+      anchor.remove();
 
       setDownloadState(DownloadState.Downloaded);
       updateLocalState(id, DownloadState.Downloaded);
     } catch {
-      console.error("Failed to download the file");
       // Open the URL in a new tab if there's an error (likely CORS)
       if (!isDesktop) {
         anchor.remove();
