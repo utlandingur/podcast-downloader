@@ -61,7 +61,7 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
           url={url}
           id={row.original.trackId}
           fileName={filename}
-          downloadState={
+          existingState={
             row.original.downloadState ?? DownloadState.ReadyToDownload
           }
         />

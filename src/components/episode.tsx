@@ -55,7 +55,7 @@ export const Episode = ({
       />
       <div className={cn("flex justify-start pt-2")}>
         <DownloadPodcastButton
-          downloadState={downloadState ?? DownloadState.ReadyToDownload}
+          existingState={downloadState ?? DownloadState.ReadyToDownload}
           id={id}
           updateLocalState={handleDownloadState}
           url={episodeUrl}
