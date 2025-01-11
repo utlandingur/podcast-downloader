@@ -13,7 +13,7 @@ export enum DownloadState {
 }
 
 type DownloadPodcastButtonProps = {
-  existingState: DownloadState;
+  downloadState: DownloadState;
   updateLocalState: (id: number, state: DownloadState) => void;
   id: number;
   url: string;
@@ -21,18 +21,13 @@ type DownloadPodcastButtonProps = {
 };
 
 export const DownloadPodcastButton = ({
-  existingState,
+  downloadState,
   updateLocalState,
   url,
   id,
   fileName,
 }: DownloadPodcastButtonProps) => {
-  const [downloadState, setDownloadState] = useState<DownloadState>(
-    existingState ?? "readyToDownload"
-  );
-
   const handleDownload = async () => {
-    setDownloadState(DownloadState.Downloading);
     updateLocalState(id, DownloadState.Downloading);
     const anchor = document.createElement("a");
 
@@ -54,18 +49,15 @@ export const DownloadPodcastButton = ({
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
       anchor.remove();
-      setDownloadState(DownloadState.Downloaded);
       updateLocalState(id, DownloadState.Downloaded);
     } catch {
       // Open the URL in a new tab if there's an error (likely CORS)
       if (!isDesktop) {
         anchor.remove();
-        setDownloadState(DownloadState.DownloadOnDesktop);
         updateLocalState(id, DownloadState.DownloadOnDesktop);
       } else {
         window.open(url, "_blank");
         anchor.remove();
-        setDownloadState(DownloadState.Downloaded);
         updateLocalState(id, DownloadState.Downloaded);
       }
     }
