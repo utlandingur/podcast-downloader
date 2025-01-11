@@ -42,6 +42,9 @@ export const DownloadPodcastButton = ({
         throw new Error("Failed to fetch the file");
       }
       const blob = await response.blob();
+      if (!blob || blob.size === 0) {
+        throw new Error("Received empty blob.");
+      }
       const blobUrl = window.URL.createObjectURL(blob);
 
       anchor.href = blobUrl;
