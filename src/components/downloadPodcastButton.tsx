@@ -3,8 +3,14 @@ import { Check, Download, X } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import { Button } from "./ui/button";
+import { isMobile } from "react-device-detect";
 
-export type DownloadState = "readyToDownload" | "downloading" | "downloaded";
+export enum DownloadState {
+  ReadyToDownload = "readyToDownload",
+  Downloading = "downloading",
+  Downloaded = "downloaded",
+  DownloadOnDesktop = "downloadOnDesktop",
+}
 
 type DownloadPodcastButtonProps = {
   existingState: DownloadState;
@@ -26,8 +32,8 @@ export const DownloadPodcastButton = ({
   );
 
   const handleDownload = async () => {
-    setDownloadState("downloading");
-    updateLocalState(id, "downloading");
+    setDownloadState(DownloadState.Downloading);
+    updateLocalState(id, DownloadState.Downloading);
     const anchor = document.createElement("a");
 
     try {
@@ -46,12 +52,15 @@ export const DownloadPodcastButton = ({
       window.URL.revokeObjectURL(blobUrl);
     } catch {
       // Open the URL in a new tab if there's an error (likely CORS)
-      window.open(url, "_blank");
+      if (isMobile) setDownloadState(DownloadState.DownloadOnDesktop);
+      else {
+        window.open(url, "_blank");
+      }
     } finally {
       // Clean up the anchor element
       anchor.remove();
-      setDownloadState("downloaded");
-      updateLocalState(id, "downloaded");
+      setDownloadState(DownloadState.Downloaded);
+      updateLocalState(id, DownloadState.Downloaded);
     }
   };
 
@@ -59,7 +68,7 @@ export const DownloadPodcastButton = ({
     readyToDownload: <Download />,
     downloading: <LoadingSpinner />,
     downloaded: <Check />,
-    error: <X />,
+    downloadOnDesktop: <X />,
   };
 
   const buttonStyle: Record<
@@ -69,18 +78,21 @@ export const DownloadPodcastButton = ({
     readyToDownload: "default",
     downloading: "default",
     downloaded: "ghost",
+    downloadOnDesktop: "destructive",
   };
 
   const buttonAriaLabel: Record<DownloadState, string> = {
     readyToDownload: "Download episode",
     downloading: "Downloading episode",
     downloaded: "Downloaded",
+    downloadOnDesktop: "Please download on desktop browser",
   };
 
   const handleOnClick = {
     readyToDownload: handleDownload,
     downloading: undefined,
     downloaded: handleDownload,
+    downloadOnDesktop: undefined,
   };
 
   return (
@@ -88,12 +100,21 @@ export const DownloadPodcastButton = ({
       size={"sm"}
       variant={buttonStyle[downloadState]}
       onClick={handleOnClick[downloadState]}
-      aria-disabled={downloadState === "downloading"}
+      disabled={
+        downloadState === DownloadState.Downloading ||
+        downloadState === DownloadState.DownloadOnDesktop
+      }
+      aria-disabled={
+        downloadState === DownloadState.Downloading ||
+        downloadState === DownloadState.DownloadOnDesktop
+      }
       aria-label={buttonAriaLabel[downloadState]}
     >
       {downloadIcon[downloadState]}
-      {downloadState === "readyToDownload" && "Download"}
-      {downloadState === "downloaded" && "Downloaded"}
+      {downloadState === DownloadState.ReadyToDownload && "Download"}
+      {downloadState === DownloadState.Downloaded && "Downloaded"}
+      {downloadState === DownloadState.DownloadOnDesktop &&
+        "Error: download on desktop"}
     </Button>
   );
 };

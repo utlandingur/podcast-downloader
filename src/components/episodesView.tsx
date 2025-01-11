@@ -37,7 +37,7 @@ export const EpisodesView = ({
         }
       }
       // Filter by download state
-      if (!showDownloaded && episode.downloadState === "downloaded")
+      if (!showDownloaded && episode.downloadState === DownloadState.Downloaded)
         return false;
       return true;
     });
@@ -67,7 +67,7 @@ export const EpisodesView = ({
           episode.id.toString()
         );
         if (isDownloaded) {
-          episode.downloadState = "downloaded";
+          episode.downloadState = DownloadState.Downloaded;
         }
       }
       return {
