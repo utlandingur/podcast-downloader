@@ -53,19 +53,20 @@ export const DownloadPodcastButton = ({
 
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
+
+      setDownloadState(DownloadState.Downloaded);
+      updateLocalState(id, DownloadState.Downloaded);
     } catch {
       // Open the URL in a new tab if there's an error (likely CORS)
       if (!isDesktop) {
         anchor.remove();
         setDownloadState(DownloadState.DownloadOnDesktop);
-        return;
       } else {
         window.open(url, "_blank");
+        anchor.remove();
+        setDownloadState(DownloadState.Downloaded);
+        updateLocalState(id, DownloadState.Downloaded);
       }
-    } finally {
-      anchor.remove();
-      setDownloadState(DownloadState.Downloaded);
-      updateLocalState(id, DownloadState.Downloaded);
     }
   };
 
