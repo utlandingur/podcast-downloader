@@ -55,12 +55,14 @@ export const DownloadPodcastButton = ({
       window.URL.revokeObjectURL(blobUrl);
     } catch {
       // Open the URL in a new tab if there's an error (likely CORS)
-      if (!isDesktop) setDownloadState(DownloadState.DownloadOnDesktop);
-      else {
+      if (!isDesktop) {
+        anchor.remove();
+        setDownloadState(DownloadState.DownloadOnDesktop);
+        return;
+      } else {
         window.open(url, "_blank");
       }
     } finally {
-      // Clean up the anchor element
       anchor.remove();
       setDownloadState(DownloadState.Downloaded);
       updateLocalState(id, DownloadState.Downloaded);
