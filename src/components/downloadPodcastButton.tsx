@@ -3,8 +3,14 @@ import { Check, Download, X } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import { Button } from "./ui/button";
+import { isDesktop } from "react-device-detect";
 
-export type DownloadState = "readyToDownload" | "downloading" | "downloaded";
+export enum DownloadState {
+  ReadyToDownload = "readyToDownload",
+  Downloading = "downloading",
+  Downloaded = "downloaded",
+  DownloadOnDesktop = "downloadOnDesktop",
+}
 
 type DownloadPodcastButtonProps = {
   existingState: DownloadState;
@@ -22,12 +28,15 @@ export const DownloadPodcastButton = ({
   fileName,
 }: DownloadPodcastButtonProps) => {
   const [downloadState, setDownloadState] = useState<DownloadState>(
-    existingState ?? "readyToDownload"
+    existingState
+      ? existingState === DownloadState.DownloadOnDesktop && isDesktop
+        ? DownloadState.ReadyToDownload
+        : existingState
+      : DownloadState.ReadyToDownload
   );
 
   const handleDownload = async () => {
-    setDownloadState("downloading");
-    updateLocalState(id, "downloading");
+    setDownloadState(DownloadState.Downloading);
     const anchor = document.createElement("a");
 
     try {
@@ -36,6 +45,9 @@ export const DownloadPodcastButton = ({
         throw new Error("Failed to fetch the file");
       }
       const blob = await response.blob();
+      if (!blob || blob.size === 0) {
+        throw new Error("Received empty blob.");
+      }
       const blobUrl = window.URL.createObjectURL(blob);
 
       anchor.href = blobUrl;
@@ -44,14 +56,21 @@ export const DownloadPodcastButton = ({
 
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
+      anchor.remove();
+      setDownloadState(DownloadState.Downloaded);
+      updateLocalState(id, DownloadState.Downloaded);
     } catch {
       // Open the URL in a new tab if there's an error (likely CORS)
-      window.open(url, "_blank");
-    } finally {
-      // Clean up the anchor element
-      anchor.remove();
-      setDownloadState("downloaded");
-      updateLocalState(id, "downloaded");
+      if (!isDesktop) {
+        anchor.remove();
+        setDownloadState(DownloadState.DownloadOnDesktop);
+        updateLocalState(id, DownloadState.DownloadOnDesktop);
+      } else {
+        window.open(url, "_blank");
+        anchor.remove();
+        setDownloadState(DownloadState.Downloaded);
+        updateLocalState(id, DownloadState.Downloaded);
+      }
     }
   };
 
@@ -59,7 +78,7 @@ export const DownloadPodcastButton = ({
     readyToDownload: <Download />,
     downloading: <LoadingSpinner />,
     downloaded: <Check />,
-    error: <X />,
+    downloadOnDesktop: <X />,
   };
 
   const buttonStyle: Record<
@@ -69,18 +88,21 @@ export const DownloadPodcastButton = ({
     readyToDownload: "default",
     downloading: "default",
     downloaded: "ghost",
+    downloadOnDesktop: "destructive",
   };
 
   const buttonAriaLabel: Record<DownloadState, string> = {
     readyToDownload: "Download episode",
     downloading: "Downloading episode",
     downloaded: "Downloaded",
+    downloadOnDesktop: "Please download on desktop browser",
   };
 
   const handleOnClick = {
     readyToDownload: handleDownload,
     downloading: undefined,
     downloaded: handleDownload,
+    downloadOnDesktop: undefined,
   };
 
   return (
@@ -88,12 +110,21 @@ export const DownloadPodcastButton = ({
       size={"sm"}
       variant={buttonStyle[downloadState]}
       onClick={handleOnClick[downloadState]}
-      aria-disabled={downloadState === "downloading"}
+      disabled={
+        downloadState === DownloadState.Downloading ||
+        downloadState === DownloadState.DownloadOnDesktop
+      }
+      aria-disabled={
+        downloadState === DownloadState.Downloading ||
+        downloadState === DownloadState.DownloadOnDesktop
+      }
       aria-label={buttonAriaLabel[downloadState]}
     >
       {downloadIcon[downloadState]}
-      {downloadState === "readyToDownload" && "Download"}
-      {downloadState === "downloaded" && "Downloaded"}
+      {downloadState === DownloadState.ReadyToDownload && "Download"}
+      {downloadState === DownloadState.Downloaded && "Downloaded"}
+      {downloadState === DownloadState.DownloadOnDesktop &&
+        "Error: download on desktop"}
     </Button>
   );
 };
