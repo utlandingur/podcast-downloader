@@ -54,7 +54,6 @@ export const DownloadPodcastButton = ({
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
       anchor.remove();
-
       setDownloadState(DownloadState.Downloaded);
       updateLocalState(id, DownloadState.Downloaded);
     } catch {
@@ -62,6 +61,7 @@ export const DownloadPodcastButton = ({
       if (!isDesktop) {
         anchor.remove();
         setDownloadState(DownloadState.DownloadOnDesktop);
+        updateLocalState(id, DownloadState.DownloadOnDesktop);
       } else {
         window.open(url, "_blank");
         anchor.remove();
