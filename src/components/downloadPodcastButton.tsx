@@ -3,7 +3,7 @@ import { Check, Download, X } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import { Button } from "./ui/button";
-import { isMobile } from "react-device-detect";
+import { isDesktop } from "react-device-detect";
 
 export enum DownloadState {
   ReadyToDownload = "readyToDownload",
@@ -52,7 +52,7 @@ export const DownloadPodcastButton = ({
       window.URL.revokeObjectURL(blobUrl);
     } catch {
       // Open the URL in a new tab if there's an error (likely CORS)
-      if (isMobile) setDownloadState(DownloadState.DownloadOnDesktop);
+      if (!isDesktop) setDownloadState(DownloadState.DownloadOnDesktop);
       else {
         window.open(url, "_blank");
       }
