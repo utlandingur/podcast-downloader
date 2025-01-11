@@ -4,9 +4,10 @@ import { DownloadState } from "./downloadPodcastButton";
 import { useMemo, useState } from "react";
 import { DebouncedInput } from "./ui/input";
 import { EpisodeList } from "./episodeList";
-import { useUserStore } from "@/hooks/useUser";
+import { useUserStore } from "@/hooks/useUserStore";
 import { Toggle } from "@/components/toggle";
 import { ArrowDownNarrowWide, ArrowUpNarrowWide } from "lucide-react";
+import { useCantDownloadStore } from "@/hooks/useCanDownloadStore";
 
 export const EpisodesView = ({
   episodes,
@@ -22,6 +23,12 @@ export const EpisodesView = ({
   const [showDownloaded, setShowDownloaded] = useState(true);
   const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
   const { user, addDownloadedEpisode } = useUserStore((state) => state);
+  const { podcasts } = useCantDownloadStore((state) => state);
+  const canDownload = useMemo(() => {
+    console.log("podcasts", podcasts);
+    console.log("podcastId", podcastId);
+    return !podcasts.some((podcast) => podcast.podcastId === podcastId);
+  }, [podcasts, podcastId]);
 
   const infoIndex = useMemo(() => {
     return user?.info.findIndex((info) => info.podcast_id === podcastId);
@@ -75,7 +82,14 @@ export const EpisodesView = ({
         updateDownloadState: handleUpdateDownloadState,
       };
     });
-  }, [filteredEpisodes, podcastId, user, addDownloadedEpisode, infoIndex]);
+  }, [
+    filteredEpisodes,
+    podcastId,
+    user,
+    addDownloadedEpisode,
+    infoIndex,
+    canDownload,
+  ]);
 
   return (
     <div className={cn("flex flex-col w-[98%] px-4 gap-4 max-w-[720px]")}>
@@ -119,7 +133,12 @@ export const EpisodesView = ({
         </div>
       </div>
       {filteredEpisodes.length > 0 ? (
-        <EpisodeList episodes={episodesToDisplay} podcastName={podcastName} />
+        <EpisodeList
+          episodes={episodesToDisplay}
+          podcastName={podcastName}
+          canDownload={canDownload}
+          podcastId={podcastId}
+        />
       ) : (
         <div>No episodes found</div>
       )}

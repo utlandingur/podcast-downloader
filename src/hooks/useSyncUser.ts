@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUserStore } from "@/hooks/useUser";
+import { useUserStore } from "@/hooks/useUserStore";
 import { Session } from "next-auth";
 
 /**

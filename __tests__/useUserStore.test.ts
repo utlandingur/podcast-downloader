@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, waitFor } from "@testing-library/react";
-import { useUserStore } from "@/hooks/useUser";
+import { useUserStore } from "@/hooks/useUserStore";
 import { PlainUserType } from "@/models/user";
 import { findOrCreateUser } from "@/serverActions/userActions";
 import { Session } from "next-auth";

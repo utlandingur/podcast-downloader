@@ -18,6 +18,8 @@ type EpisodeProps = {
   style: CSSProperties;
   podcastName: string;
   showBorder: boolean;
+  canDownload: boolean;
+  podcastId: string;
 };
 
 export const Episode = ({
@@ -26,6 +28,8 @@ export const Episode = ({
   handleDownloadState,
   style,
   showBorder,
+  canDownload,
+  podcastId,
 }: EpisodeProps) => {
   const { id, title, description, episodeUrl, downloadState } = episode;
   const datePublished = new Date(episode.datePublished); // its a string after being stringified from local storage
@@ -55,11 +59,13 @@ export const Episode = ({
       />
       <div className={cn("flex justify-start pt-2")}>
         <DownloadPodcastButton
-          existingState={downloadState ?? "readyToDownload"}
+          existingState={downloadState}
           id={id}
           updateLocalState={handleDownloadState}
           url={episodeUrl}
           fileName={filename}
+          canDownload={canDownload}
+          podcastId={podcastId}
         />
       </div>
     </div>

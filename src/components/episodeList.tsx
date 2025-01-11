@@ -4,6 +4,8 @@ import { Episode, EpisodeListItem } from "@/components/episode";
 type EpisodeListProps = {
   episodes: EpisodeListItem[];
   podcastName: string;
+  canDownload: boolean; // Find a better way to pass this down. Lots of prop drilling.
+  podcastId: string; // Find a better way to pass this down. Lots of prop drilling.
 };
 
 // Row component to render each item in the list
@@ -13,7 +15,12 @@ type RowProps<EpisodeListItem> = {
   data: EpisodeListItem[]; // The array of items passed as `itemData` to the List.
 };
 
-export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
+export const EpisodeList = ({
+  episodes,
+  podcastName,
+  canDownload,
+  podcastId,
+}: EpisodeListProps) => {
   const ITEM_SIZE = 160;
   const numOfEps = episodes.length;
 
@@ -28,6 +35,8 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
         handleDownloadState={updateDownloadState}
         style={style}
         showBorder={showBorder}
+        canDownload={canDownload}
+        podcastId={podcastId}
       />
     );
   };
