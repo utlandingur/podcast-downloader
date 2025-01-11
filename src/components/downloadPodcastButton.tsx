@@ -113,6 +113,8 @@ export const DownloadPodcastButton = ({
       }
       aria-label={buttonAriaLabel[downloadState]}
     >
+      {isDesktop && "Desktop"}
+      {!isDesktop && "not Desktop"}
       {downloadIcon[downloadState]}
       {downloadState === DownloadState.ReadyToDownload && "Download"}
       {downloadState === DownloadState.Downloaded && "Downloaded"}
