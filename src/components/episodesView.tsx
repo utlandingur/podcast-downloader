@@ -82,14 +82,7 @@ export const EpisodesView = ({
         updateDownloadState: handleUpdateDownloadState,
       };
     });
-  }, [
-    filteredEpisodes,
-    podcastId,
-    user,
-    addDownloadedEpisode,
-    infoIndex,
-    canDownload,
-  ]);
+  }, [filteredEpisodes, podcastId, user, addDownloadedEpisode, infoIndex]);
 
   return (
     <div className={cn("flex flex-col w-[98%] px-4 gap-4 max-w-[720px]")}>

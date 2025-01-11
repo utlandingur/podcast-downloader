@@ -1,6 +1,6 @@
 "use client";
 import { Check, Download, X } from "lucide-react";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import { Button } from "./ui/button";
 import { useCantDownloadStore } from "@/hooks/useCanDownloadStore";
