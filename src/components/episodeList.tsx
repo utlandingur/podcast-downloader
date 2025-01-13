@@ -33,7 +33,7 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
   };
   return (
     <List
-      height={Math.min(640, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
+      height={Math.min(480, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
       itemCount={numOfEps} // Total number of episodes.
       itemSize={ITEM_SIZE} // Function returning height of each item.
       width={"100%"} // Total width of the container in pixels.

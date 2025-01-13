@@ -108,7 +108,6 @@ export const EpisodesView = ({
             // trueIcon={<X className="h-4 w-4" />}
           />
         </div>
-
         <div className={cn("flex gap-4 items-center")}>
           <div className={cn("min-w-14")}>Search</div>
           <DebouncedInput
@@ -116,6 +115,9 @@ export const EpisodesView = ({
             onChange={(e) => setSearchTerm(e.target.value)}
             className={cn("max-w-96")}
           />
+        </div>
+        <div className={cn("text-sm text-muted-foreground")}>
+          {`${filteredEpisodes.length} episodes`}
         </div>
       </div>
       {filteredEpisodes.length > 0 ? (
