@@ -1,10 +1,11 @@
-import { PodcastSearchBar } from "@/components/podcastSearchBar";
 import { geistSans, geistMono } from "./fonts";
-import { Suspense } from "react";
-import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { HowItWorks } from "@/components/howItWorks";
-import { SocialShareLinks } from "@/components/socialShareLinks";
+import { Hero } from "@/components/hero";
+import { UserReviews } from "@/components/userReviews";
+import { Support } from "@/components/support";
+import { FAQ } from "@/components/faq";
+import { Features } from "@/components/features";
 
 export const metadata: Metadata = {
   title: "PodcastToMp3 - Download Podcasts as MP3",
@@ -46,41 +47,14 @@ export const metadata: Metadata = {
 export default async function Home() {
   return (
     <main
-      className={`flex flex-col gap-8 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center p-8 sm:px-4 text-center`}
+      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center  px-8 md:px-0`}
     >
-      <div
-        className={cn("max-w-[600px] flex flex-col gap-8 p-4 sm:px-4 w-full")}
-      >
-        <h1>Download podcasts as mp3</h1>
-        <p>
-          Easily convert and download podcasts into MP3 format for offline
-          listening. Discover your favorite shows and take them wherever you go!
-        </p>
-        <section id="how it works" className={cn("m-y-2")}>
-          <h2>How it works</h2>
-          <p>
-            1. Search for your favourite podcast.
-            <br />
-            2. Download episodes as mp3 files.
-          </p>
-          <br />
-          <p>
-            It’s that simple! Our platform makes it easy for you to enjoy
-            podcasts on any device.
-          </p>
-        </section>
-        <Suspense fallback={<div>Loading...</div>}>
-          <div className={cn("flex flex-col gap-4 py-16")}>
-            <h2>Search for a podcast</h2>
-            <PodcastSearchBar />
-          </div>
-        </Suspense>
-        <HowItWorks />
-        <SocialShareLinks
-          url="https://podcasttomp3.com"
-          title="Download a podcast to mp3"
-        />
-      </div>
+      <Hero />
+      <HowItWorks />
+      <Features />
+      <UserReviews />
+      <Support />
+      <FAQ />
     </main>
   );
 }

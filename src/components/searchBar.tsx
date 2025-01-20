@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import { useTheme } from "next-themes";
 import { ClassValue } from "clsx";
+import { CoffeeButton } from "./coffeeButton";
 
 export type SearchResult = {
   name: string;
@@ -17,6 +18,7 @@ export type SearchResult = {
 
 type SearchBarProps = {
   searchQuery: (searchTerm: string) => Promise<SearchResult[]>;
+  showCoffee?: boolean;
   staleTime?: number;
   enabled?: boolean;
   queryKey?: string[];
@@ -24,6 +26,7 @@ type SearchBarProps = {
 };
 
 export const SearchBar = ({
+  showCoffee,
   enabled = true,
   searchQuery,
   width = "w-72 sm:w-96",
@@ -170,25 +173,17 @@ export const SearchBar = ({
           )}
         </Popover>
       </div>
-      <div className={cn("text-center")}>
-        <p>
-          If you love this site, please consider buying me a coffee. It helps
-          pays the bills and keep me motivated.
-        </p>
-      </div>
-      <a
-        href="https://www.buymeacoffee.com/utlandingur"
-        role="button"
-        aria-label="Buy me a coffee"
-      >
-        <img
-          src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=utlandingur&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff"
-          className={cn("h-9")}
-          alt="Buy me a coffee button"
-          width={235}
-          height={50}
-        />
-      </a>
+      {showCoffee && (
+        <>
+          <div className={cn("text-center")}>
+            <p>
+              If you love this site, please consider buying me a coffee. It
+              helps pays the bills and keep me motivated.
+            </p>
+          </div>
+          <CoffeeButton />
+        </>
+      )}
     </div>
   );
 };
