@@ -18,6 +18,11 @@ export function UserReviews() {
       author: "Tom Prior",
       source: "BuyMeACoffee",
     },
+    {
+      text: "Thanks for creating and sharing this. It's really helpful and means that I can download history podcast episodes for my elderly father to listen to in the car via USB stick (he is beyond using bluetooth devices and/or podcasts on his phone :)",
+      author: "Em",
+      source: "BuyMeACoffee",
+    },
   ];
 
   return (
@@ -29,7 +34,7 @@ export function UserReviews() {
           </h2>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {reviews.map((review, i) => (
             <Card key={i}>
               <CardContent className="p-6 space-y-4 bg-primary-foreground h-full flex flex-col justify-between">
