@@ -10,7 +10,7 @@ export function HowItWorks() {
             How It Works
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Download your favorite podcasts in just three simple steps
+            Download your favorite podcasts in just two simple steps
           </p>
         </div>
 
