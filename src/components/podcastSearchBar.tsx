@@ -3,7 +3,10 @@ import { useRouter } from "next/navigation";
 import { SearchBar } from "@/components/searchBar";
 import { usePageLoad } from "@/providers/pageLoadProvider";
 import type { SearchResult } from "@/components/searchBar";
-import { lookupPodcastsV2 } from "@/serverActions/lookupPodcasts";
+import {
+  lookupPodcastsV1,
+  lookupPodcastsV2,
+} from "@/serverActions/lookupPodcasts";
 import { PodcastsSearchResponseV2 } from "@/types/podcasts";
 
 export const PodcastSearchBar = () => {
@@ -20,6 +23,28 @@ export const PodcastSearchBar = () => {
       handleOnClick: () => {
         startLoading();
         router.push(`/podcasts/v2/${JSON.stringify(podcast.id)}`);
+      },
+    }));
+  };
+
+  return <SearchBar searchQuery={podcastSearch} />;
+};
+
+export const PodcastSearchBarV1 = () => {
+  const router = useRouter();
+  const { startLoading } = usePageLoad();
+
+  const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
+    if (!searchTerm) return [];
+    const podcasts = await lookupPodcastsV1(searchTerm, 6);
+
+    return podcasts.map((podcast) => ({
+      name: podcast.collectionName,
+      label: podcast.collectionName,
+      image: podcast.artworkUrl100,
+      handleOnClick: () => {
+        startLoading();
+        router.push(`/podcasts/${JSON.stringify(podcast.collectionId)}`);
       },
     }));
   };

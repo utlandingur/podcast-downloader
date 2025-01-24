@@ -1,4 +1,4 @@
-import { PodcastSearchBar } from "@/components/podcastSearchBar";
+import { PodcastSearchBarV1 } from "@/components/podcastSearchBar";
 import { geistSans, geistMono } from "@/app/fonts";
 import { Suspense } from "react";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import type { Metadata } from "next";
 import type { PodcastEpisode } from "@/types/podcasts";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Link from "next/link";
 
 type Params = Promise<{
   id: string;
@@ -61,8 +62,11 @@ export default async function PodcastPage({ params }: { params: Params }) {
             🎉 Version 2 is Here!
           </AlertTitle>
           <AlertDescription>
-            You may have bookmarked this page. Search for your podcast again to
-            access all episodes, improved search, and future updates!
+            You may have bookmarked this page. Go to{" "}
+            <Link href="/" className="underline">
+              the homepage
+            </Link>{" "}
+            and search again to access it.
           </AlertDescription>
         </Alert>
       </div>
@@ -75,7 +79,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
       >
         <div className={cn("p-8 flex flex-col items-center gap-4")}>
           <h2 className={cn("text-xl")}>Search for another podcast</h2>
-          <PodcastSearchBar />
+          <PodcastSearchBarV1 />
         </div>
         <div
           className={cn(

@@ -1,5 +1,5 @@
 "use server";
-import type { PodcastV2 } from "@/types/podcasts";
+import type { Podcast, PodcastV2 } from "@/types/podcasts";
 import { getPodcastIndexHeaders } from "@/serverActions/getPodcastIndexHeaders";
 
 export const lookupPodcastsV2 = async (
@@ -18,4 +18,16 @@ export const lookupPodcastsV2 = async (
   const data = await response.json();
 
   return data.feeds;
+};
+
+export const lookupPodcastsV1 = async (
+  searchTerm: string,
+  limit: number = 6
+): Promise<Podcast[]> => {
+  const response = await fetch(
+    `https://itunes.apple.com/search?term=${searchTerm}&entity=podcast&limit=${limit}`,
+    { cache: "force-cache" }
+  );
+  const data = await response.json();
+  return data.results;
 };
