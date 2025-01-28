@@ -4,12 +4,14 @@ import { useState } from "react";
 import { LoadingSpinner } from "./ui/loadingSpinner";
 import { Button } from "./ui/button";
 import { isDesktop } from "react-device-detect";
+import Link from "next/link";
 
 export enum DownloadState {
   ReadyToDownload = "readyToDownload",
   Downloading = "downloading",
   Downloaded = "downloaded",
   DownloadOnDesktop = "downloadOnDesktop",
+  downloadedInNewTab = "downloadedInNewTab",
 }
 
 type DownloadPodcastButtonProps = {
@@ -68,17 +70,18 @@ export const DownloadPodcastButton = ({
       } else {
         window.open(url, "_blank");
         anchor.remove();
-        setDownloadState(DownloadState.Downloaded);
-        updateLocalState(id, DownloadState.Downloaded);
+        setDownloadState(DownloadState.downloadedInNewTab);
+        updateLocalState(id, DownloadState.downloadedInNewTab);
       }
     }
   };
 
-  const downloadIcon = {
+  const downloadIcon: Record<DownloadState, React.ReactElement> = {
     readyToDownload: <Download />,
     downloading: <LoadingSpinner />,
     downloaded: <Check />,
     downloadOnDesktop: <X />,
+    downloadedInNewTab: <Check />,
   };
 
   const buttonStyle: Record<
@@ -89,6 +92,7 @@ export const DownloadPodcastButton = ({
     downloading: "default",
     downloaded: "ghost",
     downloadOnDesktop: "destructive",
+    downloadedInNewTab: "default",
   };
 
   const buttonAriaLabel: Record<DownloadState, string> = {
@@ -96,14 +100,41 @@ export const DownloadPodcastButton = ({
     downloading: "Downloading episode",
     downloaded: "Downloaded",
     downloadOnDesktop: "Please download on desktop browser",
+    downloadedInNewTab: "Download in new tab",
   };
 
-  const handleOnClick = {
+  const handleOnClick: Record<
+    DownloadState,
+    (() => Promise<void>) | undefined
+  > = {
     readyToDownload: handleDownload,
     downloading: undefined,
     downloaded: handleDownload,
     downloadOnDesktop: undefined,
+    downloadedInNewTab: undefined,
   };
+
+  if (downloadState === DownloadState.downloadedInNewTab) {
+    return (
+      <div className="flex gap-8 align-center justify-center text-center">
+        <Link href={url}>
+          <Button
+            size={"sm"}
+            variant={"default"}
+            disabled
+            aria-disabled
+            aria-label={buttonAriaLabel[downloadState]}
+          >
+            {downloadIcon[downloadState]}
+            Downloaded in new tab - click to retry
+          </Button>
+        </Link>
+        <div className="text-[0.7rem] text-center self-center text-muted-foreground">
+          Click three dots and press download.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Button

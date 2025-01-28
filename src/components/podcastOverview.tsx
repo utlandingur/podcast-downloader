@@ -7,7 +7,6 @@ import {
   usePodcastEpisodesV2,
 } from "@/hooks/usePodcastEpisodes";
 import { LoadingSpinner } from "./ui/loadingSpinner";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SocialShareLinks } from "./socialShareLinks";
 import { usePodcastV2 } from "@/hooks/usePodcast";
@@ -43,7 +42,7 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
     <>
       <h1 className={cn("text-center")}>{podCastName}</h1>
       {imageUrl && (
-        <Image
+        <img
           width={100}
           height={100}
           src={imageUrl}
@@ -76,8 +75,7 @@ export const PodcastOverviewV2 = ({ id, session }: PodcastOverviewV2Props) => {
   return (
     <>
       <h1 className={cn("text-center line-clamp-5 w-full")}>{podcast.title}</h1>
-
-      <Image
+      <img
         width={100}
         height={100}
         className="rounded-md"
