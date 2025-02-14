@@ -35,7 +35,6 @@
     "mongoose": "^8.9.3",
     "next": "15.0.3",
     "next-auth": "^5.0.0-beta.25",
-    "next-sitemap": "^4.2.3",
     "next-themes": "^0.4.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-day-picker": "^8.10.1",
@@ -64,6 +63,7 @@
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "next-sitemap": "^4.2.3"
   }
 }
