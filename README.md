@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Podcast Downloader
+
+Podcast Downloader is a free and open-source web application that allows users to search for and download podcasts. The project is built using Next.js, TypeScript, and Mongoose, with API support for both Apple Podcasts and Podcast Index.
+
+## Hosted Version
+
+You can access the live version at [podcasttomp3.com](https://podcasttomp3.com).
+
+- **v2 (Default)**: Available at `podcasttomp3.com` (uses Podcast Index API).
+- **v1 (Legacy)**: Available at `podcasttomp3.com/v1` (uses Apple Podcasts API).
+
+## Features
+
+- **Search for podcasts** using Apple Podcasts API (v1) or Podcast Index API (v2, default).
+- **Download podcast episodes** directly from the UI.
+- **MongoDB integration** using Mongoose for storing user preferences and downloads.
+- **Auth enabled** to store and maintain a list of downloaded episodes and favourite podcasts.
+- **Favourites functionality** foundations in place but not yet implemented - contributions welcome!
+- **Minimal server costs and secure** since all fetching and downloading of episodes happens locally on the user's machine.
+- Styled with [ShadCN](https://ui.shadcn.com/) components.
+- Local state managed with Zustand.
+
+## Project Structure
+
+```
+/public                  # Static assets
+/src                     # Application source code
+  ├── hooks              # Custom React hooks
+  ├── components         # Re-usable components ("most" v1 only components are labelled clearly)
+  ├── server actions     # Server-side logic for Next.js
+  ├── providers          # Context providers for global state management
+  ├── models             # Mongoose models for database handling
+  ├── app                # Routing for Next.js app router
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Ensure you have the following installed:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js 18+
+- MongoDB (set up your own server)
+- API keys for Apple Podcasts and/or Podcast Index
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/utlandingur/podcast-downloader.git
+   cd podcast-downloader
+   ```
+2. Install dependencies (currently requires `--force` due to React version conflicts, but this does not seem to cause issues):
+   ```sh
+   npm install --force
+   ```
+3. Set up environment variables: Create a `.env.local` file and add:
+   ```env
+   APPLE_PODCAST_API_KEY=your_apple_api_key
+   PODCAST_INDEX_API_KEY=your_podcast_index_api_key
+   PODCAST_INDEX_API_SECRET=your_podcast_index_api_secret
+   MONGODB_URI=your_mongodb_connection_string
+   ```
+4. Run the development server:
+   ```sh
+   npm run dev
+   ```
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+- Open `http://localhost:3000` in your browser.
+- Search for podcasts using the search bar.
+- Download episodes directly from the interface.
+- All fetching and downloading of episodes is done locally on the machine to minimize running costs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project is completely free and open-source, and contributions are highly encouraged! If you'd like to help:
 
-## Deploy on Vercel
+1. **Fork the repository** on GitHub.
+2. **Create a new branch** for your changes:
+   ```sh
+   git checkout -b feature-name
+   ```
+3. **Make your changes** and commit them:
+   ```sh
+   git commit -m "Added new feature"
+   ```
+4. **Push to your fork**:
+   ```sh
+   git push origin feature-name
+   ```
+5. **Create a pull request** on GitHub to merge your changes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Suggested Contributions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Implement the **favourites** feature.
+- Improve UI/UX for a better experience.
+- Add support for additional podcast APIs.
+
+## License
+
+This project is **free and open-source**, but **commercial use is strictly prohibited**.
+
+---
+
+If you have any questions or ideas, feel free to open an issue or start a discussion!

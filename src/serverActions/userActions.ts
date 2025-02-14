@@ -52,7 +52,7 @@ export const findOrCreateUser = async (
 ): Promise<PlainUserType> => {
   await connectToDatabase();
   const user: UserDocument = await User.findOneAndUpdate(
-    { email }, // Filter by userId and podcastId
+    { email },
     { $setOnInsert: { email } }, // Insert a new user state if not found
     { upsert: true, new: true }
   );
