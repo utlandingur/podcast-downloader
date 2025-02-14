@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { PodcastSearchBarV1 } from "./podcastSearchBar";
+import { Badge } from '@/components/ui/badge';
+import { PodcastSearchBarV1 } from './podcastSearchBar';
 
 export function HeroV1() {
   return (
@@ -22,7 +22,7 @@ export function HeroV1() {
 
         <div className="flex justify-center space-x-4">
           <Badge variant="secondary" className="px-4 py-1">
-            5K+ Users
+            10K+ Visitors
           </Badge>
           <Badge variant="secondary" className="px-4 py-1">
             20+ Supporters
