@@ -60,10 +60,10 @@ export default async function PodcastPage({ params }: { params: Params }) {
         <Alert className="bg-secondary-foreground text-secondary">
           <AlertTitle>🎉 Version 2 is Here!</AlertTitle>
           <AlertDescription>
-            You may have bookmarked this page. Go to{' '}
+            You may have bookmarked this page. Go to
             <Link href="/" className="underline">
               the homepage
-            </Link>{' '}
+            </Link>
             and search again to access it.
           </AlertDescription>
         </Alert>
