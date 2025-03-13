@@ -1,11 +1,12 @@
-"use client";
-import type { PlainUserType } from "@/models/user";
+'use client';
+import { fetchUser } from '@/lib/fetchUser';
+import { getFavouriteIds } from '@/lib/getFavouriteIds';
+import type { PlainUserType } from '@/models/user';
 import {
   addDownloadedEpisode,
-  findOrCreateUser,
   toggleFavouritePodcast,
-} from "@/serverActions/userActions";
-import { create } from "zustand";
+} from '@/serverActions/userActions';
+import { create } from 'zustand';
 
 type UserState = {
   user: PlainUserType | null;
@@ -15,10 +16,11 @@ type UserState = {
 
 type UserStateActions = {
   syncUser: (email: string | null) => Promise<void>;
+  getFavouriteIds: () => string[];
   addDownloadedEpisode: (podcastId: string, episodeId: string) => Promise<void>;
   toggleFavouritePodcast: (
     podcastId: string,
-    favourited: boolean
+    favourited: boolean,
   ) => Promise<void>;
 };
 
@@ -29,13 +31,17 @@ export const useUserStore = create<UserState & UserStateActions>(
     error: null,
     syncUser: async (email: string | null) => {
       if (email) {
+        set({ loading: true });
         try {
-          set({ loading: true });
-          const user = await findOrCreateUser(email);
+          const data = await fetchUser(email);
+          if (data.error) {
+            throw data.error;
+          }
+          const user = data.user;
           set({ user });
         } catch (error) {
-          set({ error: "Error fetching user." });
-          console.error("Error fetching user:", error);
+          set({ error: 'Error fetching user.' });
+          console.error('Error fetching user:', error);
         } finally {
           set({ loading: false });
         }
@@ -43,27 +49,34 @@ export const useUserStore = create<UserState & UserStateActions>(
         set({ user: null });
       }
     },
+    getFavouriteIds: () => {
+      const user = get().user;
+      if (!user) {
+        return [];
+      }
+      return getFavouriteIds(user);
+    },
     addDownloadedEpisode: async (podcastId: string, episodeId: string) => {
       const user = get().user;
       if (user) {
         const updatedUser = await addDownloadedEpisode(
           user,
           podcastId,
-          episodeId
+          episodeId,
         );
         set({ user: updatedUser });
       }
     },
     toggleFavouritePodcast: async (podcastId: string, favourited: boolean) => {
       const user = get().user;
-      if (user) {
+      if (user && !get().loading) {
         const updatedUser = await toggleFavouritePodcast(
           user,
           podcastId,
-          favourited
+          favourited,
         );
         set({ user: updatedUser });
       }
     },
-  })
+  }),
 );

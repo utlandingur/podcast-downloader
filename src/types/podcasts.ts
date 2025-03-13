@@ -1,4 +1,4 @@
-import { DownloadState } from "@/components/downloadPodcastButton";
+import { DownloadState } from '@/components/downloadPodcastButton';
 
 //---- API V1 uses itunes ---- //
 export type Podcast = {
@@ -39,10 +39,9 @@ export type PodcastV2 = {
   type: number; // 0:RSS, 1:Atom
   dead: boolean; // Once the feed is marked dead, checked once per month.
   episodeCount: number;
-  newestItemPubdate: number;
+  newestItemPubdate: Date;
   trackCount: string;
 };
-
 
 export type PodcastsSearchResponseV2 = {
   title: string;
@@ -51,12 +50,12 @@ export type PodcastsSearchResponseV2 = {
 };
 
 enum TranscriptType {
-  ApplicationJson = "application/json",
-  ApplicationSrt = "application/srt",
-  TextHtml = "text/html",
-  TextPlain = "text/plain",
-  TextSrt = "text/srt",
-  TextVtt = "text/vtt",
+  ApplicationJson = 'application/json',
+  ApplicationSrt = 'application/srt',
+  TextHtml = 'text/html',
+  TextPlain = 'text/plain',
+  TextSrt = 'text/srt',
+  TextVtt = 'text/vtt',
 }
 
 export type PodcastEpisodeResponseV2 = {

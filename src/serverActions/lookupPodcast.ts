@@ -31,7 +31,7 @@ export const lookupPodcastV2 = async (
     type,
     dead,
     episodeCount,
-    newestItemPubdate,
+    lastUpdateTime,
     trackCount,
     id,
   } = data.feed;
@@ -45,7 +45,7 @@ export const lookupPodcastV2 = async (
     type,
     dead,
     episodeCount,
-    newestItemPubdate,
+    newestItemPubdate: new Date(lastUpdateTime * 1000), // convert from unix timestamp to JS date
     trackCount,
     id,
   };

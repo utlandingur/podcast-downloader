@@ -10,7 +10,7 @@ import { LoadingSpinner } from './ui/loadingSpinner';
 import { cn } from '@/lib/utils';
 import { SocialShareLinks } from './socialShareLinks';
 import { usePodcastV2 } from '@/hooks/usePodcast';
-import { EpisodesView } from '@/components/episodesView';
+import { EpisodesView } from '@/components/episodesView/episodesView';
 import { Session } from 'next-auth';
 import { useSyncUser } from '@/hooks/useSyncUser';
 import Image from 'next/image';
@@ -90,6 +90,7 @@ export const PodcastOverviewV2 = ({ id, session }: PodcastOverviewV2Props) => {
         episodes={episodes}
         podcastName={podcast.title}
         podcastId={podcast.id.toString()}
+        isLoggedIn={!!session}
       />
       <Link href={podcast.feedUrl} target="_blank">
         <Button

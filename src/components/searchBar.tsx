@@ -1,13 +1,13 @@
-"use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { SearchInput } from "./ui/searchInput";
-import { useQuery } from "@tanstack/react-query";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { cn } from "@/lib/utils";
-import { LoadingSpinner } from "@/components/ui/loadingSpinner";
-import { useTheme } from "next-themes";
-import { ClassValue } from "clsx";
-import { CoffeeButton } from "./coffeeButton";
+'use client';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { SearchInput } from './ui/searchInput';
+import { useQuery } from '@tanstack/react-query';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { cn } from '@/lib/utils';
+import { LoadingSpinner } from '@/components/ui/loadingSpinner';
+import { useTheme } from 'next-themes';
+import { ClassValue } from 'clsx';
+import { CoffeeButton } from './coffeeButton';
 
 export type SearchResult = {
   name: string;
@@ -29,16 +29,16 @@ export const SearchBar = ({
   showCoffee,
   enabled = true,
   searchQuery,
-  width = "w-72 sm:w-96",
+  width = 'w-72 sm:w-96',
 }: SearchBarProps) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultContainer = useRef<HTMLDivElement | null>(null);
 
   const { data: searchResults = [], isLoading } = useQuery({
-    queryKey: ["search", searchTerm],
+    queryKey: ['search', searchTerm],
     enabled: searchTerm.length > 0 && enabled,
     queryFn: async ({ queryKey }: { queryKey: [string, string] }) => {
       const [, searchTerm] = queryKey;
@@ -50,14 +50,14 @@ export const SearchBar = ({
   useEffect(() => {
     if (!resultContainer.current) return;
     resultContainer.current.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
+      behavior: 'smooth',
+      block: 'nearest',
     });
   }, [focusedIndex]);
 
   const handleNewSearchTerm = useCallback((newSearchTerm: string): void => {
     setSearchTerm(newSearchTerm);
-    if (newSearchTerm === "" || !newSearchTerm) setShowPopover(false);
+    if (newSearchTerm === '' || !newSearchTerm) setShowPopover(false);
     else setShowPopover(true);
   }, []);
 
@@ -66,22 +66,22 @@ export const SearchBar = ({
     const { key } = event;
     let nextIndexCount = focusedIndex;
 
-    if (key === "ArrowDown") {
+    if (key === 'ArrowDown') {
       event.preventDefault();
       nextIndexCount = (focusedIndex + 1) % searchResults.length;
     }
 
-    if (key === "ArrowUp") {
+    if (key === 'ArrowUp') {
       event.preventDefault();
       nextIndexCount =
         (focusedIndex - 1 + searchResults.length) % searchResults.length;
     }
 
-    if (key === "Escape") {
+    if (key === 'Escape') {
       setShowPopover(false);
     }
 
-    if (key === "Enter" && focusedIndex !== -1) {
+    if (key === 'Enter' && focusedIndex !== -1) {
       setShowPopover(false);
       searchResults[focusedIndex].handleOnClick?.();
     }
@@ -92,9 +92,9 @@ export const SearchBar = ({
   const Results = () => {
     const { systemTheme } = useTheme();
     const hoverStyles: ClassValue =
-      systemTheme === "dark" ? "hover:bg-slate-600" : "hover:bg-slate-100";
+      systemTheme === 'dark' ? 'hover:bg-slate-600' : 'hover:bg-slate-100';
     const focusStyles: ClassValue =
-      systemTheme === "dark" ? "bg-slate-800" : "bg-slate-200";
+      systemTheme === 'dark' ? 'bg-slate-800' : 'bg-slate-200';
 
     return searchResults.length > 0
       ? searchResults.map((result, index) => (
@@ -102,8 +102,8 @@ export const SearchBar = ({
             tabIndex={0}
             className={cn(
               `grid grid-cols-[100px_auto] gap-2 items-center cursor-pointer rounded-md ${
-                focusedIndex === index ? focusStyles : ""
-              } hover:bg-red ${hoverStyles}`
+                focusedIndex === index ? focusStyles : ''
+              } hover:bg-red ${hoverStyles}`,
             )}
             ref={index === focusedIndex ? resultContainer : null}
             onClick={() => {
@@ -121,21 +121,21 @@ export const SearchBar = ({
                 alt={`Image for podcast ${result.name}`}
                 width={100}
                 height={100}
-                className={cn("rounded-md")}
+                className={cn('rounded-md')}
                 loading="lazy"
               />
             )}
 
-            <div tabIndex={-1} className={cn("w-full")}>
+            <div tabIndex={-1} className={cn('w-full')}>
               {result.label}
             </div>
           </div>
         ))
-      : " No results found";
+      : ' No results found';
   };
 
   return (
-    <div className={cn("flex gap-8 flex-col items-center")}>
+    <div className={cn('flex gap-8 flex-col items-center')}>
       <div
         className="flex w-full justify-center gap-2"
         onKeyDown={handleKeyDown}
@@ -156,13 +156,13 @@ export const SearchBar = ({
               side="bottom"
               sideOffset={4}
               className={cn(
-                `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${width}`
+                `p-0 max-h-72 sm:max-h-96 overflow-hidden overflow-y-auto ${width}`,
               )}
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <div className="grid gap-2 p-2">
                 {isLoading ? (
-                  <div className={cn("justify-self-center")}>
+                  <div className={cn('justify-self-center')}>
                     <LoadingSpinner />
                   </div>
                 ) : (
@@ -175,7 +175,7 @@ export const SearchBar = ({
       </div>
       {showCoffee && (
         <>
-          <div className={cn("text-center")}>
+          <div className={cn('text-center')}>
             <p>
               If you love this site, please consider buying me a coffee. It
               helps pays the bills and keep me motivated.

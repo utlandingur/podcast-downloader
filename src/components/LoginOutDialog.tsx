@@ -1,5 +1,5 @@
-"use client";
-import { Button } from "@/components/ui/button";
+'use client';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,13 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "@/components/ui/dialog";
-import { LogIn, LogOut } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { signIn, signOut } from "next-auth/react";
+} from '@/components/ui/dialog';
+import { LogIn, LogOut } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { signIn, signOut } from 'next-auth/react';
 
-import { GoogleIcon } from "./ui/icons/googleIcon";
+import { GoogleIcon } from './ui/icons/googleIcon';
 
 type LoginOutDialogProps = {
   showLogin: boolean;
@@ -25,9 +25,9 @@ export const LoginOutDialog = ({ showLogin }: LoginOutDialogProps) => {
 
   const handleSignIn = async () => {
     try {
-      signIn("google");
+      signIn('google');
     } catch (error) {
-      console.error("error", error);
+      console.error('error', error);
     } finally {
       setOpen(false);
     }
@@ -37,8 +37,8 @@ export const LoginOutDialog = ({ showLogin }: LoginOutDialogProps) => {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" size={"sm"}>
-            <LogIn className={cn("h-4 w-4")} />
+          <Button variant="outline" className="invert">
+            <LogIn className={cn('h-4 w-4')} />
             <div>Login</div>
           </Button>
         </DialogTrigger>
@@ -52,7 +52,7 @@ export const LoginOutDialog = ({ showLogin }: LoginOutDialogProps) => {
           </DialogHeader>
           <div className="flex flex-col justify-center items-center w-full">
             <DialogClose asChild>
-              <Button onClick={handleSignIn} variant={"outline"} size={"lg"}>
+              <Button onClick={handleSignIn} variant="outline" size="lg">
                 <GoogleIcon size={80} />
                 <div>Continue with Google</div>
               </Button>
@@ -63,9 +63,13 @@ export const LoginOutDialog = ({ showLogin }: LoginOutDialogProps) => {
     );
   } else {
     return (
-      <Button variant="outline" size={"sm"} onClick={() => signOut()}>
-        <LogOut className={cn("h-4 w-4")} />
-        <div>Logout</div>
+      <Button
+        variant="ghost"
+        className="rounded-full"
+        size="icon"
+        onClick={() => signOut()}
+      >
+        <LogOut className={cn('h-4 w-4')} />
       </Button>
     );
   }

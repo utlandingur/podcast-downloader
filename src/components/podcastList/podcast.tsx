@@ -1,0 +1,64 @@
+import { cn } from '@/lib/utils';
+import { CSSProperties } from 'react';
+import Image from 'next/image';
+import { Heart } from 'lucide-react';
+import { Toggle } from '../toggle';
+import { useToggleFavourite } from '@/hooks/useToggleFavourite';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import React from 'react';
+
+type Props = {
+  title: string;
+  id: number;
+  style: CSSProperties;
+  showBorder: boolean;
+  image: string;
+};
+
+export const Podcast = React.memo(
+  ({ title, style, showBorder, image, id }: Props) => {
+    const { favourited, toggleFavourite } = useToggleFavourite(id.toString());
+
+    return (
+      <div
+        style={style}
+        className={cn(
+          `flex py-4 justify-center w-full items-center gap-4
+        ${showBorder && 'border-b border-muted-foreground pt-4'}`,
+        )}
+      >
+        <Image
+          src={image}
+          alt={title}
+          height={88}
+          width={88}
+          className="rounded-lg"
+        />
+        <div className="flex w-full h-full items-center justify-between">
+          <div className="font-semibold line-clamp-1 m:line-clamp-2 text-ellipsis">
+            {title}
+          </div>
+          <div className="flex justify-end gap-4">
+            <Link
+              href={`/podcasts/v2/${JSON.stringify(id)}`}
+              aria-label={`Go to podcast ${title}`}
+            >
+              <Button variant="outline">View</Button>
+            </Link>
+            <Toggle
+              key={favourited ? 'favourited' : 'not-favourited'}
+              onToggle={toggleFavourite}
+              initialValue={favourited}
+              label={'Sort Ascending'}
+              trueIcon={<Heart className="h-4 w-4 fill-foreground" />}
+              falseIcon={<Heart className="h-4 w-4" />}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  },
+);
+
+Podcast.displayName = 'Podcast Info';
