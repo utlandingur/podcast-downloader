@@ -36,8 +36,8 @@ export const Podcast = React.memo(
           className="rounded-lg"
         />
         <div className="flex w-full h-full items-center justify-between">
-          <div className="font-semibold line-clamp-1 m:line-clamp-2 text-ellipsis">
-            {title}
+          <div className="font-semibold line-clamp-1 m:line-clamp-2 text-left text-ellipsis">
+            <p className="hidden sm:block">{title}</p>
           </div>
           <div className="flex justify-end gap-4">
             <Link
