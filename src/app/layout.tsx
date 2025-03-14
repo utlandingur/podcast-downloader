@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import '@/globals.css';
 import { QueryClientProvider } from '@/providers/QueryClientProvider';
-import { PageLoadProvider } from '@/providers/pageLoadProvider';
 import { ThemeProvider } from '@/providers/themeProvider';
 import { Header } from '@/components/header';
 import { Analytics } from '@vercel/analytics/react';
@@ -46,9 +45,7 @@ export default async function RootLayout({
           enableSystem={true} // Optional: Enables system preference detection
           disableTransitionOnChange // Optional: Prevents transition effects during hydration
         >
-          <QueryClientProvider>
-            <PageLoadProvider>{children}</PageLoadProvider>
-          </QueryClientProvider>
+          <QueryClientProvider>{children}</QueryClientProvider>
         </ThemeProvider>
         <Analytics />
       </body>
