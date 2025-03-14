@@ -10,13 +10,9 @@ export const useEpisodesView = (podcastId: string) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isAscending, setIsAscending] = useState(false);
   const [showDownloaded, setShowDownloaded] = useState(true);
-  const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[] | null>(
-    null,
-  );
+  const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>([]);
   const { user, addDownloadedEpisode } = useUserStore((state) => state);
   const [isLoading, setIsLoading] = useState(true);
-
-  console.log('isLoading', isLoading);
 
   const { data, loading } = usePodcastEpisodesV2(podcastId);
 
