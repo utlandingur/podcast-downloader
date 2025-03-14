@@ -31,7 +31,7 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
 
   if (!podcastEpisodes)
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex w-full h-full justify-center items-center">
         <LoadingSpinner />
       </div>
     );
@@ -70,7 +70,7 @@ export const PodcastOverviewV2 = ({ id, session }: PodcastOverviewV2Props) => {
 
   if (!episodes || !podcast)
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex w-full h-full justify-center items-center">
         <LoadingSpinner />
       </div>
     );

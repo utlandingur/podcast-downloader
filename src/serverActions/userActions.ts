@@ -2,6 +2,7 @@
 import { connectToDatabase } from '@/lib/db';
 import { PodcastStateType } from '@/models/podcastState';
 import { UserDocument, User, type PlainUserType } from '@/models/user';
+import { Document } from 'mongoose';
 
 export const toggleFavouritePodcast = async (
   user: PlainUserType,
@@ -20,7 +21,7 @@ export const toggleFavouritePodcast = async (
   }
 
   await userDoc.save();
-  return JSON.parse(JSON.stringify(userDoc));
+  return toPlainObject(userDoc);
 };
 
 export const addDownloadedEpisode = async (
@@ -44,18 +45,47 @@ export const addDownloadedEpisode = async (
     podcastState.downloaded_episodes.push(episodeId);
   }
   await userDoc.save();
-  return JSON.parse(JSON.stringify(userDoc));
+  return toPlainObject(userDoc);
 };
 
 export const findOrCreateUser = async (
   email: string,
 ): Promise<PlainUserType> => {
   await connectToDatabase();
-  const user: UserDocument = await User.findOneAndUpdate(
-    { email },
-    { $setOnInsert: { email } }, // Insert a new user state if not found
-    { upsert: true, new: true },
-  );
-  const data: PlainUserType = JSON.parse(JSON.stringify(user));
-  return data;
+  const foundUser: PlainUserType | null = await findUserByEmail(email);
+  if (foundUser) {
+    return foundUser;
+  }
+  const user: PlainUserType = await createUser(email);
+  return user;
 };
+
+const createUser = async (email: string): Promise<PlainUserType> => {
+  try {
+    const user: UserDocument = await User.create({ email, info: [] });
+    return toPlainObject(user);
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw new Error('Error creating user');
+  }
+};
+
+const findUserByEmail = async (
+  email: string,
+): Promise<PlainUserType | null> => {
+  try {
+    const user: UserDocument | null = await User.findOne({
+      email,
+    });
+    if (!user) {
+      return null;
+    }
+    return toPlainObject(user);
+  } catch (error) {
+    console.error('Error finding user:', error);
+    throw new Error('Error finding user');
+  }
+};
+
+const toPlainObject = <T extends Document>(doc: T) =>
+  JSON.parse(JSON.stringify(doc));

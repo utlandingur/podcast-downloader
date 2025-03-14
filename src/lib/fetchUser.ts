@@ -7,7 +7,7 @@ export const fetchUser = async (email: string) => {
   } catch (error) {
     return {
       user: null,
-      error: new Error('Error fetching user:', error as Error),
+      error: new Error(`Error fetching user: ${(error as Error).message}`),
     };
   }
 };

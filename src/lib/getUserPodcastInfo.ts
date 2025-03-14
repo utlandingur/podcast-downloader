@@ -6,5 +6,5 @@ export const getUserPodcastInfo = (
 ) => {
   if (!info) return null;
   const index = info.findIndex((info) => info.podcast_id === podcastId);
-  return index ? info[index] : null;
+  return index !== -1 ? info[index] : null;
 };
