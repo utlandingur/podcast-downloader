@@ -1,29 +1,14 @@
 'use client';
 import { PodcastEpisodeTable } from './podcastEpisodeTable/podcastEpisodeTable';
 import { columns } from './podcastEpisodeTable/columns';
-
-import {
-  usePodcastEpisodes,
-  usePodcastEpisodesV2,
-} from '@/hooks/usePodcastEpisodes';
+import { Image } from '@/components/ui/image';
+import { usePodcastEpisodes } from '@/hooks/usePodcastEpisodes';
 import { LoadingSpinner } from './ui/loadingSpinner';
 import { cn } from '@/lib/utils';
 import { SocialShareLinks } from './socialShareLinks';
-import { usePodcastV2 } from '@/hooks/usePodcast';
-import { EpisodesView } from '@/components/episodesView/episodesView';
-import { Session } from 'next-auth';
-import { useSyncUser } from '@/hooks/useSyncUser';
-import Image from 'next/image';
-import { Button } from './ui/button';
-import Link from 'next/link';
 
 type PodcastOverviewProps = {
   id: string;
-};
-
-type PodcastOverviewV2Props = {
-  id: string;
-  session: Session | null;
 };
 
 export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
@@ -31,7 +16,7 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
 
   if (!podcastEpisodes)
     return (
-      <div className="flex w-full h-full justify-center items-center">
+      <div className="flex justify-center items-center">
         <LoadingSpinner />
       </div>
     );
@@ -57,53 +42,6 @@ export const PodcastOverview = ({ id }: PodcastOverviewProps) => {
       <SocialShareLinks
         url={'https://podcasttomp3.com/podcasts/' + id}
         title={'Download mp3s for podcast: ' + podCastName}
-      />
-    </>
-  );
-};
-
-export const PodcastOverviewV2 = ({ id, session }: PodcastOverviewV2Props) => {
-  const { data: episodes } = usePodcastEpisodesV2(id);
-  const { data: podcast } = usePodcastV2(id);
-
-  useSyncUser(session || null);
-
-  if (!episodes || !podcast)
-    return (
-      <div className="flex w-full h-full justify-center items-center">
-        <LoadingSpinner />
-      </div>
-    );
-
-  return (
-    <>
-      <h1 className={cn('text-center line-clamp-5 w-full')}>{podcast.title}</h1>
-      <Image
-        width={100}
-        height={100}
-        className="rounded-md"
-        src={podcast.image}
-        alt={`Artwork for ${podcast.title}`}
-      />
-      <p className="text-center">{`Download your favourite podcast episodes from ${podcast.title} as an mp3 file.`}</p>
-      <EpisodesView
-        episodes={episodes}
-        podcastName={podcast.title}
-        podcastId={podcast.id.toString()}
-        isLoggedIn={!!session}
-      />
-      <Link href={podcast.feedUrl} target="_blank">
-        <Button
-          variant="link"
-          size="default"
-          className={'text-foreground underline'}
-        >
-          Go to RSS Feed
-        </Button>
-      </Link>
-      <SocialShareLinks
-        url={'https://podcasttomp3.com/podcasts/' + id}
-        title={'Download mp3s for podcast: ' + podcast.title}
       />
     </>
   );

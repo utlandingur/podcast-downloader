@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
-import { Button } from "./button";
-import { DebouncedInput } from "./input";
-import { forwardRef } from "react";
-import { SearchResult } from "../searchBar";
+import { cn } from '@/lib/utils';
+import { Button } from './button';
+import { DebouncedInput } from './input';
+import { forwardRef } from 'react';
+import { SearchResult } from '../searchBar';
 
 type SearchInputProps = {
   searchTerm: string;
@@ -20,15 +20,15 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={cn("self-center border-accent-foreground")}
+          className={cn('self-center border-accent-foreground')}
           ref={ref}
         />
         {handleSearch && <Button onClick={handleSearch}>Search</Button>}
       </>
     );
-  }
+  },
 );
 
-SearchInput.displayName = "SearchBar";
+SearchInput.displayName = 'SearchBar';
 
 export { SearchInput };

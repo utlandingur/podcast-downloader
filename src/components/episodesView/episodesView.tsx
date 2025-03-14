@@ -1,7 +1,7 @@
-import { PodcastEpisodeV2 } from '@/types/podcasts';
+'use client';
 import { cn } from '@/lib/utils';
 import { DebouncedInput } from '../ui/input';
-import { EpisodeList } from '../episodeList/episodeList';
+import { EpisodeList, EpisodeListSkeleton } from '../episodeList/episodeList';
 import { Toggle } from '@/components/toggle';
 import { ArrowDownNarrowWide, ArrowUpNarrowWide } from 'lucide-react';
 import { useEpisodesView } from './useEpisodesView';
@@ -9,18 +9,12 @@ import { OptionsWrapper } from './optionsWraper';
 import { ToggleFavourite } from './toggleFavourite';
 
 type Props = {
-  episodes: PodcastEpisodeV2[];
   podcastName: string;
   podcastId: string;
   isLoggedIn: boolean;
 };
 
-export const EpisodesView = ({
-  episodes,
-  podcastName,
-  podcastId,
-  isLoggedIn,
-}: Props) => {
+export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
   const {
     searchTerm,
     setSearchTerm,
@@ -30,7 +24,9 @@ export const EpisodesView = ({
     setShowDownloaded,
     filteredEpisodes,
     episodesToDisplay,
-  } = useEpisodesView(episodes, podcastId);
+    isLoading,
+  } = useEpisodesView(podcastId);
+
   return (
     <div className={cn('flex flex-col w-[98%] px-4 gap-4 max-w-[720px]')}>
       <div className={cn('grid gap-4 w-full grid-cols-[auto] items-center')}>
@@ -41,6 +37,7 @@ export const EpisodesView = ({
           <div className={cn('flex flex-col sm:flex-row gap-2')}>
             <Toggle
               onToggle={setIsAscending}
+              disabled={isLoading}
               initialValue={isAscending}
               trueText={'Ascending'}
               falseText={'Descending'}
@@ -53,6 +50,7 @@ export const EpisodesView = ({
         {/* // Toggle to show or hide downloaded episodes */}
         <OptionsWrapper title="Filter">
           <Toggle
+            disabled={isLoading}
             onToggle={setShowDownloaded}
             initialValue={showDownloaded}
             trueText={'Showing Downloaded'}
@@ -64,18 +62,24 @@ export const EpisodesView = ({
         <OptionsWrapper title="Search">
           <DebouncedInput
             value={searchTerm}
+            disabled={isLoading}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={cn('max-w-96')}
           />
         </OptionsWrapper>
         <div className={cn('text-sm text-muted-foreground')}>
-          {`${filteredEpisodes.length} episodes`}
+          {`${isLoading ? 'Loading' : filteredEpisodes.length} episodes`}
         </div>
       </div>
-      {filteredEpisodes.length > 0 ? (
-        <EpisodeList episodes={episodesToDisplay} podcastName={podcastName} />
-      ) : (
+      {isLoading && <EpisodeListSkeleton />}
+      {isLoading === false && !filteredEpisodes.length ? (
         <div>No episodes found</div>
+      ) : (
+        <EpisodeList
+          episodes={episodesToDisplay}
+          podcastName={podcastName}
+          isLoading={isLoading}
+        />
       )}
     </div>
   );

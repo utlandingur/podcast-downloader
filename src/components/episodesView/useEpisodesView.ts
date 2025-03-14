@@ -1,20 +1,35 @@
+'use client';
 import { DownloadState } from '@/components/downloadPodcastButton';
 import { PodcastEpisodeV2 } from '@/types/podcasts';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useUserStore } from '@/hooks/useUserStore';
 import { getUserPodcastInfo } from '@/lib/getUserPodcastInfo';
+import { usePodcastEpisodesV2 } from '@/hooks/usePodcastEpisodes';
 
-export const useEpisodesView = (
-  episodes: PodcastEpisodeV2[],
-  podcastId: string,
-) => {
+export const useEpisodesView = (podcastId: string) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isAscending, setIsAscending] = useState(false);
   const [showDownloaded, setShowDownloaded] = useState(true);
-  const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>(episodes);
-  const { user, loading, addDownloadedEpisode } = useUserStore(
-    (state) => state,
+  const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[] | null>(
+    null,
   );
+  const { user, addDownloadedEpisode } = useUserStore((state) => state);
+  const [isLoading, setIsLoading] = useState(true);
+
+  console.log('isLoading', isLoading);
+
+  const { data, loading } = usePodcastEpisodesV2(podcastId);
+
+  useEffect(() => {
+    if (loading !== undefined) setIsLoading(loading);
+  }, [loading]);
+
+  useEffect(() => {
+    if (data) {
+      setEpisodeData(data);
+    }
+  }, [data]);
+
   const userPodcastInfo = getUserPodcastInfo(podcastId, user?.info);
 
   const filteredEpisodes = useMemo(() => {
@@ -82,6 +97,6 @@ export const useEpisodesView = (
     setShowDownloaded,
     episodesToDisplay,
     filteredEpisodes,
-    loading,
+    isLoading,
   };
 };

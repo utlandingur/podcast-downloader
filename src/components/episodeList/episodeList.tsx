@@ -1,9 +1,15 @@
+'use client';
 import { FixedSizeList as List } from 'react-window';
-import { Episode, EpisodeListItem } from '@/components/episodeList/episode';
+import {
+  Episode,
+  EpisodeListItem,
+  EpisodeSkeleton,
+} from '@/components/episodeList/episode';
 
 type EpisodeListProps = {
   episodes: EpisodeListItem[];
   podcastName: string;
+  isLoading?: boolean;
 };
 
 // Row component to render each item in the list
@@ -21,6 +27,7 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
     const { episode, updateDownloadState } = data[index];
 
     const showBorder = index !== numOfEps - 1;
+
     return (
       <Episode
         podcastName={podcastName}
@@ -49,4 +56,11 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
       {Row}
     </List>
   );
+};
+
+export const EpisodeListSkeleton = () => {
+  const skeletones = Array.from({ length: 5 }).map((_, i) => (
+    <EpisodeSkeleton key={i} />
+  ));
+  return <>{skeletones}</>;
 };

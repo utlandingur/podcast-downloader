@@ -1,5 +1,4 @@
-"use client";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   FacebookIcon,
   RedditIcon,
@@ -9,7 +8,7 @@ import {
   RedditShareButton,
   TwitterShareButton,
   WhatsappShareButton,
-} from "react-share";
+} from 'react-share';
 
 type SocialShareLinksProps = {
   url: string;
@@ -17,9 +16,9 @@ type SocialShareLinksProps = {
 };
 
 export const SocialShareLinks = ({ url, title }: SocialShareLinksProps) => (
-  <div className={cn("flex flex-col gap-4")}>
+  <div className={cn('flex flex-col gap-4')}>
     <h2>Share on social</h2>
-    <div className={cn("flex w-full gap-4 justify-center")}>
+    <div className={cn('flex w-full gap-4 justify-center')}>
       <FacebookShareButton url={url} aria-label="Share on Facebook Button">
         <FacebookIcon size={32} round />
       </FacebookShareButton>
@@ -27,7 +26,7 @@ export const SocialShareLinks = ({ url, title }: SocialShareLinksProps) => (
       <TwitterShareButton
         url={url}
         title={title}
-        hashtags={["downloadPodcasts", "podcasts", "mp3"]}
+        hashtags={['downloadPodcasts', 'podcasts', 'mp3']}
         aria-label="Share on Twitter Button"
       >
         <TwitterIcon size={32} round />

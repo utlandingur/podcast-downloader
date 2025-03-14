@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/loadingSpinner';
 import { useTheme } from 'next-themes';
 import { ClassValue } from 'clsx';
 import { CoffeeButton } from './coffeeButton';
+import { Img } from './ui/img';
 
 export type SearchResult = {
   name: string;
@@ -34,6 +35,7 @@ export const SearchBar = ({
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+  const [navigating, setNavigating] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultContainer = useRef<HTMLDivElement | null>(null);
 
@@ -55,11 +57,17 @@ export const SearchBar = ({
     });
   }, [focusedIndex]);
 
-  const handleNewSearchTerm = useCallback((newSearchTerm: string): void => {
-    setSearchTerm(newSearchTerm);
-    if (newSearchTerm === '' || !newSearchTerm) setShowPopover(false);
-    else setShowPopover(true);
-  }, []);
+  const handleNewSearchTerm = useCallback(
+    (newSearchTerm: string): void => {
+      setSearchTerm(newSearchTerm);
+      if (newSearchTerm === '' || !newSearchTerm || navigating)
+        setShowPopover(false);
+      else {
+        setShowPopover(true);
+      }
+    },
+    [navigating],
+  );
 
   // Handle keydown events for arrow navigation and Enter to "click"
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -83,6 +91,7 @@ export const SearchBar = ({
 
     if (key === 'Enter' && focusedIndex !== -1) {
       setShowPopover(false);
+      setNavigating(true);
       searchResults[focusedIndex].handleOnClick?.();
     }
 
@@ -109,12 +118,13 @@ export const SearchBar = ({
             onClick={() => {
               setShowPopover(false);
               result.handleOnClick?.();
+              setNavigating(true);
             }}
             aria-label={`Select ${result.name}`}
             key={index}
           >
             {result.image && (
-              <img
+              <Img
                 key={result.image}
                 src={result.image}
                 tabIndex={-1}
@@ -151,7 +161,7 @@ export const SearchBar = ({
               />
             </div>
           </PopoverTrigger>
-          {showPopover && (
+          {showPopover && !navigating && (
             <PopoverContent
               side="bottom"
               sideOffset={4}
@@ -177,8 +187,8 @@ export const SearchBar = ({
         <>
           <div className={cn('text-center')}>
             <p>
-              If you love this site, please consider buying me a coffee. It
-              helps pays the bills and keep me motivated.
+              If you love this site, please consider buying a coffee. It costs
+              time and money to run this site.
             </p>
           </div>
           <CoffeeButton />

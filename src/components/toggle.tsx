@@ -12,6 +12,7 @@ interface ToggleProps {
   label: string;
   trueText?: string;
   falseText?: string;
+  disabled?: boolean;
 }
 
 export function Toggle({
@@ -20,12 +21,16 @@ export function Toggle({
   trueIcon,
   falseIcon,
   label,
+  disabled,
   trueText,
   falseText,
 }: ToggleProps) {
   const [isTrue, setIsTrue] = useState(initialValue ?? true);
 
   const handleToggle = () => {
+    if (disabled) {
+      return;
+    }
     const newState = !isTrue;
     setIsTrue(newState);
     onToggle(newState);

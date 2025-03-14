@@ -22,10 +22,10 @@ export function HeroV1() {
 
         <div className="flex justify-center space-x-4">
           <Badge variant="secondary" className="px-4 py-1">
-            10K+ Visitors
+            15K+ Visitors
           </Badge>
           <Badge variant="secondary" className="px-4 py-1">
-            20+ Supporters
+            25+ Supporters
           </Badge>
         </div>
       </div>

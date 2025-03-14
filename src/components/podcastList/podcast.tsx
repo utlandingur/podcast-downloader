@@ -1,12 +1,10 @@
 import { cn } from '@/lib/utils';
 import { CSSProperties } from 'react';
 import Image from 'next/image';
-import { Heart } from 'lucide-react';
-import { Toggle } from '../toggle';
-import { useToggleFavourite } from '@/hooks/useToggleFavourite';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import React from 'react';
+import { FavouriteToggle } from './favouriteToggle';
 
 type Props = {
   title: string;
@@ -18,8 +16,6 @@ type Props = {
 
 export const Podcast = React.memo(
   ({ title, style, showBorder, image, id }: Props) => {
-    const { favourited, toggleFavourite } = useToggleFavourite(id.toString());
-
     return (
       <div
         style={style}
@@ -36,7 +32,7 @@ export const Podcast = React.memo(
           className="rounded-lg"
         />
         <div className="flex w-full h-full items-center justify-between">
-          <div className="font-semibold line-clamp-1 m:line-clamp-2 text-left text-ellipsis">
+          <div className="line-clamp-1 m:line-clamp-2 text-left text-ellipsis">
             <p className="hidden sm:block">{title}</p>
           </div>
           <div className="flex justify-end gap-4">
@@ -46,14 +42,7 @@ export const Podcast = React.memo(
             >
               <Button variant="outline">View</Button>
             </Link>
-            <Toggle
-              key={favourited ? 'favourited' : 'not-favourited'}
-              onToggle={toggleFavourite}
-              initialValue={favourited}
-              label={'Sort Ascending'}
-              trueIcon={<Heart className="h-4 w-4 fill-foreground" />}
-              falseIcon={<Heart className="h-4 w-4" />}
-            />
+            <FavouriteToggle id={id} />
           </div>
         </div>
       </div>

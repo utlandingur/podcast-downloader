@@ -1,12 +1,10 @@
 import { PodcastSearchBar } from '@/components/podcastSearchBar';
 import { geistSans, geistMono } from '@/app/fonts';
-import { Suspense } from 'react';
 import { cn } from '@/lib/utils';
-import { PodcastOverviewV2 } from '@/components/podcastOverview';
-import { LoadingSpinner } from '@/components/ui/loadingSpinner';
 import type { Metadata } from 'next';
 import { lookupPodcastV2 } from '@/serverActions/lookupPodcast';
 import { auth } from '../../../../../auth';
+import { PodcastOverviewV2 } from '@/components/podcastOverviewV2';
 
 type Params = Promise<{
   id: string;
@@ -42,31 +40,25 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   if (!decodedId) return <div>Page not found</div>;
 
+  const podcast = await lookupPodcastV2(id);
+
   const session = await auth();
 
   return (
     <main
       className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full`}
     >
-      <Suspense
-        fallback={
-          <div className="flex w-full h-full justify-center items-center">
-            <LoadingSpinner />
-          </div>
-        }
+      <div className={cn('p-8 flex flex-col items-center gap-4')}>
+        <h2 className={cn('text-xl')}>Search for another podcast</h2>
+        <PodcastSearchBar />
+      </div>
+      <div
+        className={cn(
+          'flex flex-col h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8',
+        )}
       >
-        <div className={cn('p-8 flex flex-col items-center gap-4')}>
-          <h2 className={cn('text-xl')}>Search for another podcast</h2>
-          <PodcastSearchBar />
-        </div>
-        <div
-          className={cn(
-            'flex flex-col h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8',
-          )}
-        >
-          <PodcastOverviewV2 id={decodedId} session={session} />
-        </div>
-      </Suspense>
+        <PodcastOverviewV2 podcast={podcast} session={session} />
+      </div>
     </main>
   );
 }

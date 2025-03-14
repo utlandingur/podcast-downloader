@@ -4,6 +4,8 @@ import { QueryClientProvider } from '@/providers/QueryClientProvider';
 import { ThemeProvider } from '@/providers/themeProvider';
 import { Header } from '@/components/header';
 import { Analytics } from '@vercel/analytics/react';
+import { auth } from '../../auth';
+import { SyncUserWrapper } from '@/components/syncUserWrapper';
 
 export const metadata: Metadata = {
   title: 'Download Podcasts To Mp3',
@@ -15,6 +17,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html
       lang="en"
@@ -45,7 +48,9 @@ export default async function RootLayout({
           enableSystem={true} // Optional: Enables system preference detection
           disableTransitionOnChange // Optional: Prevents transition effects during hydration
         >
-          <QueryClientProvider>{children}</QueryClientProvider>
+          <QueryClientProvider>
+            <SyncUserWrapper session={session}>{children}</SyncUserWrapper>
+          </QueryClientProvider>
         </ThemeProvider>
         <Analytics />
       </body>
