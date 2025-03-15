@@ -57,6 +57,7 @@ export const useEpisodesView = (podcastId: string) => {
         newData[indexToUpdate].downloadState = state;
         return newData;
       });
+      // TODO - add logic to handle when episode is downloaded in a new tab
       if (state === 'downloaded' && user) {
         addDownloadedEpisode(podcastId, id.toString());
       }

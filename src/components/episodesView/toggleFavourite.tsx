@@ -1,9 +1,11 @@
+'use client';
 import { Heart } from 'lucide-react';
 import { Toggle } from '../toggle';
 import { OptionsWrapper } from './optionsWraper';
+import { useToggleFavourite } from '@/hooks/useToggleFavourite';
+import { LoginPortal } from '../loginPortal';
 import { Button } from '../ui/button';
 import { Lock } from 'lucide-react';
-import { useToggleFavourite } from '@/hooks/useToggleFavourite';
 
 type Props = {
   isLoggedIn: boolean;
@@ -29,12 +31,17 @@ export const ToggleFavourite = ({ podcastId, isLoggedIn }: Props) => {
 
   return (
     <OptionsWrapper title="Favourite">
-      <Button variant="outline">
-        <div className={'flex gap-2 items-center'}>
-          <Lock className="h-4 w-4" />
-        </div>
-        You must be logged in to use this feature
-      </Button>
+      <LoginPortal
+        trigger={
+          <Button variant="outline">
+            <div className={'flex gap-2 items-center'}>
+              <Lock className="h-4 w-4" />
+            </div>
+            Login to favourite
+          </Button>
+        }
+        key={'loginToFav'}
+      />
     </OptionsWrapper>
   );
 };

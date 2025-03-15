@@ -1,17 +1,17 @@
-"use client";
-import { Check, Download, X } from "lucide-react";
-import { useState } from "react";
-import { LoadingSpinner } from "./ui/loadingSpinner";
-import { Button } from "./ui/button";
-import { isDesktop } from "react-device-detect";
-import Link from "next/link";
+'use client';
+import { Check, Download, X } from 'lucide-react';
+import { useState } from 'react';
+import { LoadingSpinner } from './ui/loadingSpinner';
+import { Button } from './ui/button';
+import { isDesktop } from 'react-device-detect';
+import Link from 'next/link';
 
 export enum DownloadState {
-  ReadyToDownload = "readyToDownload",
-  Downloading = "downloading",
-  Downloaded = "downloaded",
-  DownloadOnDesktop = "downloadOnDesktop",
-  downloadedInNewTab = "downloadedInNewTab",
+  ReadyToDownload = 'readyToDownload',
+  Downloading = 'downloading',
+  Downloaded = 'downloaded',
+  DownloadOnDesktop = 'downloadOnDesktop',
+  downloadedInNewTab = 'downloadedInNewTab',
 }
 
 type DownloadPodcastButtonProps = {
@@ -34,21 +34,21 @@ export const DownloadPodcastButton = ({
       ? existingState === DownloadState.DownloadOnDesktop && isDesktop
         ? DownloadState.ReadyToDownload
         : existingState
-      : DownloadState.ReadyToDownload
+      : DownloadState.ReadyToDownload,
   );
 
   const handleDownload = async () => {
     setDownloadState(DownloadState.Downloading);
-    const anchor = document.createElement("a");
+    const anchor = document.createElement('a');
 
     try {
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error("Failed to fetch the file");
+        throw new Error('Failed to fetch the file');
       }
       const blob = await response.blob();
       if (!blob || blob.size === 0) {
-        throw new Error("Received empty blob.");
+        throw new Error('Received empty blob.');
       }
       const blobUrl = window.URL.createObjectURL(blob);
 
@@ -68,7 +68,7 @@ export const DownloadPodcastButton = ({
         setDownloadState(DownloadState.DownloadOnDesktop);
         updateLocalState(id, DownloadState.DownloadOnDesktop);
       } else {
-        window.open(url, "_blank");
+        window.open(url, '_blank');
         anchor.remove();
         setDownloadState(DownloadState.downloadedInNewTab);
         updateLocalState(id, DownloadState.downloadedInNewTab);
@@ -86,21 +86,21 @@ export const DownloadPodcastButton = ({
 
   const buttonStyle: Record<
     DownloadState,
-    "default" | "ghost" | "destructive"
+    'default' | 'ghost' | 'destructive'
   > = {
-    readyToDownload: "default",
-    downloading: "default",
-    downloaded: "ghost",
-    downloadOnDesktop: "destructive",
-    downloadedInNewTab: "default",
+    readyToDownload: 'default',
+    downloading: 'default',
+    downloaded: 'ghost',
+    downloadOnDesktop: 'destructive',
+    downloadedInNewTab: 'default',
   };
 
   const buttonAriaLabel: Record<DownloadState, string> = {
-    readyToDownload: "Download episode",
-    downloading: "Downloading episode",
-    downloaded: "Downloaded",
-    downloadOnDesktop: "Please download on desktop browser",
-    downloadedInNewTab: "Download in new tab",
+    readyToDownload: 'Download episode',
+    downloading: 'Downloading episode',
+    downloaded: 'Downloaded',
+    downloadOnDesktop: 'Please download on desktop browser',
+    downloadedInNewTab: 'Download in new tab',
   };
 
   const handleOnClick: Record<
@@ -119,8 +119,8 @@ export const DownloadPodcastButton = ({
       <div className="flex gap-8 align-center justify-center text-center">
         <Link href={url}>
           <Button
-            size={"sm"}
-            variant={"default"}
+            size={'sm'}
+            variant={'default'}
             disabled
             aria-disabled
             aria-label={buttonAriaLabel[downloadState]}
@@ -138,7 +138,7 @@ export const DownloadPodcastButton = ({
 
   return (
     <Button
-      size={"sm"}
+      size={'sm'}
       variant={buttonStyle[downloadState]}
       onClick={handleOnClick[downloadState]}
       disabled={
@@ -152,10 +152,10 @@ export const DownloadPodcastButton = ({
       aria-label={buttonAriaLabel[downloadState]}
     >
       {downloadIcon[downloadState]}
-      {downloadState === DownloadState.ReadyToDownload && "Download"}
-      {downloadState === DownloadState.Downloaded && "Downloaded"}
+      {downloadState === DownloadState.ReadyToDownload && 'Download'}
+      {downloadState === DownloadState.Downloaded && 'Downloaded'}
       {downloadState === DownloadState.DownloadOnDesktop &&
-        "Error: download on desktop"}
+        'Error: download on desktop'}
     </Button>
   );
 };
