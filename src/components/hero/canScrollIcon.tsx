@@ -11,7 +11,7 @@ export const CanScrollIcon = () => {
         isScrolled ? 'hidden animate-out' : 'animate-in'
       }`}
     >
-      <ArrowDown className="h-6 w-6" />
+      <ArrowDown className="h-6 w-6 sm:h-8 sm:w-8" />
     </div>
   );
 };
