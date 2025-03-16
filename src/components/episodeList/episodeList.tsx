@@ -39,22 +39,24 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
     );
   };
   return (
-    <List
-      height={Math.min(480, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
-      itemCount={numOfEps} // Total number of episodes.
-      itemSize={ITEM_SIZE} // Function returning height of each item.
-      width={'100%'} // Total width of the container in pixels.
-      itemData={episodes} // Pass episodes as data for the Row component.
-      style={{
-        overflowY: 'scroll', // Allow scrolling
-        scrollbarWidth: 'none', // Firefox specific to hide scrollbar
-        msOverflowStyle: 'none', // Internet Explorer/Edge specific to hide scrollbar
-      }}
-      key={numOfEps}
-      itemKey={(index, data) => data[index].episode.id}
-    >
-      {Row}
-    </List>
+    <div className="border border-gray-200 rounded-md p-4">
+      <List
+        height={Math.min(530, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
+        itemCount={numOfEps} // Total number of episodes.
+        itemSize={ITEM_SIZE} // Function returning height of each item.
+        width={'100%'} // Total width of the container in pixels.
+        itemData={episodes} // Pass episodes as data for the Row component.
+        style={{
+          overflowY: 'scroll', // Allow scrolling
+          scrollbarWidth: 'none', // Firefox specific to hide scrollbar
+          msOverflowStyle: 'none', // Internet Explorer/Edge specific to hide scrollbar
+        }}
+        key={numOfEps}
+        itemKey={(index, data) => data[index].episode.id}
+      >
+        {Row}
+      </List>
+    </div>
   );
 };
 
