@@ -22,8 +22,7 @@ export function HowItWorks() {
               </div>
               <h3 className="text-xl font-bold">1. Search</h3>
               <p className="text-center text-muted-foreground">
-                Start typing to instantly see results and find your desired
-                podcast effortlessly.
+                Type the name of the podcast into the searchbar and select the right result.
               </p>
             </CardContent>
           </Card>
