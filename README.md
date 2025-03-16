@@ -14,8 +14,7 @@ You can access the live version at [podcasttomp3.com](https://podcasttomp3.com).
 - **Search for podcasts** using Apple Podcasts API (v1) or Podcast Index API (v2, default).
 - **Download podcast episodes** directly from the UI.
 - **MongoDB integration** using Mongoose for storing user preferences and downloads.
-- **Auth enabled** to store and maintain a list of downloaded episodes and favourite podcasts.
-- **Profile** to easily access favourites and see what you have already downloaded.
+- **Profile** to store and maintain a list of downloaded episodes and favourite podcasts.
 - **Minimal server costs and secure** since all fetching and downloading of episodes happens locally on the user's machine.
 - Styled with [ShadCN](https://ui.shadcn.com/) components.
 - Local state managed with Zustand.
