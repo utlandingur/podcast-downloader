@@ -1,7 +1,8 @@
 import { Badge } from '@/components/ui/badge';
-import { PodcastSearchBar } from './podcastSearchBar';
-import { GithubIcon } from './ui/icons/githubIcon';
+import { PodcastSearchBar } from '../podcastSearchBar';
+import { GithubIcon } from '../ui/icons/githubIcon';
 import Link from 'next/link';
+import { CanScrollIcon } from './canScrollIcon';
 
 export function Hero() {
   return (
@@ -41,6 +42,7 @@ export function Hero() {
           </Link>
         </section>
       </div>
+      <CanScrollIcon />
     </section>
   );
 }
