@@ -15,7 +15,7 @@ You can access the live version at [podcasttomp3.com](https://podcasttomp3.com).
 - **Download podcast episodes** directly from the UI.
 - **MongoDB integration** using Mongoose for storing user preferences and downloads.
 - **Auth enabled** to store and maintain a list of downloaded episodes and favourite podcasts.
-- **Favourites functionality** foundations in place but not yet implemented - contributions welcome!
+- **Profile** to easily access favourites and see what you have already downloaded.
 - **Minimal server costs and secure** since all fetching and downloading of episodes happens locally on the user's machine.
 - Styled with [ShadCN](https://ui.shadcn.com/) components.
 - Local state managed with Zustand.
