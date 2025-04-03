@@ -3,7 +3,7 @@ import '@/globals.css';
 import { QueryClientProvider } from '@/providers/QueryClientProvider';
 import { ThemeProvider } from '@/providers/themeProvider';
 import { Header } from '@/components/header';
-import { Analytics } from '@vercel/analytics/react';
+// import { Analytics } from '@vercel/analytics/react';
 import { auth } from '../../auth';
 import { SyncUserWrapper } from '@/components/syncUserWrapper';
 
@@ -52,7 +52,7 @@ export default async function RootLayout({
             <SyncUserWrapper session={session}>{children}</SyncUserWrapper>
           </QueryClientProvider>
         </ThemeProvider>
-        <Analytics />
+        {/* <Analytics /> */}
       </body>
     </html>
   );
