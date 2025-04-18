@@ -6,6 +6,8 @@ Podcast Downloader is a free and open-source web application that allows users t
 
 You can access the live version at [podcasttomp3.com](https://podcasttomp3.com).
 
+You can access website analytics [on the publish dashboard](https://analyics.vercel.app/share/cnsccY0ztBhXcmRT/podcasttomp3.com)
+
 - **v2 (Default)**: Available at `podcasttomp3.com` (uses Podcast Index API).
 - **v1 (Legacy)**: Available at `podcasttomp3.com/v1` (uses Apple Podcasts API).
 
