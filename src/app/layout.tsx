@@ -39,6 +39,11 @@ export default async function RootLayout({
         />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="dns-prefetch" href="https://api.podcastindex.org" />
+        <script
+          defer
+          src={process.env.NEXT_PUBLIC_UMAMI_SRC}
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+        ></script>
       </head>
       <body>
         <Header />
