@@ -10,7 +10,7 @@ type LoginOutDialogProps = {
 };
 
 const Trigger = () => (
-  <Button variant="outline" className="invert">
+  <Button variant="outline">
     <LogIn className={cn('h-4 w-4')} />
     <div>Login</div>
   </Button>

@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes';
 import { ClassValue } from 'clsx';
 import { CoffeeButton } from './coffeeButton';
 import { Img } from './ui/img';
+import { Button } from './ui/button';
 
 export type SearchResult = {
   name: string;
@@ -25,6 +26,7 @@ type SearchBarProps = {
   queryKey?: string[];
   width?: string;
   autoFocus?: boolean;
+  showButton?: boolean;
 };
 
 export const SearchBar = ({
@@ -33,6 +35,7 @@ export const SearchBar = ({
   searchQuery,
   width = 'w-72 sm:w-96',
   autoFocus,
+  showButton,
 }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showPopover, setShowPopover] = useState<boolean>(false);
@@ -162,6 +165,16 @@ export const SearchBar = ({
                 ref={inputRef}
                 autoFocus={autoFocus}
               />
+              {showButton && (
+                <Button
+                  className="font-bold"
+                  onClick={() => {
+                    setShowPopover(true);
+                  }}
+                >
+                  Search
+                </Button>
+              )}
             </div>
           </PopoverTrigger>
           {showPopover && !navigating && (
