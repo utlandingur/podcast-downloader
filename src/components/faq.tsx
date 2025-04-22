@@ -3,32 +3,51 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion';
+
+export const faqItems = [
+  {
+    question: 'Is PodcastToMp3.com free?',
+    answer:
+      'Yes, our service is completely free to use! No hidden fees or subscriptions required.',
+  },
+  {
+    question: 'How do I download a podcast?',
+    answer:
+      'Simply search for your favorite podcast in the search bar above, select an episode, and click the "Download" button. The file will be saved directly to your device.',
+  },
+  {
+    question: 'Do I need to create an account?',
+    answer:
+      'No, you don’t need an account to use our service. Just search, download, and enjoy.',
+  },
+  {
+    question: 'How do I download a podcast to my device?',
+    answer:
+      'For Android, iPhone, or other devices: search for the episode, click "Download", and the file will be saved to your device. You can then transfer it to other devices like Shokz headphones or Yoto Player.',
+  },
+  {
+    question: 'Do I need to install any software?',
+    answer:
+      'No software installation is required. Everything is web-based, so you can download podcasts directly from your browser.',
+  },
+  {
+    question: 'What is the maximum file size I can download?',
+    answer: 'There is no limit, but larger files may take longer to download.',
+  },
+  {
+    question: 'What formats do you support?',
+    answer:
+      'We support MP3 format, compatible with most devices and media players.',
+  },
+  {
+    question: 'Do you host podcast files on your servers?',
+    answer:
+      "No, we don't host files. Downloads are provided directly from the original podcast source for security and reliability.",
+  },
+];
 
 export function FAQ() {
-  const faqItems = [
-    {
-      question: "How do I download a podcast as an MP3?",
-      answer:
-        "Simply search for your favorite podcast in the search bar above, select an episode, and download it directly as an MP3 file. The process is seamless, straightforward, and compatible with most devices.",
-    },
-    {
-      question: "What happens if there is an error while downloading?",
-      answer:
-        'If there is an issue, the episode will open in a new browser tab. Just click the ellipsis menu in the player and hit "Download" to save the file.',
-    },
-    {
-      question: "Is PodcastToMp3.com free?",
-      answer:
-        "Yes, our service is completely free to use! No hidden fees or subscriptions required.",
-    },
-    {
-      question: "Do you host podcast files on your servers?",
-      answer:
-        "No, we don't host or serve any files. Downloads are facilitated directly from the original podcast source for a reliable and secure experience.",
-    },
-  ];
-
   return (
     <section className="container">
       <div className="mx-auto max-w-3xl space-y-8">
@@ -42,7 +61,9 @@ export function FAQ() {
           {faqItems.map((item, index) => (
             <AccordionItem key={index} value={`item-${index + 1}`}>
               <AccordionTrigger>{item.question}</AccordionTrigger>
-              <AccordionContent>{item.answer}</AccordionContent>
+              <AccordionContent className="text-left">
+                {item.answer}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

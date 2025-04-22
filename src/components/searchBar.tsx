@@ -24,6 +24,7 @@ type SearchBarProps = {
   enabled?: boolean;
   queryKey?: string[];
   width?: string;
+  autoFocus?: boolean;
 };
 
 export const SearchBar = ({
@@ -31,6 +32,7 @@ export const SearchBar = ({
   enabled = true,
   searchQuery,
   width = 'w-72 sm:w-96',
+  autoFocus,
 }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showPopover, setShowPopover] = useState<boolean>(false);
@@ -158,6 +160,7 @@ export const SearchBar = ({
                 setSearchTerm={handleNewSearchTerm}
                 searchResults={searchResults}
                 ref={inputRef}
+                autoFocus={autoFocus}
               />
             </div>
           </PopoverTrigger>

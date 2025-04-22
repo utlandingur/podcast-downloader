@@ -3,9 +3,9 @@ import '@/globals.css';
 import { QueryClientProvider } from '@/providers/QueryClientProvider';
 import { ThemeProvider } from '@/providers/themeProvider';
 import { Header } from '@/components/header';
-// import { Analytics } from '@vercel/analytics/react';
 import { auth } from '../../auth';
 import { SyncUserWrapper } from '@/components/syncUserWrapper';
+import { faqItems } from '@/components/faq';
 
 export const metadata: Metadata = {
   title: 'Download Podcasts To Mp3',
@@ -44,6 +44,26 @@ export default async function RootLayout({
           src={process.env.NEXT_PUBLIC_UMAMI_SRC}
           data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
         ></script>
+        {/* Structured Data (FAQ Schema for SEO) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: Array.isArray(faqItems)
+                ? faqItems.map((item) => ({
+                    '@type': 'Question',
+                    name: item.question,
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: item.answer,
+                    },
+                  }))
+                : [],
+            }),
+          }}
+        />
       </head>
       <body>
         <Header />
@@ -57,7 +77,6 @@ export default async function RootLayout({
             <SyncUserWrapper session={session}>{children}</SyncUserWrapper>
           </QueryClientProvider>
         </ThemeProvider>
-        {/* <Analytics /> */}
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 'use client';
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList } from 'react-window';
 import {
   Episode,
   EpisodeListItem,
@@ -40,7 +40,7 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
   };
   return (
     <div className="border border-gray-200 rounded-md p-4">
-      <List
+      <FixedSizeList
         height={Math.min(530, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
         itemCount={numOfEps} // Total number of episodes.
         itemSize={ITEM_SIZE} // Function returning height of each item.
@@ -55,7 +55,7 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
         itemKey={(index, data) => data[index].episode.id}
       >
         {Row}
-      </List>
+      </FixedSizeList>
     </div>
   );
 };

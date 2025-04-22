@@ -2,8 +2,10 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { LoginOutDialog } from './LoginOutDialog';
 import { auth } from '../../auth';
-import { Headphones, User } from 'lucide-react';
+import { HandHelping, Headphones, User } from 'lucide-react';
 import { Button } from './ui/button';
+
+const Spacer = () => <div className="font-thin text-muted-foreground">|</div>;
 
 export const Header = async () => {
   const session = await auth();
@@ -16,17 +18,23 @@ export const Header = async () => {
     >
       <Link href={'/'} className="flex gap-2 items-center">
         <Headphones className="h-4 w-4" />
-        PodcastToMp3.com
+        PodcastToMP3
       </Link>
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-2 items-center">
         {session ? (
           <>
-            <Link href={'/profile'}>
+            <Link href={'https://buymeacoffee.com/utlandingur'} target="_blank">
               <Button variant="ghost" className="rounded-full" size="icon">
-                <User className="" />
+                <HandHelping className="fill-yellow-300" />
               </Button>
             </Link>
-            <div className="font-thin">|</div>
+            <Spacer />
+            <Link href={'/profile'}>
+              <Button variant="ghost" className="rounded-full" size="icon">
+                <User />
+              </Button>
+            </Link>
+            <Spacer />
             <LoginOutDialog showLogin={!!session} />
           </>
         ) : (

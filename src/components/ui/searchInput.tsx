@@ -9,19 +9,21 @@ type SearchInputProps = {
   setSearchTerm: (string: string) => void;
   handleSearch?: React.MouseEventHandler<HTMLButtonElement>;
   searchResults: SearchResult[];
+  autoFocus?: boolean;
 };
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ searchTerm, setSearchTerm, handleSearch }, ref) => {
+  ({ searchTerm, setSearchTerm, handleSearch, autoFocus }, ref) => {
     return (
       <>
         <DebouncedInput
           type="search"
-          placeholder="Enter podcast's name to search..."
+          placeholder='Enter name, such as "Joe Rogan"'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className={cn('self-center border-accent-foreground')}
           ref={ref}
+          autoFocus={autoFocus}
         />
         {handleSearch && <Button onClick={handleSearch}>Search</Button>}
       </>
