@@ -11,7 +11,7 @@ type SearchInputProps = {
 };
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ searchTerm, setSearchTerm, autoFocus }, ref) => {
+  ({ searchTerm, setSearchTerm }, ref) => {
     return (
       <DebouncedInput
         type="search"
@@ -20,7 +20,6 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         onChange={(e) => setSearchTerm(e.target.value)}
         className={cn('self-center border-accent-foreground border-')}
         ref={ref}
-        autoFocus={autoFocus}
       />
     );
   },
