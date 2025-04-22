@@ -8,9 +8,9 @@ import { Button } from './ui/button';
 
 export function Support() {
   return (
-    <section className="container grid gap-12">
+    <section className="container grid gap-12 max-w-3xl">
       <h2>Support the project</h2>
-      <Card className="mx-auto">
+      <Card className="mx-auto w-full">
         <CardContent className="flex flex-col items-center space-y-6 p-6 text-center">
           <div className="rounded-full bg-primary/10 p-3">
             <Coffee className="h-6 w-6 text-primary" />
@@ -25,8 +25,8 @@ export function Support() {
           <CoffeeButton />
         </CardContent>
       </Card>
-      <Card className="mx-auto">
-        <CardContent className="flex flex-col items-center space-y-6 p-6 text-center">
+      <Card className="mx-auto w-full">
+        <CardContent className="flex flex-col items-center space-y-6 p-6 text-center w-full">
           <div className="rounded-full bg-primary/10 p-3">
             <Code className="h-6 w-6 text-primary" />
           </div>
