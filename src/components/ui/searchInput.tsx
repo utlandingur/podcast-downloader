@@ -18,7 +18,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       <>
         <DebouncedInput
           type="search"
-          placeholder='Enter name, such as "Joe Rogan"'
+          placeholder='Enter show name, such as "Crime Junkie" or "Joe Rogan"'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className={cn('self-center border-accent-foreground')}
