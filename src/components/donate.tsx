@@ -3,6 +3,7 @@ import { CoffeeButton } from './coffeeButton';
 import { Card, CardContent } from './ui/card';
 import type { HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 type Props = HTMLAttributes<HTMLDivElement>;
 
@@ -13,7 +14,13 @@ export const Donate = ({ className, ...props }: Props) => (
         <Coffee className="h-6 w-6 text-primary" />
       </div>
       <div className="space-y-2">
-        <h3 className="text-2xl font-bold">Donate</h3>
+        <Link
+          href={'https://buymeacoffee.com/utlandingur'}
+          target="_blank"
+          className="hover:underline"
+        >
+          <h3 className="text-2xl font-bold">Donate</h3>
+        </Link>
         <p>
           This site is built and maintained by just one person, me! As more
           people use it, the costs grow. If you find it helpful, please consider
