@@ -8,8 +8,8 @@ import { LoadingSpinner } from '@/components/ui/loadingSpinner';
 import { useTheme } from 'next-themes';
 import { ClassValue } from 'clsx';
 import { CoffeeButton } from './coffeeButton';
-import { Img } from './ui/img';
-import { Button } from './ui/button';
+import { Image } from '@/components/ui/image';
+import { Button } from '@/components/ui/button';
 
 export type SearchResult = {
   name: string;
@@ -129,7 +129,7 @@ export const SearchBar = ({
             key={index}
           >
             {result.image && (
-              <Img
+              <Image
                 key={result.image}
                 src={result.image}
                 tabIndex={-1}

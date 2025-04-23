@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils';
 import { CSSProperties } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import React from 'react';
 import { FavouriteToggle } from './favouriteToggle';
+import { Image } from '@/components/ui/image';
 
 type Props = {
   title: string;

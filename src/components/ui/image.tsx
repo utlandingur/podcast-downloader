@@ -1,10 +1,15 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import NextImage, { ImageProps as NextImageProps } from 'next/image';
-import { useState } from 'react';
+import { type ImgHTMLAttributes, useState } from 'react';
 import { Skeleton } from './skeleton';
 
-export const Image = (props: NextImageProps) => {
+type Props = {
+  width?: number | string;
+  height?: number | string;
+  alt?: string;
+} & ImgHTMLAttributes<HTMLImageElement>;
+
+export const Image = (props: Props) => {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -13,8 +18,9 @@ export const Image = (props: NextImageProps) => {
       className="relative"
     >
       {isLoading && <Skeleton className="absolute inset-0 w-full h-full" />}
-      <NextImage
+      <img
         {...props}
+        alt={props.alt}
         onLoad={() => setIsLoading(false)}
         className={`${isLoading ? 'invisible' : 'visible'} ${
           props.className || ''
