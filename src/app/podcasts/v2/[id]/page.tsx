@@ -1,10 +1,12 @@
-import { PodcastSearchBar } from '@/components/podcastSearchBar';
 import { geistSans, geistMono } from '@/app/fonts';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { lookupPodcastV2 } from '@/serverActions/lookupPodcast';
 import { auth } from '../../../../../auth';
 import { PodcastOverviewV2 } from '@/components/podcastOverviewV2';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type Params = Promise<{
   id: string;
@@ -46,15 +48,17 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   return (
     <main
-      className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full`}
+      className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full pt-4 pb-8 px-2 gap-4 sm:gap-0`}
     >
-      <div className={cn('p-8 flex flex-col items-center gap-4')}>
-        <h2 className={cn('text-xl')}>Search for another podcast</h2>
-        <PodcastSearchBar />
-      </div>
+      <Link href={'/'}>
+        <Button className="w-fit text-muted-foreground" variant={'link'}>
+          <ArrowLeft className="h-6 w-6" />
+          Back
+        </Button>
+      </Link>
       <div
         className={cn(
-          'flex flex-col h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8',
+          'flex flex-col h-full w-full items-center justify-start sm:justify-center sm:p-8 gap-8',
         )}
       >
         <PodcastOverviewV2 podcast={podcast} session={session} />

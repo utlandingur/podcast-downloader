@@ -39,11 +39,13 @@ export default async function RootLayout({
         />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="dns-prefetch" href="https://api.podcastindex.org" />
-        <script
-          defer
-          src={process.env.NEXT_PUBLIC_UMAMI_SRC}
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-        ></script>
+        {process.env.NODE_ENV !== 'development' && (
+          <script
+            defer
+            src={process.env.NEXT_PUBLIC_UMAMI_SRC}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          ></script>
+        )}
         {/* Structured Data (FAQ Schema for SEO) */}
         <script
           type="application/ld+json"

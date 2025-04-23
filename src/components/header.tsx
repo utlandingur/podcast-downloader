@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { LoginOutDialog } from './LoginOutDialog';
 import { auth } from '../../auth';
-import { HandHelping, Headphones, User } from 'lucide-react';
+import { Coffee, Headphones, User } from 'lucide-react';
 import { Button } from './ui/button';
 
 const Spacer = () => <div className="font-thin text-muted-foreground">|</div>;
@@ -25,7 +25,7 @@ export const Header = async () => {
           <>
             <Link href={'https://buymeacoffee.com/utlandingur'} target="_blank">
               <Button variant="ghost" className="rounded-full" size="icon">
-                <HandHelping className="fill-yellow-300" />
+                <Coffee className="fill-yellow-300" />
               </Button>
             </Link>
             <Spacer />

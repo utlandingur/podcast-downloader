@@ -1,10 +1,9 @@
 import { EpisodesView } from '@/components/episodesView/episodesView';
 import { Session } from 'next-auth';
-import { Button } from './ui/button';
-import Link from 'next/link';
 import type { PodcastV2 } from '@/types/podcasts';
 import { Image } from '@/components/ui/image';
 import { cn } from '@/lib/utils';
+import { Donate } from './donate';
 
 type PodcastOverviewV2Props = {
   podcast: PodcastV2;
@@ -32,7 +31,11 @@ export const PodcastOverviewV2 = ({
         podcastId={podcast.id.toString()}
         isLoggedIn={!!session}
       />
-      <Link href={podcast.feedUrl} target="_blank">
+      <div className="w-[98%] max-w-[720px] px-4">
+        <Donate className="bg-foreground text-background" />
+      </div>
+      {/* Broken */}
+      {/* <Link href={podcast.feedUrl} target="_blank">
         <Button
           variant="link"
           size="default"
@@ -40,7 +43,7 @@ export const PodcastOverviewV2 = ({
         >
           Go to RSS Feed
         </Button>
-      </Link>
+      </Link> */}
     </>
   );
 };
