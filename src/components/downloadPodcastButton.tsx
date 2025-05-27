@@ -151,11 +151,6 @@ export const DownloadPodcastButton = ({
         downloadState === DownloadState.DownloadOnDesktop
       }
       aria-label={buttonAriaLabel[downloadState]}
-      data-umami-event={
-        downloadState === DownloadState.ReadyToDownload
-          ? 'Download podcast'
-          : undefined
-      }
     >
       {downloadIcon[downloadState]}
       {downloadState === DownloadState.ReadyToDownload && 'Download'}
