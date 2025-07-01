@@ -13,6 +13,17 @@ const nextConfig: NextConfig = {
     };
     return config;
   },
+  async redirects() {
+      return [
+        // Basic redirect
+        {
+          source: '/podcasts',
+          destination: '/',
+          permanent: true,
+        },
+      ]
+    },
+
 };
 
 export default nextConfig;
