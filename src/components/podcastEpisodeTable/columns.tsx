@@ -2,7 +2,7 @@ import type { PodcastEpisode } from "@/types/podcasts";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DownloadPodcastButton, DownloadState } from "../downloadPodcastButton";
+import { DownloadPodcastButton, DownloadState } from "@/components/downloadPodcastButton";
 
 export const columns: ColumnDef<PodcastEpisode>[] = [
   {
