@@ -111,12 +111,6 @@ export const DownloadPodcastButton = ({
     await persistDownload();
   };
 
-  const handleReportIssue = () => {
-    setDownloadState(DownloadState.DownloadError);
-    updateLocalState(id, DownloadState.DownloadError);
-    setShowFallbackAlert(false);
-  };
-
   const handleDismissAlert = () => {
     setShowFallbackAlert(false);
     setDownloadState(DownloadState.ReadyToDownload);
@@ -221,7 +215,6 @@ export const DownloadPodcastButton = ({
           <DownloadFallbackAlert
             fileName={fileName}
             onConfirmDownload={handleConfirmFallbackDownload}
-            onReportIssue={handleReportIssue}
             onRetry={handleRetry}
           />
         )}
@@ -248,7 +241,6 @@ export const DownloadPodcastButton = ({
         <DownloadFallbackAlert
           fileName={fileName}
           onConfirmDownload={handleConfirmFallbackDownload}
-          onReportIssue={handleReportIssue}
           onRetry={handleRetry}
         />
       )}

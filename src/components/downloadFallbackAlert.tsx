@@ -2,20 +2,18 @@
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Check, HelpCircle, RotateCcw, ExternalLink } from 'lucide-react';
+import { Check, RotateCcw, ExternalLink } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
 
 interface DownloadFallbackAlertProps {
   fileName: string;
   onConfirmDownload: () => void;
-  onReportIssue: () => void;
   onRetry: () => void;
 }
 
 export const DownloadFallbackAlert = ({
   fileName,
   onConfirmDownload,
-  onReportIssue,
   onRetry,
 }: DownloadFallbackAlertProps) => {
   return (
@@ -44,15 +42,6 @@ export const DownloadFallbackAlert = ({
           >
             <Check className="h-3 w-3 mr-1" />
             Downloaded Successfully
-          </Button>
-          
-          <Button
-            onClick={onReportIssue}
-            variant="outline"
-            size="sm"
-          >
-            <HelpCircle className="h-3 w-3 mr-1" />
-            Need Help?
           </Button>
           
           <Button
