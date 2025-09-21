@@ -2,12 +2,17 @@ import { InferSchemaType, Schema, Document, models, model } from 'mongoose';
 
 import { podcastStateSchema, PodcastStateType } from '@/models/podcastState';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const userSchema = new Schema(
   {
     email: { type: Schema.Types.String, required: true, unique: true },
-    info: { type: [podcastStateSchema], required: true },
+    info: { type: [podcastStateSchema], required: true, default: [] },
   },
-  { strict: true },
+  { strict: true,
+    versionKey: !isDev ? true : false, // disable __v only in dev
+   },
+  
 );
 
 export type UserType = InferSchemaType<typeof userSchema>;
