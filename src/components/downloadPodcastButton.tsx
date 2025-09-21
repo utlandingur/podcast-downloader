@@ -13,8 +13,21 @@ export enum DownloadState {
   ReadyToDownload = 'readyToDownload',
   Downloading = 'downloading',
   Downloaded = 'downloaded',
+  PreviouslyDownloaded = 'previouslyDownloaded',
+  DownloadError = 'downloadError',
+  AwaitingConfirmation = 'awaitingConfirmation',
+  ShowingFallbackInstructions = 'showingFallbackInstructions',
   DownloadOnDesktop = 'downloadOnDesktop',
   downloadedInNewTab = 'downloadedInNewTab',
+}
+
+interface DownloadButtonConfig {
+  icon: React.ReactElement;
+  variant: 'default' | 'ghost' | 'destructive' | 'secondary';
+  text: string;
+  ariaLabel: string;
+  disabled: boolean;
+  className?: string;
 }
 
 type DownloadPodcastButtonProps = {
@@ -23,6 +36,7 @@ type DownloadPodcastButtonProps = {
   id: number;
   url: string;
   fileName: string;
+  podcastId?: string;
 };
 
 export const DownloadPodcastButton = ({
@@ -31,6 +45,7 @@ export const DownloadPodcastButton = ({
   url,
   id,
   fileName,
+  podcastId,
 }: DownloadPodcastButtonProps) => {
   const normalizeState = (state?: DownloadState) => {
     if (!state) return DownloadState.ReadyToDownload;
@@ -68,6 +83,10 @@ export const DownloadPodcastButton = ({
     downloaded: <Check className="h-4 w-4" />,
     downloadOnDesktop: <X className="h-4 w-4" />,
     downloadedInNewTab: <Check className="h-4 w-4" />,
+    previouslyDownloaded: <Check className="h-4 w-4" />,
+    downloadError: <X className="h-4 w-4" />,
+    awaitingConfirmation: <Check className="h-4 w-4" />,
+    showingFallbackInstructions: <X className="h-4 w-4" />,
   };
 
   const buttonStyle: Record<
@@ -79,27 +98,37 @@ export const DownloadPodcastButton = ({
     downloaded: 'outline',
     downloadOnDesktop: 'destructive',
     downloadedInNewTab: 'secondary',
+    previouslyDownloaded: 'outline',
+    downloadError: 'destructive',
+    awaitingConfirmation: 'secondary',
+    showingFallbackInstructions: 'secondary',
   };
-  const buttonClassName = 'rounded-full px-3 sm:px-4';
 
   const buttonAriaLabel: Record<DownloadState, string> = {
     readyToDownload: 'Download episode',
     downloading: 'Downloading episode',
-    downloaded: 'Downloaded',
-    downloadOnDesktop: 'Please download on desktop browser',
-    downloadedInNewTab: 'Download in new tab',
+    downloaded: 'Episode downloaded successfully',
+    downloadOnDesktop: 'Download on desktop',
+    downloadedInNewTab: 'Episode opened in new tab',
+    previouslyDownloaded: 'Episode previously downloaded',
+    downloadError: 'Download failed',
+    awaitingConfirmation: 'Awaiting confirmation',
+    showingFallbackInstructions: 'Showing fallback instructions',
   };
 
-  const handleOnClick: Record<
-    DownloadState,
-    (() => Promise<void>) | undefined
-  > = {
+  const handleOnClick: Record<DownloadState, () => void> = {
     readyToDownload: handleDownload,
-    downloading: undefined,
-    downloaded: handleDownload,
-    downloadOnDesktop: undefined,
-    downloadedInNewTab: handleDownload,
+    downloading: () => {},
+    downloaded: () => {},
+    downloadOnDesktop: () => {},
+    downloadedInNewTab: () => {},
+    previouslyDownloaded: handleDownload,
+    downloadError: handleDownload,
+    awaitingConfirmation: () => {},
+    showingFallbackInstructions: () => {},
   };
+
+  const buttonClassName = 'rounded-full px-3 sm:px-4';
 
   if (downloadState === DownloadState.downloadedInNewTab) {
     const fallbackUrl = getOpenAudioUrl(url);
@@ -116,16 +145,11 @@ export const DownloadPodcastButton = ({
             onClick={handleOnClick[downloadState]}
           >
             {downloadIcon[downloadState]}
-            Downloaded in new tab - click to retry
           </Button>
         </Link>
-        <div className="text-[0.7rem] text-center self-center text-muted-foreground">
-          Click three dots and press download.
-        </div>
       </div>
     );
   }
-
   return (
     <Button
       size={'sm'}

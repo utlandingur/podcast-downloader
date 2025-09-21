@@ -9,9 +9,11 @@ import { CSSProperties } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { formatEpisodeFilename } from '@/lib/formatEpisodeFilename';
 
+
 export type EpisodeListItem = {
   episode: PodcastEpisodeV2;
   updateDownloadState: (id: number, state: DownloadState) => void;
+  podcastId?: string;
 };
 
 type EpisodeProps = {
@@ -19,12 +21,14 @@ type EpisodeProps = {
   handleDownloadState: (id: number, state: DownloadState) => void;
   style: CSSProperties;
   podcastName: string;
+  podcastId?: string;
   showBorder: boolean;
 };
 
 export const Episode = ({
   episode,
   podcastName,
+  podcastId,
   handleDownloadState,
   style,
   showBorder,
@@ -68,6 +72,7 @@ export const Episode = ({
           updateLocalState={handleDownloadState}
           url={episodeUrl}
           fileName={filename}
+          podcastId={podcastId}
         />
       </div>
     </div>
