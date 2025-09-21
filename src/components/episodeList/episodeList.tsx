@@ -9,6 +9,7 @@ import {
 type EpisodeListProps = {
   episodes: EpisodeListItem[];
   podcastName: string;
+  podcastId?: string;
   isLoading?: boolean;
 };
 
@@ -19,7 +20,7 @@ type RowProps<EpisodeListItem> = {
   data: EpisodeListItem[]; // The array of items passed as `itemData` to the List.
 };
 
-export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
+export const EpisodeList = ({ episodes, podcastName, podcastId }: EpisodeListProps) => {
   const ITEM_SIZE = 160;
   const numOfEps = episodes.length;
 
@@ -31,6 +32,7 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
     return (
       <Episode
         podcastName={podcastName}
+        podcastId={podcastId}
         episode={episode}
         handleDownloadState={updateDownloadState}
         style={style}

@@ -38,7 +38,9 @@ export const useEpisodesView = (podcastId: string) => {
         }
       }
       // Filter by download state
-      if (!showDownloaded && episode.downloadState === DownloadState.Downloaded)
+      if (!showDownloaded && 
+          (episode.downloadState === DownloadState.Downloaded || 
+           episode.downloadState === DownloadState.PreviouslyDownloaded))
         return false;
       return true;
     });
@@ -54,11 +56,14 @@ export const useEpisodesView = (podcastId: string) => {
       setEpisodeData((prev) => {
         const newData = [...prev];
         const indexToUpdate = prev.findIndex((episode) => episode.id === id);
-        newData[indexToUpdate].downloadState = state;
+        if (indexToUpdate !== -1) {
+          newData[indexToUpdate].downloadState = state;
+        }
         return newData;
       });
-      // TODO - add logic to handle when episode is downloaded in a new tab
-      if (state === 'downloaded' && user) {
+      
+      // Persist download to database when state becomes 'downloaded'
+      if (state === DownloadState.Downloaded && user) {
         addDownloadedEpisode(podcastId, id.toString());
       }
     };
@@ -69,12 +74,13 @@ export const useEpisodesView = (podcastId: string) => {
           episode.id.toString(),
         );
         if (isDownloaded) {
-          episode.downloadState = DownloadState.Downloaded;
+          episode.downloadState = DownloadState.PreviouslyDownloaded;
         }
       }
       return {
         episode,
         updateDownloadState: handleUpdateDownloadState,
+        podcastId,
       };
     });
   }, [

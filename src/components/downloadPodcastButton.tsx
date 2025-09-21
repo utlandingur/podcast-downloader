@@ -1,17 +1,29 @@
 'use client';
-import { Check, Download, X } from 'lucide-react';
+import { Check, Download, RotateCcw, AlertCircle, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { LoadingSpinner } from './ui/loadingSpinner';
 import { Button } from './ui/button';
 import { isDesktop } from 'react-device-detect';
-import Link from 'next/link';
+import { useUserStore } from '@/hooks/useUserStore';
+import { DownloadFallbackAlert } from './downloadFallbackAlert';
 
 export enum DownloadState {
   ReadyToDownload = 'readyToDownload',
   Downloading = 'downloading',
   Downloaded = 'downloaded',
-  DownloadOnDesktop = 'downloadOnDesktop',
-  downloadedInNewTab = 'downloadedInNewTab',
+  PreviouslyDownloaded = 'previouslyDownloaded',
+  DownloadError = 'downloadError',
+  AwaitingConfirmation = 'awaitingConfirmation',
+  ShowingFallbackInstructions = 'showingFallbackInstructions',
+}
+
+interface DownloadButtonConfig {
+  icon: React.ReactElement;
+  variant: 'default' | 'ghost' | 'destructive' | 'secondary';
+  text: string;
+  ariaLabel: string;
+  disabled: boolean;
+  className?: string;
 }
 
 type DownloadPodcastButtonProps = {
@@ -20,6 +32,7 @@ type DownloadPodcastButtonProps = {
   id: number;
   url: string;
   fileName: string;
+  podcastId?: string;
 };
 
 export const DownloadPodcastButton = ({
@@ -28,17 +41,26 @@ export const DownloadPodcastButton = ({
   url,
   id,
   fileName,
+  podcastId,
 }: DownloadPodcastButtonProps) => {
-  const [downloadState, setDownloadState] = useState<DownloadState>(
-    existingState
-      ? existingState === DownloadState.DownloadOnDesktop && isDesktop
-        ? DownloadState.ReadyToDownload
-        : existingState
-      : DownloadState.ReadyToDownload,
-  );
+  const [downloadState, setDownloadState] = useState<DownloadState>(existingState);
+  const [showFallbackAlert, setShowFallbackAlert] = useState<boolean>(false);
+  const { addDownloadedEpisode, user } = useUserStore();
+
+  const persistDownload = async () => {
+    if (user && podcastId) {
+      try {
+        await addDownloadedEpisode(podcastId, id.toString());
+      } catch (error) {
+        console.error('Failed to persist download:', error);
+      }
+    }
+  };
 
   const handleDownload = async () => {
     setDownloadState(DownloadState.Downloading);
+    updateLocalState(id, DownloadState.Downloading);
+    
     const anchor = document.createElement('a');
 
     try {
@@ -59,104 +81,177 @@ export const DownloadPodcastButton = ({
       // Clean up the blob URL after download
       window.URL.revokeObjectURL(blobUrl);
       anchor.remove();
+      
+      // Update state and persist to database
       setDownloadState(DownloadState.Downloaded);
       updateLocalState(id, DownloadState.Downloaded);
-    } catch {
-      // Open the URL in a new tab if there's an error (likely CORS)
-      if (!isDesktop) {
-        anchor.remove();
-        setDownloadState(DownloadState.DownloadOnDesktop);
-        updateLocalState(id, DownloadState.DownloadOnDesktop);
-      } else {
-        window.open(url, '_blank');
-        anchor.remove();
-        setDownloadState(DownloadState.downloadedInNewTab);
-        updateLocalState(id, DownloadState.downloadedInNewTab);
-      }
+      await persistDownload();
+    } catch (error) {
+      console.error('Download failed:', error);
+      anchor.remove();
+      
+      // Open in new tab and show fallback instructions
+      window.open(url, '_blank');
+      setDownloadState(DownloadState.ShowingFallbackInstructions);
+      updateLocalState(id, DownloadState.ShowingFallbackInstructions);
+      setShowFallbackAlert(true);
     }
   };
 
-  const downloadIcon: Record<DownloadState, React.ReactElement> = {
-    readyToDownload: <Download />,
-    downloading: <LoadingSpinner />,
-    downloaded: <Check />,
-    downloadOnDesktop: <X />,
-    downloadedInNewTab: <Check />,
+  const handleRetry = () => {
+    setDownloadState(DownloadState.ReadyToDownload);
+    updateLocalState(id, DownloadState.ReadyToDownload);
+    setShowFallbackAlert(false);
   };
 
-  const buttonStyle: Record<
-    DownloadState,
-    'default' | 'ghost' | 'destructive'
-  > = {
-    readyToDownload: 'default',
-    downloading: 'default',
-    downloaded: 'ghost',
-    downloadOnDesktop: 'destructive',
-    downloadedInNewTab: 'default',
+  const handleConfirmFallbackDownload = async () => {
+    setDownloadState(DownloadState.Downloaded);
+    updateLocalState(id, DownloadState.Downloaded);
+    setShowFallbackAlert(false);
+    await persistDownload();
   };
 
-  const buttonAriaLabel: Record<DownloadState, string> = {
-    readyToDownload: 'Download episode',
-    downloading: 'Downloading episode',
-    downloaded: 'Downloaded',
-    downloadOnDesktop: 'Please download on desktop browser',
-    downloadedInNewTab: 'Download in new tab',
+  const handleReportIssue = () => {
+    setDownloadState(DownloadState.DownloadError);
+    updateLocalState(id, DownloadState.DownloadError);
+    setShowFallbackAlert(false);
   };
 
-  const handleOnClick: Record<
-    DownloadState,
-    (() => Promise<void>) | undefined
-  > = {
-    readyToDownload: handleDownload,
-    downloading: undefined,
-    downloaded: handleDownload,
-    downloadOnDesktop: undefined,
-    downloadedInNewTab: handleDownload,
+  const handleDismissAlert = () => {
+    setShowFallbackAlert(false);
+    setDownloadState(DownloadState.ReadyToDownload);
+    updateLocalState(id, DownloadState.ReadyToDownload);
   };
 
-  if (downloadState === DownloadState.downloadedInNewTab) {
+  const DOWNLOAD_STATES: Record<DownloadState, DownloadButtonConfig> = {
+    [DownloadState.ReadyToDownload]: {
+      icon: <Download className="h-4 w-4" />,
+      variant: 'default',
+      text: 'Download',
+      ariaLabel: 'Download episode',
+      disabled: false,
+    },
+    [DownloadState.Downloading]: {
+      icon: <LoadingSpinner />,
+      variant: 'default',
+      text: 'Downloading...',
+      ariaLabel: 'Downloading episode',
+      disabled: true,
+    },
+    [DownloadState.Downloaded]: {
+      icon: <Check className="h-4 w-4" />,
+      variant: 'ghost',
+      text: 'Downloaded',
+      ariaLabel: 'Episode downloaded successfully',
+      disabled: false,
+      className: 'text-green-600 hover:text-green-700',
+    },
+    [DownloadState.PreviouslyDownloaded]: {
+      icon: <RotateCcw className="h-4 w-4" />,
+      variant: 'secondary',
+      text: 'Download Again',
+      ariaLabel: 'Download episode again',
+      disabled: false,
+    },
+    [DownloadState.DownloadError]: {
+      icon: <AlertCircle className="h-4 w-4" />,
+      variant: 'destructive',
+      text: isDesktop ? 'Download Failed' : 'Use Desktop',
+      ariaLabel: 'Download failed, click to retry',
+      disabled: false,
+    },
+    [DownloadState.AwaitingConfirmation]: {
+      icon: <Clock className="h-4 w-4" />,
+      variant: 'default',
+      text: 'Opened in New Tab',
+      ariaLabel: 'Waiting for download confirmation',
+      disabled: true,
+    },
+    [DownloadState.ShowingFallbackInstructions]: {
+      icon: <AlertCircle className="h-4 w-4" />,
+      variant: 'secondary',
+      text: 'Download Instructions',
+      ariaLabel: 'Showing download instructions',
+      disabled: false,
+    },
+  };
+
+  const config = DOWNLOAD_STATES[downloadState];
+  
+  const getClickHandler = () => {
+    switch (downloadState) {
+      case DownloadState.ReadyToDownload:
+      case DownloadState.PreviouslyDownloaded:
+        return handleDownload;
+      case DownloadState.Downloaded:
+        return handleDownload; // Allow re-download
+      case DownloadState.DownloadError:
+        return handleRetry;
+      case DownloadState.ShowingFallbackInstructions:
+        return handleDismissAlert;
+      default:
+        return undefined;
+    }
+  };
+
+  // Show confirmation + download again button for completed downloads
+  if (downloadState === DownloadState.Downloaded || downloadState === DownloadState.PreviouslyDownloaded) {
     return (
-      <div className="flex gap-8 align-center justify-center text-center">
-        <Link href={url}>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 text-green-600 mr-2">
+            <Check className="h-4 w-4" />
+            <span className="text-sm font-medium">
+              {downloadState === DownloadState.Downloaded ? 'Downloaded' : 'Previously downloaded'}
+            </span>
+          </div>
           <Button
-            size={'sm'}
-            variant={'default'}
-            disabled
-            aria-disabled
-            aria-label={buttonAriaLabel[downloadState]}
-            onClick={handleOnClick[downloadState]}
+            size="sm"
+            variant="outline"
+            onClick={handleDownload}
+            aria-label="Download episode again"
+            className="text-xs text-gray-400 hover:text-gray-600"
           >
-            {downloadIcon[downloadState]}
-            Downloaded in new tab - click to retry
+            <RotateCcw className="h-3 w-3 mr-1 text-gray-400 hover:text-gray-600" />
+            Download Again
           </Button>
-        </Link>
-        <div className="text-[0.7rem] text-center self-center text-muted-foreground">
-          Click three dots and press download.
         </div>
+        
+        {showFallbackAlert && (
+          <DownloadFallbackAlert
+            fileName={fileName}
+            onConfirmDownload={handleConfirmFallbackDownload}
+            onReportIssue={handleReportIssue}
+            onRetry={handleRetry}
+          />
+        )}
       </div>
     );
   }
 
+  // Default single button layout for other states
   return (
-    <Button
-      size={'sm'}
-      variant={buttonStyle[downloadState]}
-      onClick={handleOnClick[downloadState]}
-      disabled={
-        downloadState === DownloadState.Downloading ||
-        downloadState === DownloadState.DownloadOnDesktop
-      }
-      aria-disabled={
-        downloadState === DownloadState.Downloading ||
-        downloadState === DownloadState.DownloadOnDesktop
-      }
-      aria-label={buttonAriaLabel[downloadState]}
-    >
-      {downloadIcon[downloadState]}
-      {downloadState === DownloadState.ReadyToDownload && 'Download'}
-      {downloadState === DownloadState.Downloaded && 'Downloaded'}
-      {downloadState === DownloadState.DownloadOnDesktop &&
-        'Error: download on desktop'}
-    </Button>
+    <div className="space-y-2">
+      <Button
+        size="sm"
+        variant={config.variant}
+        onClick={getClickHandler()}
+        disabled={config.disabled}
+        aria-label={config.ariaLabel}
+        className={config.className}
+      >
+        {config.icon}
+        {config.text}
+      </Button>
+      
+      {showFallbackAlert && (
+        <DownloadFallbackAlert
+          fileName={fileName}
+          onConfirmDownload={handleConfirmFallbackDownload}
+          onReportIssue={handleReportIssue}
+          onRetry={handleRetry}
+        />
+      )}
+    </div>
   );
 };
