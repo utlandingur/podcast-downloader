@@ -128,7 +128,6 @@ MONGODB_URI=mongodb://localhost:27017/podcast-downloader-dev
 
 ### Set up environment variables: Create a `.env.local` file and add:
    ```env
-
    MONGODB_URI=mongodb://localhost:27017/podcast-downloader-dev
    ```
 
@@ -137,10 +136,8 @@ MONGODB_URI=mongodb://localhost:27017/podcast-downloader-dev
 Podcast Index API (Required for v2/default functionality):
 
 1. Visit https://api.podcastindex.org/ 
-2. Click "Get API Key"
-3. Fill out the form with your name, email, and intended use
-4. You'll receive your PODCAST_INDEX_API_KEY and PODCAST_INDEX_API_SECRET via email
-5. Add these to your .env.local file
+2. Copy your PODCAST_INDEX_API_KEY and PODCAST_INDEX_API_SECRET
+3. Add these to your .env.local file
 
 add to .env.local
 ```env
