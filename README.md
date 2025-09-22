@@ -99,6 +99,68 @@ This project is completely free and open-source, and contributions are highly en
 - Improve UI/UX for a better experience.
 - Add support for additional podcast APIs.
 
+## Development Testing
+
+### Local MongoDB Setup
+
+For local development and testing, you can use MongoDB Community Edition via Homebrew:
+
+1. **Install MongoDB Community Edition**:
+   ```sh
+   brew tap mongodb/brew
+   brew install mongodb-community
+
+2. Start MongoDB service:
+brew services start mongodb-community
+
+3. Connect to MongoDB:
+```sh
+mongosh
+> use podcast-downloader-dev
+```
+
+4. Stop MongoDB service (when done):
+brew services stop mongodb-community
+
+5. Update your .env.local to use local MongoDB:
+MONGODB_URI=mongodb://localhost:27017/podcast-downloader-dev
+
+
+### Set up environment variables: Create a `.env.local` file and add:
+   ```env
+
+   MONGODB_URI=mongodb://localhost:27017/podcast-downloader-dev
+   ```
+
+### Getting API Keys
+
+Podcast Index API (Required for v2/default functionality):
+
+1. Visit https://api.podcastindex.org/ 
+2. Click "Get API Key"
+3. Fill out the form with your name, email, and intended use
+4. You'll receive your PODCAST_INDEX_API_KEY and PODCAST_INDEX_API_SECRET via email
+5. Add these to your .env.local file
+
+add to .env.local
+```env
+   PODCAST_INDEX_API_KEY=your_podcast_index_api_key
+   PODCAST_INDEX_API_SECRET=your_podcast_index_api_secret
+```
+
+### Development Authentication
+
+For testing user features (download history, favorites) without Google OAuth setup:
+
+1. The app includes a dev credentials provider that automatically activates in development mode
+2. No additional setup required - just run npm run dev
+3. In the login dialog, you'll see a "Continue as Dev User" option
+4. Dev user email: dev@local.test - automatically created in your local MongoDB
+5. Note: You may need to manually refresh the page after dev login to see auth state changes & also after logout
+
+This allows you to test download persistence and user features without configuring Google OAuth credentials.
+
+
 ## License
 
 This project is **free and open-source**, but **commercial use is strictly prohibited**.
