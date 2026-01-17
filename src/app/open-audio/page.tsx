@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-type Props = {
-  searchParams?: {
-    url?: string | string[];
-  };
+type SearchParams = {
+  url?: string | string[];
 };
 
-const getAudioUrl = (searchParams?: Props['searchParams']) => {
+type Props = {
+  searchParams?: Promise<SearchParams>;
+};
+
+const getAudioUrl = (searchParams?: SearchParams) => {
   const rawUrl = searchParams?.url;
   const urlValue = Array.isArray(rawUrl) ? rawUrl[0] : rawUrl;
   if (!urlValue) return null;
@@ -21,8 +23,9 @@ const getAudioUrl = (searchParams?: Props['searchParams']) => {
   }
 };
 
-export default function OpenAudioPage({ searchParams }: Props) {
-  const audioUrl = getAudioUrl(searchParams);
+export default async function OpenAudioPage({ searchParams }: Props) {
+  const resolvedParams = searchParams ? await searchParams : undefined;
+  const audioUrl = getAudioUrl(resolvedParams);
 
   if (!audioUrl) {
     return (
