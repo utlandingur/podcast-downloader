@@ -8,9 +8,11 @@ import DOMPurify from 'dompurify';
 import { CSSProperties } from 'react';
 import { Skeleton } from '../ui/skeleton';
 
+
 export type EpisodeListItem = {
   episode: PodcastEpisodeV2;
   updateDownloadState: (id: number, state: DownloadState) => void;
+  podcastId?: string;
 };
 
 type EpisodeProps = {
@@ -18,12 +20,14 @@ type EpisodeProps = {
   handleDownloadState: (id: number, state: DownloadState) => void;
   style: CSSProperties;
   podcastName: string;
+  podcastId?: string;
   showBorder: boolean;
 };
 
 export const Episode = ({
   episode,
   podcastName,
+  podcastId,
   handleDownloadState,
   style,
   showBorder,
@@ -54,13 +58,14 @@ export const Episode = ({
         )}
         dangerouslySetInnerHTML={{ __html: cleanDescription }}
       />
-      <div className={cn('flex justify-start pt-2')}>
+      <div className={cn('flex flex-col items-start pt-2')}>
         <DownloadPodcastButton
           existingState={downloadState ?? DownloadState.ReadyToDownload}
           id={id}
           updateLocalState={handleDownloadState}
           url={episodeUrl}
           fileName={filename}
+          podcastId={podcastId}
         />
       </div>
     </div>
