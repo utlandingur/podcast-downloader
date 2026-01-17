@@ -271,7 +271,11 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
         {isBulkDownloading && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-md bg-background/80 backdrop-blur-sm">
             <LoadingSpinner size={32} />
-            <div className="text-sm text-muted-foreground">
+            <div
+              className="text-sm text-muted-foreground"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               Downloading {bulkProgress.current} of {bulkProgress.total}
             </div>
             <Button
