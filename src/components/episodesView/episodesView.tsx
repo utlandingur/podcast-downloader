@@ -191,7 +191,19 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
                   max={maxBulkCount}
                   value={bulkCountInput}
                   onChange={(e) => setBulkCountInput(e.target.value)}
+                  aria-invalid={!isBulkCountValid}
+                  aria-describedby="bulk-count-error"
                 />
+                <p
+                  id="bulk-count-error"
+                  className={cn(
+                    'text-xs text-destructive',
+                    isBulkCountValid && 'sr-only',
+                  )}
+                >
+                  Enter a number between 1 and {maxBulkCount}, up to{' '}
+                  {BULK_DOWNLOAD_MAX}.
+                </p>
               </div>
               <DialogFooter>
                 <Button
