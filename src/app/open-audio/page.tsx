@@ -1,21 +1,16 @@
+'use client';
+import { useMemo } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
-type SearchParams = {
-  url?: string | string[];
-};
+export const dynamic = 'force-static';
 
-type Props = {
-  searchParams?: Promise<SearchParams>;
-};
-
-const getAudioUrl = (searchParams?: SearchParams) => {
-  const rawUrl = searchParams?.url;
-  const urlValue = Array.isArray(rawUrl) ? rawUrl[0] : rawUrl;
-  if (!urlValue) return null;
+const getAudioUrl = (rawUrl: string | null) => {
+  if (!rawUrl) return null;
 
   try {
-    const parsed = new URL(urlValue);
+    const parsed = new URL(rawUrl);
     if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
     return parsed.toString();
   } catch {
@@ -23,9 +18,12 @@ const getAudioUrl = (searchParams?: SearchParams) => {
   }
 };
 
-export default async function OpenAudioPage({ searchParams }: Props) {
-  const resolvedParams = searchParams ? await searchParams : undefined;
-  const audioUrl = getAudioUrl(resolvedParams);
+export default function OpenAudioPage() {
+  const searchParams = useSearchParams();
+  const audioUrl = useMemo(
+    () => getAudioUrl(searchParams.get('url')),
+    [searchParams],
+  );
 
   if (!audioUrl) {
     return (
@@ -48,7 +46,7 @@ export default async function OpenAudioPage({ searchParams }: Props) {
         Some hosts block direct downloads. This player is muted by default.
         Use the three-dot menu in the player to download if needed.
       </p>
-      <audio className="w-full" controls muted preload="metadata" src={audioUrl} />
+      <audio className="w-full" controls preload="metadata" src={audioUrl} />
       <div className="flex flex-wrap gap-2">
         <Button asChild>
           <a href={audioUrl} rel="noreferrer" target="_blank">
