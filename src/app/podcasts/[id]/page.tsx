@@ -26,7 +26,7 @@ export async function generateMetadata({
   const response = await fetch(
     `https://itunes.apple.com/lookup?id=${id}&entity=podcast
     `,
-    { cache: 'force-cache' },
+    { next: { revalidate: 7200 } },
   );
   const data = await response.json();
   const episode: PodcastEpisode = data.results[0];

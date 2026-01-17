@@ -10,7 +10,7 @@ export const lookupPodcastEpisodes = async (
   collectionId: string,
 ): Promise<PodcastEpisode[]> => {
   const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode`;
-  const response = await fetch(url, { cache: 'no-store' });
+  const response = await fetch(url, { next: { revalidate: 7200 } });
 
   const data = await response.json();
   const results: PodcastEpisode[] = data.results;
@@ -32,7 +32,7 @@ export const lookupPodcastEpisodesV2 = async (
     // url.searchParams.append('fulltext', 'true'); // If present, return the full text value of any text fields (ex: description). If not provided, field value is truncated to 100 words.
 
     const response = await fetch(url, {
-      cache: 'no-store',
+      next: { revalidate: 7200 },
       headers: await getPodcastIndexHeaders(),
       method: 'GET',
     });
@@ -83,7 +83,7 @@ export const lookupRecentPodcastEpisodes = async (
     url.searchParams.append('since', `${oneMonthAgo}`);
 
     const response = await fetch(url, {
-      cache: 'force-cache',
+      next: { revalidate: 7200 },
       headers: await getPodcastIndexHeaders(),
       method: 'GET',
     });
@@ -120,7 +120,7 @@ export const lookupOlderPodcastEpisodes = async (
     url.searchParams.append('before', `${lastTimestamp ?? oneMonthAgo}`); // Default: Before last month
 
     const response = await fetch(url, {
-      cache: 'no-store',
+      next: { revalidate: 300 },
       headers: await getPodcastIndexHeaders(),
       method: 'GET',
     });

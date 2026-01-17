@@ -15,7 +15,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const episodes = await lookupPodcastEpisodesV2(podcastId);
-    return NextResponse.json(episodes);
+    return NextResponse.json(episodes, {
+      headers: { 'Cache-Control': 'public, s-maxage=3000, stale-while-revalidate=300' },
+    });
   } catch (error) {
     console.error('Error fetching episodes', error);
     return NextResponse.json(

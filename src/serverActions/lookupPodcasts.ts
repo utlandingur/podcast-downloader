@@ -26,7 +26,7 @@ export const lookupPodcastsV1 = async (
 ): Promise<Podcast[]> => {
   const response = await fetch(
     `https://itunes.apple.com/search?term=${searchTerm}&entity=podcast&limit=${limit}`,
-    { cache: "force-cache" }
+    { next: { revalidate: 7200 } }
   );
   const data = await response.json();
   return data.results;
