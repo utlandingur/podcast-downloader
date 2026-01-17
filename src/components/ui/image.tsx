@@ -24,12 +24,42 @@ export const Image = (props: Props) => {
       setIsLoading(false);
       return;
     }
-    if (img.decode) {
+
+    if (typeof img.decode === 'function') {
+      let isActive = true;
       img
         .decode()
-        .then(() => setIsLoading(false))
-        .catch(() => setIsLoading(false));
+        .then(() => {
+          if (isActive) {
+            setIsLoading(false);
+          }
+        })
+        .catch(() => {
+          if (isActive) {
+            setIsLoading(false);
+          }
+        });
+
+      return () => {
+        isActive = false;
+      };
     }
+
+    const handleLoad = () => {
+      setIsLoading(false);
+    };
+
+    const handleError = () => {
+      setIsLoading(false);
+    };
+
+    img.addEventListener('load', handleLoad);
+    img.addEventListener('error', handleError);
+
+    return () => {
+      img.removeEventListener('load', handleLoad);
+      img.removeEventListener('error', handleError);
+    };
   }, [props.src]);
 
   return (
