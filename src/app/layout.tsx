@@ -3,9 +3,10 @@ import '@/globals.css';
 import { QueryClientProvider } from '@/providers/QueryClientProvider';
 import { ThemeProvider } from '@/providers/themeProvider';
 import { Header } from '@/components/header';
-import { auth } from '../../auth';
 import { SyncUserWrapper } from '@/components/syncUserWrapper';
 import { faqItems } from '@/components/faq';
+import { SessionProvider } from 'next-auth/react';
+
 
 export const metadata: Metadata = {
   title: 'Download Podcasts To Mp3',
@@ -17,7 +18,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html
       lang="en"
@@ -68,19 +68,21 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body>
-        <Header />
-        <ThemeProvider
-          attribute="class" // Ensures theme is applied using a class
-          defaultTheme="system" // Default theme used during SSR
-          enableSystem={true} // Optional: Enables system preference detection
-          disableTransitionOnChange // Optional: Prevents transition effects during hydration
-        >
-          <QueryClientProvider>
-            <SyncUserWrapper session={session}>{children}</SyncUserWrapper>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </body>
+      <SessionProvider>
+        <body>
+          <Header />
+          <ThemeProvider
+            attribute="class" // Ensures theme is applied using a class
+            defaultTheme="system" // Default theme used during SSR
+            enableSystem={true} // Optional: Enables system preference detection
+            disableTransitionOnChange // Optional: Prevents transition effects during hydration
+          >
+            <QueryClientProvider>
+              <SyncUserWrapper>{children}</SyncUserWrapper>
+            </QueryClientProvider>
+          </ThemeProvider>
+        </body>
+      </SessionProvider>
     </html>
   );
 }

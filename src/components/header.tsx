@@ -1,19 +1,21 @@
+'use client';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { LoginOutDialog } from './LoginOutDialog';
-import { auth } from '../../auth';
 import { Coffee, Headphones, User } from 'lucide-react';
 import { Button } from './ui/button';
+import { SessionContextValue, useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 const Spacer = () => <div className="font-thin text-muted-foreground">|</div>;
 
-export const Header = async () => {
-  const session = await auth();
+export const Header = () => {
+  const { data: session, status} = useSession();
 
   return (
     <div
       className={cn(
-        'p-3 flex w-full font-semibold justify-between items-center border-b-2 border-b-text-foreground',
+        'p-3 flex w-full font-semibold justify-between items-center border-b-2 border-b-text-foreground h-16',
       )}
     >
       <Link href={'/'} className="flex gap-2 items-center">
@@ -21,8 +23,20 @@ export const Header = async () => {
         PodcastToMP3
       </Link>
       <div className="flex gap-2 items-center">
-        {session ? (
-          <>
+        <ButtonsToRender status={status} loggedIn={!!session?.user} />
+      </div>
+    </div>
+  );
+};
+
+const ButtonsToRender = ({status, loggedIn}: {status: SessionContextValue["status"], loggedIn:boolean}) => {
+  if (status === "loading") {
+    return null; // or a loading spinner
+  }
+
+  if (loggedIn) {
+    return (
+       <>
             <Link href={'https://buymeacoffee.com/utlandingur'} target="_blank">
               <Button variant="ghost" className="rounded-full" size="icon">
                 <Coffee className="fill-yellow-300" />
@@ -35,12 +49,9 @@ export const Header = async () => {
               </Button>
             </Link>
             <Spacer />
-            <LoginOutDialog showLogin={!!session} />
-          </>
-        ) : (
-          <LoginOutDialog showLogin={!!session} />
-        )}
-      </div>
-    </div>
-  );
+            <LoginOutDialog mode="logout" />
+      </>);
+  } else {
+    return <LoginOutDialog mode="login" />;
+  }
 };
