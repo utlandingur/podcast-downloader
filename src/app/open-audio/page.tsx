@@ -1,0 +1,61 @@
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+
+type Props = {
+  searchParams?: {
+    url?: string | string[];
+  };
+};
+
+const getAudioUrl = (searchParams?: Props['searchParams']) => {
+  const rawUrl = searchParams?.url;
+  const urlValue = Array.isArray(rawUrl) ? rawUrl[0] : rawUrl;
+  if (!urlValue) return null;
+
+  try {
+    const parsed = new URL(urlValue);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+};
+
+export default function OpenAudioPage({ searchParams }: Props) {
+  const audioUrl = getAudioUrl(searchParams);
+
+  if (!audioUrl) {
+    return (
+      <main className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center gap-4 px-4 text-center">
+        <h1 className="text-xl font-semibold">Invalid audio link</h1>
+        <p className="text-sm text-muted-foreground">
+          We could not open that episode. Please go back and try again.
+        </p>
+        <Button asChild variant="outline">
+          <Link href="/">Back to home</Link>
+        </Button>
+      </main>
+    );
+  }
+
+  return (
+    <main className="mx-auto flex min-h-[60vh] max-w-2xl flex-col gap-4 px-4 py-10">
+      <h1 className="text-xl font-semibold">Episode player</h1>
+      <p className="text-sm text-muted-foreground">
+        Some hosts block direct downloads. This player is muted by default.
+        Use the three-dot menu in the player to download if needed.
+      </p>
+      <audio className="w-full" controls muted preload="metadata" src={audioUrl} />
+      <div className="flex flex-wrap gap-2">
+        <Button asChild>
+          <a href={audioUrl} rel="noreferrer" target="_blank">
+            Open audio file
+          </a>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/">Back to home</Link>
+        </Button>
+      </div>
+    </main>
+  );
+}
