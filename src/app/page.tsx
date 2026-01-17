@@ -7,6 +7,8 @@ import { FAQ } from '@/components/faq';
 import { Features } from '@/components/features';
 import { Hero } from '@/components/hero/hero';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'PodcastToMp3 - Download Podcasts as MP3',
   description:

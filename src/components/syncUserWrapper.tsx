@@ -1,13 +1,13 @@
 'use client';
 import { useSyncUser } from '@/hooks/useSyncUser';
-import { Session } from 'next-auth';
+import { useSession } from 'next-auth/react';
 
 type Props = {
-  session: Session | null;
   children: React.ReactNode;
 };
 
-export const SyncUserWrapper = ({ session, children }: Props) => {
+export const SyncUserWrapper = ({ children }: Props) => {
+  const { data: session } = useSession();
   useSyncUser(session || null);
   return <>{children}</>;
 };
