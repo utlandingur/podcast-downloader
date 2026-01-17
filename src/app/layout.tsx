@@ -68,8 +68,8 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <SessionProvider>
-        <body>
+      <body>
+        <SessionProvider>
           <Header />
           <ThemeProvider
             attribute="class" // Ensures theme is applied using a class
@@ -81,8 +81,8 @@ export default async function RootLayout({
               <SyncUserWrapper>{children}</SyncUserWrapper>
             </QueryClientProvider>
           </ThemeProvider>
-        </body>
-      </SessionProvider>
+       </SessionProvider>
+      </body>
     </html>
   );
 }

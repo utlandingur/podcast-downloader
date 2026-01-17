@@ -9,7 +9,7 @@ import { SessionContextValue, useSession } from 'next-auth/react';
 const Spacer = () => <div className="font-thin text-muted-foreground">|</div>;
 
 export const Header = () => {
-  const { data: session, status} = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <div
@@ -28,7 +28,7 @@ export const Header = () => {
   );
 };
 
-const ButtonsToRender = ({status, loggedIn}: {status: SessionContextValue["status"], loggedIn:boolean}) => {
+const ButtonsToRender = ({ status, loggedIn }: { status: SessionContextValue["status"]; loggedIn:boolean }) => {
   if (status === "loading") {
     return null; // or a loading spinner
   }
