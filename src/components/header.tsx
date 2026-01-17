@@ -5,7 +5,6 @@ import { LoginOutDialog } from './LoginOutDialog';
 import { Coffee, Headphones, User } from 'lucide-react';
 import { Button } from './ui/button';
 import { SessionContextValue, useSession } from 'next-auth/react';
-import { useEffect } from 'react';
 
 const Spacer = () => <div className="font-thin text-muted-foreground">|</div>;
 
