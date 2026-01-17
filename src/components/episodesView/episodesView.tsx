@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loadingSpinner';
 import { DownloadState } from '@/components/downloadPodcastButton';
 import type { EpisodeListItem } from '@/components/episodeList/episode';
-import { downloadEpisodeFile } from '@/lib/downloadEpisode';
+import { downloadEpisodeFile } from '@/lib/downloadEpisodeFile';
 import {
   Dialog,
   DialogContent,

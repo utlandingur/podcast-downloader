@@ -5,7 +5,8 @@ import { LoadingSpinner } from './ui/loadingSpinner';
 import { Button } from './ui/button';
 import { isDesktop } from 'react-device-detect';
 import Link from 'next/link';
-import { downloadEpisodeFile } from '@/lib/downloadEpisode';
+import { downloadEpisodeFile } from '@/lib/downloadEpisodeFile';
+import { getOpenAudioUrl } from '@/lib/openAudio';
 
 export enum DownloadState {
   ReadyToDownload = 'readyToDownload',
@@ -90,9 +91,10 @@ export const DownloadPodcastButton = ({
   };
 
   if (downloadState === DownloadState.downloadedInNewTab) {
+    const fallbackUrl = getOpenAudioUrl(url);
     return (
       <div className="flex gap-8 align-center justify-center text-center">
-        <Link href={url} target="_blank" rel="noreferrer">
+        <Link href={fallbackUrl} target="_blank" rel="noreferrer">
           <Button
             size={'sm'}
             variant={'default'}

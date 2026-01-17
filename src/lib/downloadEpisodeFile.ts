@@ -1,6 +1,7 @@
 'use client';
 import { isDesktop } from 'react-device-detect';
 import { DownloadState } from '@/components/downloadPodcastButton';
+import { getOpenAudioUrl } from '@/lib/openAudio';
 
 type DownloadEpisodeOptions = {
   url: string;
@@ -58,7 +59,7 @@ export const downloadEpisodeFile = async ({
       return DownloadState.DownloadOnDesktop;
     }
 
-    const fallbackUrl = `/open-audio?url=${encodeURIComponent(url)}`;
+    const fallbackUrl = getOpenAudioUrl(url);
     window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
     anchor.remove();
     return DownloadState.downloadedInNewTab;
