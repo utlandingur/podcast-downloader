@@ -30,7 +30,11 @@ type Props = {
   isLoggedIn: boolean;
 };
 
+// Default number of episodes pre-filled for bulk download. Kept small to avoid
+// overwhelming users or the UI with very large initial batches.
 const BULK_DOWNLOAD_LIMIT = 10;
+// Hard upper safety cap on bulk downloads to avoid very large multi-download
+// operations that could strain browser, network, or backend resources.
 const BULK_DOWNLOAD_MAX = 100;
 
 export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
