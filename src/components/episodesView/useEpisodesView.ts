@@ -54,6 +54,7 @@ export const useEpisodesView = (podcastId: string) => {
       setEpisodeData((prev) => {
         const newData = [...prev];
         const indexToUpdate = prev.findIndex((episode) => episode.id === id);
+        if (indexToUpdate === -1) return prev;
         newData[indexToUpdate].downloadState = state;
         return newData;
       });

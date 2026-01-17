@@ -68,7 +68,8 @@ export const DownloadPodcastButton = ({
         setDownloadState(DownloadState.DownloadOnDesktop);
         updateLocalState(id, DownloadState.DownloadOnDesktop);
       } else {
-        window.open(url, '_blank');
+        const fallbackUrl = `/open-audio?url=${encodeURIComponent(url)}`;
+        window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
         anchor.remove();
         setDownloadState(DownloadState.downloadedInNewTab);
         updateLocalState(id, DownloadState.downloadedInNewTab);
@@ -117,7 +118,7 @@ export const DownloadPodcastButton = ({
   if (downloadState === DownloadState.downloadedInNewTab) {
     return (
       <div className="flex gap-8 align-center justify-center text-center">
-        <Link href={url}>
+        <Link href={url} target="_blank" rel="noreferrer">
           <Button
             size={'sm'}
             variant={'default'}
