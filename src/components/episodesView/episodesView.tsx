@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { DebouncedInput } from '../ui/input';
 import { EpisodeList, EpisodeListSkeleton } from '../episodeList/episodeList';
@@ -10,9 +10,9 @@ import { OptionsWrapper } from './optionsWraper';
 import { ToggleFavourite } from './toggleFavourite';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loadingSpinner';
-import { isDesktop } from 'react-device-detect';
 import { DownloadState } from '@/components/downloadPodcastButton';
 import type { EpisodeListItem } from '@/components/episodeList/episode';
+import { downloadEpisodeFile } from '@/lib/downloadEpisode';
 import {
   Dialog,
   DialogContent,
@@ -55,6 +55,9 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
     total: 0,
     current: 0,
   });
+  const bulkCancelRef = useRef(false);
+  const currentAbortRef = useRef<AbortController | null>(null);
+  const isMountedRef = useRef(true);
 
   const [bulkDialogOpen, setBulkDialogOpen] = useState(false);
   const maxBulkCount = Math.min(BULK_DOWNLOAD_MAX, episodesToDisplay.length);
@@ -71,51 +74,62 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
     }
   }, [bulkDialogOpen, defaultBulkCount]);
 
-  const downloadEpisode = async (item: EpisodeListItem) => {
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      bulkCancelRef.current = true;
+      currentAbortRef.current?.abort();
+    };
+  }, []);
+
+  const downloadEpisode = async (
+    item: EpisodeListItem,
+    signal?: AbortSignal,
+  ) => {
     const { episode, updateDownloadState } = item;
     const filename = `${podcastName}-episode-${episode.title}.mp3`;
-    const anchor = document.createElement('a');
 
-    updateDownloadState(episode.id, DownloadState.Downloading);
-    try {
-      const response = await fetch(episode.episodeUrl);
-      if (!response.ok) throw new Error('Failed to fetch the file');
-      const blob = await response.blob();
-      if (!blob || blob.size === 0) throw new Error('Received empty blob.');
+    if (isMountedRef.current) {
+      updateDownloadState(episode.id, DownloadState.Downloading);
+    }
 
-      const blobUrl = window.URL.createObjectURL(blob);
-      anchor.href = blobUrl;
-      anchor.download = filename;
-      anchor.click();
+    const nextState = await downloadEpisodeFile({
+      url: episode.episodeUrl,
+      filename,
+      signal,
+    });
 
-      window.URL.revokeObjectURL(blobUrl);
-      anchor.remove();
-      updateDownloadState(episode.id, DownloadState.Downloaded);
-    } catch {
-      if (!isDesktop) {
-        anchor.remove();
-        updateDownloadState(episode.id, DownloadState.DownloadOnDesktop);
-      } else {
-        const fallbackUrl = `/open-audio?url=${encodeURIComponent(
-          episode.episodeUrl,
-        )}`;
-        window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
-        anchor.remove();
-        updateDownloadState(episode.id, DownloadState.downloadedInNewTab);
-      }
+    if (isMountedRef.current) {
+      updateDownloadState(episode.id, nextState);
     }
   };
 
   const handleBulkDownload = async (requestedCount: number) => {
     if (isLoading || isBulkDownloading || requestedCount === 0) return;
 
-    setBulkProgress({ active: true, total: requestedCount, current: 0 });
+    bulkCancelRef.current = false;
+    if (isMountedRef.current) {
+      setBulkProgress({ active: true, total: requestedCount, current: 0 });
+    }
     const items = episodesToDisplay.slice(0, requestedCount);
     for (let i = 0; i < items.length; i += 1) {
-      setBulkProgress((prev) => ({ ...prev, current: i + 1 }));
-      await downloadEpisode(items[i]);
+      if (bulkCancelRef.current) break;
+      if (isMountedRef.current) {
+        setBulkProgress((prev) => ({ ...prev, current: i + 1 }));
+      }
+      const controller = new AbortController();
+      currentAbortRef.current = controller;
+      await downloadEpisode(items[i], controller.signal);
+      currentAbortRef.current = null;
     }
-    setBulkProgress({ active: false, total: 0, current: 0 });
+    if (isMountedRef.current) {
+      setBulkProgress({ active: false, total: 0, current: 0 });
+    }
+  };
+
+  const handleCancelBulkDownload = () => {
+    bulkCancelRef.current = true;
+    currentAbortRef.current?.abort();
   };
 
   const parsedBulkCount = Number.parseInt(bulkCountInput, 10);
@@ -165,7 +179,13 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
           />
         </OptionsWrapper>
         <OptionsWrapper title="Bulk Download">
-          <Dialog open={bulkDialogOpen} onOpenChange={setBulkDialogOpen}>
+          <Dialog
+            open={bulkDialogOpen}
+            onOpenChange={(open) => {
+              if (isBulkDownloading) return;
+              setBulkDialogOpen(open);
+            }}
+          >
             <DialogTrigger asChild>
               <Button
                 disabled={isLoading || isBulkDownloading || maxBulkCount === 0}
@@ -173,7 +193,14 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
                 Bulk download
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent
+              onPointerDownOutside={(event) => {
+                if (isBulkDownloading) event.preventDefault();
+              }}
+              onEscapeKeyDown={(event) => {
+                if (isBulkDownloading) event.preventDefault();
+              }}
+            >
               <DialogHeader>
                 <DialogTitle>Bulk download</DialogTitle>
                 <DialogDescription>
@@ -247,6 +274,13 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
             <div className="text-sm text-muted-foreground">
               Downloading {bulkProgress.current} of {bulkProgress.total}
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCancelBulkDownload}
+            >
+              Cancel
+            </Button>
           </div>
         )}
         {isLoading && <EpisodeListSkeleton />}
