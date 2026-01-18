@@ -20,9 +20,10 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className={cn(
-          'self-center placeholder:text-lg md:placeholder:text-2xl py-0',
+          'self-center placeholder:text-xl md:placeholder:text-2xl py-0',
           className,
         )}
+        name='search'
         autoFocus={autoFocus}
         ref={ref}
       />

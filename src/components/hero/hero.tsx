@@ -12,54 +12,49 @@ export function Hero() {
         <div className="absolute bottom-0 left-0 h-80 w-80 rounded-full bg-sky-500/10 blur-3xl" />
       </div>
 
-      <div className="flex flex-col items-center gap-8 text-center py-20 w-full">
-        <Container>
-          <Badge
-            variant="secondary"
-            className="rounded-full px-4 py-1 text-xs uppercase tracking-[0.2em]"
-          >
-            Now with bulk downloads
-          </Badge>
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Download podcasts fast. Keep them forever.
-          </h1>
-          <p className="text-base text-muted-foreground sm:text-lg">
-            Search any show, grab single episodes, or bulk download entire seasons
-            for offline listening on any device.
+      <div className="flex w-full items-center py-16 sm:py-20 justify-center">
+        <div className="flex w-full max-w-4xl flex-col items-center gap-8 text-center">
+          <div className="flex flex-col items-center gap-4">
+            <Badge
+              variant="secondary"
+              className="rounded-full px-4 py-1 text-xs uppercase tracking-[0.2em]"
+            >
+              Loved by 240+ supporters
+            </Badge>
+            <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              The easy way to download podcast MP3s
+            </h1>
+            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+              Search any show, save single episodes, or bulk download full
+              seasons for offline listening. No paywalls. No fluff. Just
+              downloads.
             </p>
-        </Container>
-        <div className="w-full max-w-2xl px-2">
-          <PodcastSearchBar
-            autoFocus={true}
-            showButton
-            width="w-full max-w-2xl"
-            inputClassName="h-12 sm:h-14 rounded-full bg-background/80 px-6 text-base shadow-md focus-visible:ring-2 sm:text-lg"
-            buttonClassName="h-12 sm:h-14 rounded-full px-6 text-base sm:text-lg"
-          />
-        </div>
+          </div>
+          <div className="w-full max-w-2xl px-2">
+            <PodcastSearchBar
+              autoFocus={true}
+              showButton
+              width="w-full"
+              inputClassName="h-12 sm:h-14 rounded-full bg-background/80 text-base shadow-md focus-visible:ring-2 sm:text-lg"
+              buttonClassName="h-12 sm:h-14 rounded-full px-6 text-base sm:text-lg"
+            />
+          </div>
 
-        <Container>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Badge
               variant="outline"
               className="px-4 py-2 text-sm font-medium backdrop-blur"
             >
-              15k+ Users
+              No ads or tracking whatsoever
             </Badge>
             <Badge
               variant="outline"
               className="px-4 py-2 text-sm font-medium backdrop-blur"
             >
-              75k+ Downloads
-            </Badge>
-            <Badge
-              variant="outline"
-              className="px-4 py-2 text-sm font-medium backdrop-blur"
-            >
-              Bulk episode downloads
+              Completely free and open source
             </Badge>
           </div>
-        </Container>
+        </div>
       </div>
       <CanScrollIcon />
     </section>
