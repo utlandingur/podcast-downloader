@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
-import useEmblaCarousel, {
+import useEmblaCarousel from "embla-carousel-react";
+import {
+  type EmblaOptionsType,
+  type EmblaPluginType,
   type EmblaCarouselType,
-} from "embla-carousel-react";
-import { type EmblaOptionsType, type EmblaPluginType } from "embla-carousel";
+} from "embla-carousel";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
