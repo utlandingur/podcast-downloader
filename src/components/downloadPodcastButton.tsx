@@ -5,6 +5,8 @@ import { LoadingSpinner } from './ui/loadingSpinner';
 import { Button } from './ui/button';
 import { isDesktop } from 'react-device-detect';
 import Link from 'next/link';
+import { downloadEpisodeFile } from '@/lib/downloadEpisodeFile';
+import { getOpenAudioUrl } from '@/lib/openAudio';
 
 export enum DownloadState {
   ReadyToDownload = 'readyToDownload',
@@ -39,40 +41,14 @@ export const DownloadPodcastButton = ({
 
   const handleDownload = async () => {
     setDownloadState(DownloadState.Downloading);
-    const anchor = document.createElement('a');
 
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch the file');
-      }
-      const blob = await response.blob();
-      if (!blob || blob.size === 0) {
-        throw new Error('Received empty blob.');
-      }
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      anchor.href = blobUrl;
-      anchor.download = fileName;
-      await anchor.click();
-
-      // Clean up the blob URL after download
-      window.URL.revokeObjectURL(blobUrl);
-      anchor.remove();
-      setDownloadState(DownloadState.Downloaded);
-      updateLocalState(id, DownloadState.Downloaded);
+      const nextState = await downloadEpisodeFile({ url, filename: fileName });
+      setDownloadState(nextState);
+      updateLocalState(id, nextState);
     } catch {
-      // Open the URL in a new tab if there's an error (likely CORS)
-      if (!isDesktop) {
-        anchor.remove();
-        setDownloadState(DownloadState.DownloadOnDesktop);
-        updateLocalState(id, DownloadState.DownloadOnDesktop);
-      } else {
-        window.open(url, '_blank');
-        anchor.remove();
-        setDownloadState(DownloadState.downloadedInNewTab);
-        updateLocalState(id, DownloadState.downloadedInNewTab);
-      }
+      setDownloadState(DownloadState.ReadyToDownload);
+      updateLocalState(id, DownloadState.ReadyToDownload);
     }
   };
 
@@ -115,9 +91,10 @@ export const DownloadPodcastButton = ({
   };
 
   if (downloadState === DownloadState.downloadedInNewTab) {
+    const fallbackUrl = getOpenAudioUrl(url);
     return (
       <div className="flex gap-8 align-center justify-center text-center">
-        <Link href={url}>
+        <Link href={fallbackUrl} target="_blank" rel="noreferrer">
           <Button
             size={'sm'}
             variant={'default'}
