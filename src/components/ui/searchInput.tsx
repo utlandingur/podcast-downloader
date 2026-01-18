@@ -16,10 +16,13 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <DebouncedInput
         type="search"
-        placeholder="Enter name of the podcast"
+        placeholder="Podcast title"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className={cn('self-center', className)}
+        className={cn(
+          'self-center placeholder:text-lg md:placeholder:text-2xl py-0',
+          className,
+        )}
         autoFocus={autoFocus}
         ref={ref}
       />

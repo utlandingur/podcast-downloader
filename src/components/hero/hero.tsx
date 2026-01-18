@@ -12,21 +12,23 @@ export function Hero() {
         <div className="absolute bottom-0 left-0 h-80 w-80 rounded-full bg-sky-500/10 blur-3xl" />
       </div>
 
-      <Container className="flex flex-col items-center gap-8 text-center py-20">
-        <Badge
-          variant="secondary"
-          className="rounded-full px-4 py-1 text-xs uppercase tracking-[0.2em]"
-        >
-          Now with bulk downloads
-        </Badge>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-          Download podcasts fast. Keep them forever.
-        </h1>
-        <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
-          Search any show, grab single episodes, or bulk download entire seasons
-          for offline listening on any device.
-        </p>
-        <div className="w-full max-w-2xl">
+      <div className="flex flex-col items-center gap-8 text-center py-20 w-full">
+        <Container>
+          <Badge
+            variant="secondary"
+            className="rounded-full px-4 py-1 text-xs uppercase tracking-[0.2em]"
+          >
+            Now with bulk downloads
+          </Badge>
+          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+            Download podcasts fast. Keep them forever.
+          </h1>
+          <p className="text-base text-muted-foreground sm:text-lg">
+            Search any show, grab single episodes, or bulk download entire seasons
+            for offline listening on any device.
+            </p>
+        </Container>
+        <div className="w-full max-w-2xl px-2">
           <PodcastSearchBar
             autoFocus={true}
             showButton
@@ -36,27 +38,29 @@ export function Hero() {
           />
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Badge
-            variant="outline"
-            className="px-4 py-2 text-sm font-medium backdrop-blur"
-          >
-            15k+ Users
-          </Badge>
-          <Badge
-            variant="outline"
-            className="px-4 py-2 text-sm font-medium backdrop-blur"
-          >
-            75k+ Downloads
-          </Badge>
-          <Badge
-            variant="outline"
-            className="px-4 py-2 text-sm font-medium backdrop-blur"
-          >
-            Bulk episode downloads
-          </Badge>
-        </div>
-      </Container>
+        <Container>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Badge
+              variant="outline"
+              className="px-4 py-2 text-sm font-medium backdrop-blur"
+            >
+              15k+ Users
+            </Badge>
+            <Badge
+              variant="outline"
+              className="px-4 py-2 text-sm font-medium backdrop-blur"
+            >
+              75k+ Downloads
+            </Badge>
+            <Badge
+              variant="outline"
+              className="px-4 py-2 text-sm font-medium backdrop-blur"
+            >
+              Bulk episode downloads
+            </Badge>
+          </div>
+        </Container>
+      </div>
       <CanScrollIcon />
     </section>
   );
