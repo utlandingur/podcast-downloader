@@ -62,6 +62,7 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       },
       plugins,
     );
+    const emblaApi = api ?? null;
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
 
@@ -72,12 +73,12 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     }, []);
 
     const scrollPrev = React.useCallback(() => {
-      api?.scrollPrev();
-    }, [api]);
+      emblaApi?.scrollPrev();
+    }, [emblaApi]);
 
     const scrollNext = React.useCallback(() => {
-      api?.scrollNext();
-    }, [api]);
+      emblaApi?.scrollNext();
+    }, [emblaApi]);
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -93,27 +94,27 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     );
 
     React.useEffect(() => {
-      if (!api || !setApi) return;
-      setApi(api);
-    }, [api, setApi]);
+      if (!emblaApi || !setApi) return;
+      setApi(emblaApi);
+    }, [emblaApi, setApi]);
 
     React.useEffect(() => {
-      if (!api) return;
-      onSelect(api);
-      api.on("reInit", onSelect);
-      api.on("select", onSelect);
+      if (!emblaApi) return;
+      onSelect(emblaApi);
+      emblaApi.on("reInit", onSelect);
+      emblaApi.on("select", onSelect);
 
       return () => {
-        api.off("select", onSelect);
-        api.off("reInit", onSelect);
+        emblaApi.off("select", onSelect);
+        emblaApi.off("reInit", onSelect);
       };
-    }, [api, onSelect]);
+    }, [emblaApi, onSelect]);
 
     return (
       <CarouselContext.Provider
         value={{
           carouselRef,
-          api,
+          api: emblaApi,
           opts,
           orientation,
           scrollPrev,
