@@ -2,7 +2,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { LoginOutDialog } from './LoginOutDialog';
-import { Coffee, Headphones, User } from 'lucide-react';
+import { Coffee, Podcast, User } from 'lucide-react';
 import { Button } from './ui/button';
 import { SessionContextValue, useSession } from 'next-auth/react';
 
@@ -17,9 +17,14 @@ export const Header = () => {
         'p-3 flex w-full font-semibold justify-between items-center border-b-2 border-b-text-foreground h-16',
       )}
     >
-      <Link href={'/'} className="flex gap-2 items-center">
-        <Headphones className="h-4 w-4" />
-        PodcastToMP3
+      <Link
+        href={'/'}
+        className="flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-foreground shadow-sm"
+      >
+        <Podcast className="h-4 w-4 text-primary" />
+        <span className="text-sm font-semibold tracking-tight sm:text-base">
+          PodcastToMP3
+        </span>
       </Link>
       <div className="flex gap-2 items-center">
         <ButtonsToRender status={status} loggedIn={!!session?.user} />

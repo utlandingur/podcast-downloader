@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Container } from '@/components/container';
 
 export const faqItems = [
   {
@@ -32,6 +33,16 @@ export const faqItems = [
       'No software installation is required. Everything is web-based, so you can download podcasts directly from your browser.',
   },
   {
+    question: 'Can I download Spotify podcasts?',
+    answer:
+      'Yes. If the podcast is publicly available, you can find it here and download episodes as MP3 files.',
+  },
+  {
+    question: 'Can I download Apple Podcasts to MP3?',
+    answer:
+      'Yes. Search for any public show and download episodes directly as MP3 files.',
+  },
+  {
     question: 'What is the maximum file size I can download?',
     answer: 'There is no limit, but larger files may take longer to download.',
   },
@@ -49,8 +60,8 @@ export const faqItems = [
 
 export function FAQ() {
   return (
-    <section className="container">
-      <div className="mx-auto max-w-3xl space-y-8">
+    <section className="w-full">
+      <Container className="mx-auto max-w-3xl space-y-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tighter">
             Frequently Asked Questions
@@ -67,7 +78,7 @@ export function FAQ() {
             </AccordionItem>
           ))}
         </Accordion>
-      </div>
+      </Container>
     </section>
   );
 }

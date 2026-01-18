@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     "free podcast download",
     "download podcast episodes",
     "podcast to mp3",
+    "apple podcast downloader",
+    "spotify podcast to mp3",
+    "download podcast mp3",
   ],
   openGraph: {
     title: "PodcastToMp3 - Download Podcasts as MP3",
@@ -47,7 +50,7 @@ export const metadata: Metadata = {
 export default async function Home() {
   return (
     <main
-      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center  px-8 md:px-0`}
+      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center`}
     >
       <HeroV1 />
       <HowItWorks />

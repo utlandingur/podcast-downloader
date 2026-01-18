@@ -65,7 +65,7 @@ export const Image = (props: Props) => {
   return (
     <div
       style={{ width: props.width, height: props.height }}
-      className="relative"
+      className="relative flex justify-center items-center overflow-hidden"
     >
       {isLoading && <Skeleton className="absolute inset-0 w-full h-full" />}
       <img

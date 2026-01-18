@@ -6,13 +6,14 @@ import { Support } from '@/components/support';
 import { FAQ } from '@/components/faq';
 import { Features } from '@/components/features';
 import { Hero } from '@/components/hero/hero';
+import { Reveal } from '@/components/reveal';
 
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
   title: 'PodcastToMp3 - Download Podcasts as MP3',
   description:
-    'Easily convert and download podcasts into MP3 format for offline listening. Discover your favorite shows and take them wherever you go!',
+    'Easily convert and download podcasts into MP3 format for offline listening. Find Spotify podcasts and more, then take your favorite shows anywhere.',
   keywords: [
     'podcast downloader',
     'download podcasts',
@@ -21,11 +22,18 @@ export const metadata: Metadata = {
     'free podcast download',
     'download podcast episodes',
     'podcast to mp3',
+    'apple podcast downloader',
+    'spotify podcast to mp3',
+    'download podcast mp3',
+    'spotify podcasts',
+    'spotify podcast downloader',
+    'download spotify podcasts',
+    'spotify to mp3',
   ],
   openGraph: {
     title: 'PodcastToMp3 - Download Podcasts as MP3',
     description:
-      'Convert and download your favorite podcasts as MP3 files. Perfect for offline listening!',
+      'Convert and download your favorite podcasts, including Spotify podcasts, as MP3 files. Perfect for offline listening!',
     url: 'https://podcasttomp3.com',
     images: [
       {
@@ -41,7 +49,7 @@ export const metadata: Metadata = {
     card: 'summary',
     title: 'PodcastToMp3 - Download Podcasts as MP3',
     description:
-      'Easily convert and download podcasts into MP3 format for offline listening. Discover your favorite shows and take them wherever you go!',
+      'Easily convert and download podcasts into MP3 format for offline listening. Find Spotify podcasts and take your favorite shows wherever you go!',
     images: ['https://podcasttomp3.com/assets/screenshot.png'],
   },
 };
@@ -49,14 +57,26 @@ export const metadata: Metadata = {
 export default async function Home() {
   return (
     <main
-      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center  px-8 md:px-0`}
+      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center`}
     >
-      <Hero />
-      <UserReviews />
-      <Features />
-      <HowItWorks />
-      <Support />
-      <FAQ />
+      <Reveal className="w-full" delayMs={0}>
+        <Hero />
+      </Reveal>
+      <Reveal className="w-full" delayMs={120}>
+        <UserReviews />
+      </Reveal>
+      <Reveal className="w-full" delayMs={180}>
+        <Features />
+      </Reveal>
+      <Reveal className="w-full" delayMs={240}>
+        <HowItWorks />
+      </Reveal>
+      <Reveal className="w-full" delayMs={300}>
+        <Support />
+      </Reveal>
+      <Reveal className="w-full" delayMs={360}>
+        <FAQ />
+      </Reveal>
     </main>
   );
 }

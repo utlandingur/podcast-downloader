@@ -1,5 +1,14 @@
+'use client';
+
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import AutoScroll from "embla-carousel-auto-scroll";
 import { Coffee } from "lucide-react";
+import { Container } from "./container";
 
 export function UserReviews() {
   const reviews = [
@@ -24,41 +33,67 @@ export function UserReviews() {
       source: "BuyMeACoffee",
     },
   ];
+  const carouselReviews = [...reviews, ...reviews];
 
   return (
-    <section className="container">
-      <div className="mx-auto max-w-5xl space-y-8">
-        <div className="text-center">
+    <section className="relative w-full overflow-hidden">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.06),_transparent_60%)]" />
+      <div className="space-y-10">
+        <Container className="text-center space-y-2">
           <h2 className="text-3xl font-bold tracking-tighter">
             What Our Supporters Say
           </h2>
-        </div>
+          <p className="text-muted-foreground">
+            Real feedback from listeners who download on the go.
+          </p>
+        </Container>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {reviews.map((review, i) => (
-            <Card key={i}>
-              <CardContent className="p-6 space-y-4 bg-primary-foreground h-full flex flex-col justify-between">
-                <div className="flex flex-col  justify-center gap-4 items-center">
-                  <div className="flex text-accent-foreground">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <Coffee key={j} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground">{review.text}</p>
-                </div>
-                <div>
-                  <p className="font-semibold">{review.author}</p>
-                  {review.source && (
-                    <p className="text-xs text-muted-foreground">
-                      Source: {review.source}
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Carousel
+          opts={{ align: "start", loop: true, dragFree: true }}
+          plugins={[
+            AutoScroll({
+              speed: 0.8,
+              stopOnInteraction: false,
+              stopOnMouseEnter: true,
+            }),
+          ]}
+          className="w-full"
+        >
+          <CarouselContent>
+            {carouselReviews.map((review, i) => (
+              <CarouselItem
+                key={`${review.author}-${i}`}
+                className="pl-4 basis-[280px] sm:basis-[320px] lg:basis-[360px]"
+              >
+                <Card className="h-full border-border/60 bg-background/70 shadow-sm backdrop-blur">
+                  <CardContent className="flex h-full flex-col justify-between gap-6 p-6">
+                    <div className="flex flex-col items-center gap-4 text-center">
+                      <div className="flex text-accent-foreground">
+                        {Array.from({ length: 5 }).map((_, j) => (
+                          <Coffee key={j} className="h-4 w-4 fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {review.text}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="font-semibold">{review.author}</p>
+                      {review.source && (
+                        <p className="text-xs text-muted-foreground">
+                          Source: {review.source}
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-20 bg-gradient-to-r from-background to-transparent md:block" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-20 bg-gradient-to-l from-background to-transparent md:block" />
     </section>
   );
 }
