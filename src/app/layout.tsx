@@ -37,6 +37,7 @@ export default async function RootLayout({
           sizes="180x180"
           href="/apple-touch-icon.png"
         />
+        <meta property="og:type" content="website" />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="dns-prefetch" href="https://api.podcastindex.org" />
         {/* Removed to reduce the number of requests to keep costs down */}

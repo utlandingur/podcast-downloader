@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     "free podcast download",
     "download podcast episodes",
     "podcast to mp3",
+    "apple podcast downloader",
+    "spotify podcast to mp3",
+    "download podcast mp3",
   ],
   openGraph: {
     title: "PodcastToMp3 - Download Podcasts as MP3",

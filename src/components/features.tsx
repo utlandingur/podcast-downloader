@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Container } from "@/components/container";
-import { Plane, Shield, History, DownloadCloud } from "lucide-react";
+import { Radar, Shield, History, DownloadCloud } from "lucide-react";
 
 export function Features() {
   const features = [
@@ -17,7 +17,7 @@ export function Features() {
         "Grab full seasons or multi-episode batches in one go when you need a lot fast.",
     },
     {
-      icon: <Plane className="h-6 w-6" />,
+      icon: <Radar className="h-6 w-6" />,
       title: "No Ads or Tracking",
       description:
         "Download what you want without ads, trackers, or upsells—just a clean, fast experience.",

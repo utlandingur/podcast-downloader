@@ -33,6 +33,16 @@ export const faqItems = [
       'No software installation is required. Everything is web-based, so you can download podcasts directly from your browser.',
   },
   {
+    question: 'Can I download Spotify podcasts?',
+    answer:
+      'Yes. If the podcast is publicly available, you can find it here and download episodes as MP3 files.',
+  },
+  {
+    question: 'Can I download Apple Podcasts to MP3?',
+    answer:
+      'Yes. Search for any public show and download episodes directly as MP3 files.',
+  },
+  {
     question: 'What is the maximum file size I can download?',
     answer: 'There is no limit, but larger files may take longer to download.',
   },

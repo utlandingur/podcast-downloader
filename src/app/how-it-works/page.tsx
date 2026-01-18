@@ -10,18 +10,24 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "How it Works - PodcastToMp3",
   description:
-    "Learn how to easily convert and download podcasts into MP3 format with PodcastToMp3. Step-by-step guide for downloading your favorite episodes.",
+    "Learn how to easily convert and download podcasts into MP3 format with PodcastToMp3, including Spotify podcast favorites. Step-by-step guide for downloading your favorite episodes.",
   keywords: [
     "how it works podcast downloader",
     "download podcasts as mp3",
     "how to download podcasts",
     "podcast to mp3 guide",
     "podcast download tutorial",
+    "spotify podcasts",
+    "download spotify podcasts",
+    "spotify podcast downloader",
+    "spotify podcast to mp3",
+    "apple podcast downloader",
+    "download podcast mp3",
   ],
   openGraph: {
     title: "How it Works - PodcastToMp3",
     description:
-      "Step-by-step guide on how to convert and download podcasts as MP3 files. Easily download your favorite podcast episodes.",
+      "Step-by-step guide on how to convert and download podcasts as MP3 files, including Spotify podcast favorites.",
     url: "https://podcasttomp3.com/how-it-works",
     images: [
       {
@@ -37,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary", // Use a larger image for Twitter sharing
     title: "How it Works - PodcastToMp3",
     description:
-      "Step-by-step guide on how to convert and download podcasts as MP3 files. Easily download your favorite podcast episodes.",
+      "Step-by-step guide on how to convert and download podcasts as MP3 files, including Spotify podcast favorites.",
     images: ["https://podcasttomp3.com/assets/screenshot.png"], // Twitter card image
   },
 };
