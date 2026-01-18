@@ -18,9 +18,9 @@ export function Features() {
     },
     {
       icon: <Plane className="h-6 w-6" />,
-      title: "Listen Anywhere, Anytime",
+      title: "No Ads or Tracking",
       description:
-        "Take your favorite podcasts offline—perfect for flights, road trips, or areas with no internet.",
+        "Download what you want without ads, trackers, or upsells—just a clean, fast experience.",
     },
     {
       icon: <Shield className="h-6 w-6" />,
@@ -35,7 +35,7 @@ export function Features() {
       <Container className="grid gap-12">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-            Why Use PodcastToMp3
+            Why Use PodcastToMp3.com
           </h2>
         </div>
 

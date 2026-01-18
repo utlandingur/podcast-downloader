@@ -35,8 +35,8 @@ export function Hero() {
               autoFocus={true}
               showButton
               width="w-full"
-              inputClassName="h-12 sm:h-14 rounded-full bg-background/80 text-base shadow-md focus-visible:ring-2 sm:text-lg"
-              buttonClassName="h-12 sm:h-14 rounded-full px-6 text-base sm:text-lg"
+              inputClassName="h-12 sm:h-14 rounded-full bg-background/80 shadow-md focus-visible:ring-2 py-0 md:text-2xl"
+              buttonClassName="h-12 sm:h-14 rounded-full px-6 sm:text-lg"
             />
           </div>
 
