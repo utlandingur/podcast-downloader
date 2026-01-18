@@ -74,7 +74,7 @@ export default async function RootLayout({
           <Header />
           <ThemeProvider
             attribute="class" // Ensures theme is applied using a class
-            defaultTheme="system" // Default theme used during SSR
+            defaultTheme="dark" // Default theme used during SSR
             enableSystem={true} // Optional: Enables system preference detection
             disableTransitionOnChange // Optional: Prevents transition effects during hydration
           >

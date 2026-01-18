@@ -5,8 +5,8 @@ import { CanScrollIcon } from './canScrollIcon';
 
 export function Hero() {
   return (
-    <section className="relative w-full min-h-[calc(100vh-56px)] flex items-center overflow-hidden">
-      <div className="absolute inset-0 -z-10">
+    <section className="relative w-full min-h-[calc(100vh-56px)] flex items-center">
+      <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_55%)]" />
         <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
         <div className="absolute bottom-0 left-0 h-80 w-80 rounded-full bg-sky-500/10 blur-3xl" />

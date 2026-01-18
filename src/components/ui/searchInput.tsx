@@ -1,31 +1,29 @@
 import { cn } from '@/lib/utils';
-import { DebouncedInput } from './input';
+import { Input } from './input';
 import { forwardRef } from 'react';
-import { SearchResult } from '../searchBar';
 
-type SearchInputProps = {
-  searchTerm: string;
-  setSearchTerm: (string: string) => void;
-  searchResults: SearchResult[];
-  autoFocus?: boolean;
-  className?: string;
-};
+type SearchInputProps = React.ComponentPropsWithoutRef<'input'>;
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ searchTerm, setSearchTerm, className, autoFocus }, ref) => {
+  (
+    {
+      className,
+      type = 'search',
+      placeholder = 'Podcast title',
+      ...props
+    },
+    ref,
+  ) => {
     return (
-      <DebouncedInput
-        type="search"
-        placeholder="Podcast title"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+      <Input
+        ref={ref}
+        type={type}
+        placeholder={placeholder}
         className={cn(
-          'self-center placeholder:text-xl md:placeholder:text-2xl py-0',
+          'self-center border-2 border-muted-foreground/40 py-0 text-lg leading-none placeholder:text-base sm:placeholder:text-lg focus-visible:border-primary/60',
           className,
         )}
-        name='search'
-        autoFocus={autoFocus}
-        ref={ref}
+        {...props}
       />
     );
   },
