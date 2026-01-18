@@ -1,5 +1,4 @@
 import { Badge } from '@/components/ui/badge';
-import { Container } from '@/components/container';
 import { PodcastSearchBar } from '../podcastSearchBar';
 import { CanScrollIcon } from './canScrollIcon';
 

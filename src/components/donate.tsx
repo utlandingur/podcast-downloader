@@ -3,7 +3,6 @@ import { CoffeeButton } from './coffeeButton';
 import { Card, CardContent } from './ui/card';
 import type { HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 type Props = HTMLAttributes<HTMLDivElement>;
 
