@@ -80,8 +80,16 @@ export default async function RootLayout({
             <QueryClientProvider>
               <SyncUserWrapper>{children}</SyncUserWrapper>
             </QueryClientProvider>
+            <footer className="py-6 text-center text-xs text-muted-foreground">
+              Personal use only.
+              <br />
+              Please respect podcast host terms.
+              <br />
+              <br />
+              Consider supporting the podcast creators.
+            </footer>
           </ThemeProvider>
-       </SessionProvider>
+        </SessionProvider>
       </body>
     </html>
   );

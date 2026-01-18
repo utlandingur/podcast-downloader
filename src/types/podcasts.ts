@@ -33,6 +33,7 @@ export type PodcastV2 = {
   id: number;
   title: string;
   feedUrl: string;
+  link?: string;
   description: string;
   image: string;
   language: string;
