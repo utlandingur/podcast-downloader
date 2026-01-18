@@ -11,9 +11,18 @@ import { PodcastsSearchResponseV2 } from '@/types/podcasts';
 type Props = {
   autoFocus?: boolean;
   showButton?: boolean;
+  width?: string;
+  inputClassName?: string;
+  buttonClassName?: string;
 };
 
-export const PodcastSearchBar = ({ autoFocus, showButton }: Props) => {
+export const PodcastSearchBar = ({
+  autoFocus,
+  showButton,
+  width,
+  inputClassName,
+  buttonClassName,
+}: Props) => {
   const router = useRouter();
 
   const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
@@ -34,6 +43,9 @@ export const PodcastSearchBar = ({ autoFocus, showButton }: Props) => {
       searchQuery={podcastSearch}
       autoFocus={autoFocus}
       showButton={showButton}
+      width={width}
+      inputClassName={inputClassName}
+      buttonClassName={buttonClassName}
     />
   );
 };

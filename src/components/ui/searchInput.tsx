@@ -8,17 +8,19 @@ type SearchInputProps = {
   setSearchTerm: (string: string) => void;
   searchResults: SearchResult[];
   autoFocus?: boolean;
+  className?: string;
 };
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ searchTerm, setSearchTerm }, ref) => {
+  ({ searchTerm, setSearchTerm, className, autoFocus }, ref) => {
     return (
       <DebouncedInput
         type="search"
         placeholder="Enter name of the podcast"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className={cn('self-center border-accent-foreground border-')}
+        className={cn('self-center', className)}
+        autoFocus={autoFocus}
         ref={ref}
       />
     );

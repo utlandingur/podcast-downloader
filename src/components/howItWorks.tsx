@@ -1,10 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Container } from "@/components/container";
 import { Download, Search } from "lucide-react";
 
 export function HowItWorks() {
   return (
-    <section className="container">
-      <div className="grid gap-12">
+    <section className="w-full">
+      <Container className="grid gap-12">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
             How It Works
@@ -41,7 +42,7 @@ export function HowItWorks() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

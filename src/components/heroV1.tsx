@@ -1,10 +1,11 @@
 import { Badge } from '@/components/ui/badge';
+import { Container } from '@/components/container';
 import { PodcastSearchBarV1 } from './podcastSearchBar';
 
 export function HeroV1() {
   return (
     <section className="h-[calc(100vh-56px)] justify-center flex items-center">
-      <div className="container space-y-8 text-center">
+      <Container className="space-y-8 text-center">
         <div className="space-y-6">
           <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
             Download Your Favorite Podcasts as MP3s
@@ -28,7 +29,7 @@ export function HeroV1() {
             25+ Supporters
           </Badge>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

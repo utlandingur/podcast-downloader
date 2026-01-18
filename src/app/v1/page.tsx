@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 export default async function Home() {
   return (
     <main
-      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center  px-8 md:px-0`}
+      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center`}
     >
       <HeroV1 />
       <HowItWorks />

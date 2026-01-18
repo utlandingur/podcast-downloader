@@ -27,6 +27,8 @@ type SearchBarProps = {
   width?: string;
   autoFocus?: boolean;
   showButton?: boolean;
+  inputClassName?: string;
+  buttonClassName?: string;
 };
 
 export const SearchBar = ({
@@ -36,6 +38,8 @@ export const SearchBar = ({
   width = 'w-72 sm:w-96',
   autoFocus,
   showButton,
+  inputClassName,
+  buttonClassName,
 }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showPopover, setShowPopover] = useState<boolean>(false);
@@ -164,10 +168,11 @@ export const SearchBar = ({
                 searchResults={searchResults}
                 ref={inputRef}
                 autoFocus={autoFocus}
+                className={inputClassName}
               />
               {showButton && (
                 <Button
-                  className="font-bold"
+                  className={cn('font-bold', buttonClassName)}
                   onClick={() => {
                     setShowPopover(true);
                   }}

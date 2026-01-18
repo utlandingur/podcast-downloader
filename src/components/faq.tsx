@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Container } from '@/components/container';
 
 export const faqItems = [
   {
@@ -49,8 +50,8 @@ export const faqItems = [
 
 export function FAQ() {
   return (
-    <section className="container">
-      <div className="mx-auto max-w-3xl space-y-8">
+    <section className="w-full">
+      <Container className="mx-auto max-w-3xl space-y-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tighter">
             Frequently Asked Questions
@@ -67,7 +68,7 @@ export function FAQ() {
             </AccordionItem>
           ))}
         </Accordion>
-      </div>
+      </Container>
     </section>
   );
 }

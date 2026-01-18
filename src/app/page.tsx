@@ -6,6 +6,7 @@ import { Support } from '@/components/support';
 import { FAQ } from '@/components/faq';
 import { Features } from '@/components/features';
 import { Hero } from '@/components/hero/hero';
+import { Reveal } from '@/components/reveal';
 
 export const dynamic = 'force-static';
 
@@ -49,14 +50,26 @@ export const metadata: Metadata = {
 export default async function Home() {
   return (
     <main
-      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center  px-8 md:px-0`}
+      className={`flex flex-col gap-24 pb-16 ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-full items-center justify-center sm:justify-center text-center`}
     >
-      <Hero />
-      <UserReviews />
-      <Features />
-      <HowItWorks />
-      <Support />
-      <FAQ />
+      <Reveal className="w-full" delayMs={0}>
+        <Hero />
+      </Reveal>
+      <Reveal className="w-full" delayMs={120}>
+        <UserReviews />
+      </Reveal>
+      <Reveal className="w-full" delayMs={180}>
+        <Features />
+      </Reveal>
+      <Reveal className="w-full" delayMs={240}>
+        <HowItWorks />
+      </Reveal>
+      <Reveal className="w-full" delayMs={300}>
+        <Support />
+      </Reveal>
+      <Reveal className="w-full" delayMs={360}>
+        <FAQ />
+      </Reveal>
     </main>
   );
 }

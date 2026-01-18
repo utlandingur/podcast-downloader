@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Plane, Shield, History } from "lucide-react";
+import { Container } from "@/components/container";
+import { Plane, Shield, History, DownloadCloud } from "lucide-react";
 
 export function Features() {
   const features = [
@@ -8,6 +9,12 @@ export function Features() {
       title: "Completely Free",
       description:
         "Enjoy unlimited downloads without paying a cent—no hidden fees, ever.",
+    },
+    {
+      icon: <DownloadCloud className="h-6 w-6" />,
+      title: "Bulk Downloads",
+      description:
+        "Grab full seasons or multi-episode batches in one go when you need a lot fast.",
     },
     {
       icon: <Plane className="h-6 w-6" />,
@@ -21,17 +28,11 @@ export function Features() {
       description:
         "Download episodes directly from podcast hosts for the most secure and reliable experience.",
     },
-    {
-      icon: <History className="h-6 w-6" />,
-      title: "Stay Organized",
-      description:
-        "Log in with Google to track your downloads, avoid repeats, and keep your library tidy..",
-    },
   ];
 
   return (
-    <section className="container">
-      <div className="grid gap-12">
+    <section className="w-full">
+      <Container className="grid gap-12">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
             Why Use PodcastToMp3
@@ -53,7 +54,7 @@ export function Features() {
             </Card>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 }
