@@ -29,6 +29,7 @@ export const useEpisodesView = (podcastId: string) => {
   const userPodcastInfo = getUserPodcastInfo(podcastId, user?.info);
 
   const filteredEpisodes = useMemo(() => {
+    const downloadedIds = new Set(userPodcastInfo?.downloaded_episodes ?? []);
     const filtered = (episodeData || []).filter((episode) => {
       // Filter by search term
       if (searchTerm) {
@@ -38,7 +39,10 @@ export const useEpisodesView = (podcastId: string) => {
         }
       }
       // Filter by download state
-      if (!showDownloaded && episode.downloadState === DownloadState.Downloaded)
+      const isDownloaded =
+        episode.downloadState === DownloadState.Downloaded ||
+        downloadedIds.has(episode.id.toString());
+      if (!showDownloaded && isDownloaded)
         return false;
       return true;
     });
@@ -47,7 +51,7 @@ export const useEpisodesView = (podcastId: string) => {
       return filtered.toReversed();
     }
     return filtered;
-  }, [episodeData, searchTerm, isAscending, showDownloaded]);
+  }, [episodeData, searchTerm, isAscending, showDownloaded, userPodcastInfo]);
 
   const episodesToDisplay = useMemo(() => {
     const handleUpdateDownloadState = (id: number, state: DownloadState) => {
@@ -93,6 +97,7 @@ export const useEpisodesView = (podcastId: string) => {
     setIsAscending,
     showDownloaded,
     setShowDownloaded,
+    totalEpisodes: episodeData.length,
     episodesToDisplay,
     filteredEpisodes,
     isLoading,

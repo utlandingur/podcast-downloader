@@ -20,7 +20,7 @@ type RowProps<EpisodeListItem> = {
 };
 
 export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
-  const ITEM_SIZE = 160;
+  const ITEM_SIZE = 176;
   const numOfEps = episodes.length;
 
   const Row = ({ index, style, data }: RowProps<EpisodeListItem>) => {
@@ -39,9 +39,9 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
     );
   };
   return (
-    <div className="border border-gray-200 rounded-md p-4">
+    <div className="rounded-2xl border border-border/70 bg-muted/30 p-1 sm:p-2 shadow-sm overflow-hidden">
       <FixedSizeList
-        height={Math.min(530, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
+        height={Math.min(620, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
         itemCount={numOfEps} // Total number of episodes.
         itemSize={ITEM_SIZE} // Function returning height of each item.
         width={'100%'} // Total width of the container in pixels.
@@ -64,5 +64,9 @@ export const EpisodeListSkeleton = () => {
   const skeletones = Array.from({ length: 5 }).map((_, i) => (
     <EpisodeSkeleton key={i} />
   ));
-  return <>{skeletones}</>;
+  return (
+    <div className="rounded-2xl border border-border/70 bg-muted/30 p-1 sm:p-2 shadow-sm">
+      {skeletones}
+    </div>
+  );
 };

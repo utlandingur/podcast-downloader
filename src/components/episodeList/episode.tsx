@@ -38,23 +38,25 @@ export const Episode = ({
     <div
       style={style}
       className={cn(
-        `flex flex-col py-4 justify-center
-        ${showBorder && 'border-b border-muted-foreground pt-4'}`,
+        `flex h-full flex-col justify-between gap-3 px-3 sm:px-4 py-4 transition-colors hover:bg-muted/40
+        ${showBorder && 'border-b border-border/40'}`,
       )}
     >
-      <div className={cn('text-sm text-muted-foreground')}>
-        {datePublished.toLocaleDateString()}
+      <div className="flex flex-col gap-2">
+        <div className={cn('text-xs uppercase tracking-wide text-muted-foreground')}>
+          {datePublished.toLocaleDateString()}
+        </div>
+        <div className={cn('line-clamp-2 text-base font-semibold leading-snug')}>
+          {title}
+        </div>
+        <div
+          className={cn(
+            'line-clamp-2 text-ellipsis text-sm text-muted-foreground',
+          )}
+          dangerouslySetInnerHTML={{ __html: cleanDescription }}
+        />
       </div>
-      <div className={cn('line-clamp-1 m:line-clamp-2 text-ellipsis')}>
-        {title}
-      </div>
-      <div
-        className={cn(
-          'line-clamp-2 text-ellipsis text-sm text-muted-foreground ',
-        )}
-        dangerouslySetInnerHTML={{ __html: cleanDescription }}
-      />
-      <div className={cn('flex justify-start pt-2')}>
+      <div className={cn('flex justify-end')}>
         <DownloadPodcastButton
           existingState={downloadState ?? DownloadState.ReadyToDownload}
           id={id}
@@ -68,9 +70,11 @@ export const Episode = ({
 };
 
 export const EpisodeSkeleton = () => (
-  <div className="flex flex-col py-4 justify-center">
-    <Skeleton className="w-full h-[20px] mb-4" /> {/* Title skeleton */}
-    <Skeleton className="w-full h-[15px] mb-2" /> {/* Description skeleton */}
-    <Skeleton className="w-[150px] h-[30px]" /> {/* Button skeleton */}
+  <div className="flex flex-col gap-3 px-4 py-4">
+    <Skeleton className="h-3 w-24" />
+    <Skeleton className="h-5 w-full" />
+    <Skeleton className="h-4 w-5/6" />
+    <Skeleton className="h-4 w-3/4" />
+    <Skeleton className="h-9 w-36" />
   </div>
 );

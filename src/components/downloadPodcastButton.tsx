@@ -7,6 +7,7 @@ import { isDesktop } from 'react-device-detect';
 import Link from 'next/link';
 import { downloadEpisodeFile } from '@/lib/downloadEpisodeFile';
 import { getOpenAudioUrl } from '@/lib/openAudio';
+import { cn } from '@/lib/utils';
 
 export enum DownloadState {
   ReadyToDownload = 'readyToDownload',
@@ -53,23 +54,24 @@ export const DownloadPodcastButton = ({
   };
 
   const downloadIcon: Record<DownloadState, React.ReactElement> = {
-    readyToDownload: <Download />,
-    downloading: <LoadingSpinner />,
-    downloaded: <Check />,
-    downloadOnDesktop: <X />,
-    downloadedInNewTab: <Check />,
+    readyToDownload: <Download className="h-4 w-4" />,
+    downloading: <LoadingSpinner size={16} />,
+    downloaded: <Check className="h-4 w-4" />,
+    downloadOnDesktop: <X className="h-4 w-4" />,
+    downloadedInNewTab: <Check className="h-4 w-4" />,
   };
 
   const buttonStyle: Record<
     DownloadState,
-    'default' | 'ghost' | 'destructive'
+    'default' | 'ghost' | 'destructive' | 'secondary' | 'outline'
   > = {
-    readyToDownload: 'default',
-    downloading: 'default',
-    downloaded: 'ghost',
+    readyToDownload: 'secondary',
+    downloading: 'secondary',
+    downloaded: 'outline',
     downloadOnDesktop: 'destructive',
-    downloadedInNewTab: 'default',
+    downloadedInNewTab: 'secondary',
   };
+  const buttonClassName = 'rounded-full px-3 sm:px-4';
 
   const buttonAriaLabel: Record<DownloadState, string> = {
     readyToDownload: 'Download episode',
@@ -97,7 +99,8 @@ export const DownloadPodcastButton = ({
         <Link href={fallbackUrl} target="_blank" rel="noreferrer">
           <Button
             size={'sm'}
-            variant={'default'}
+            variant={'secondary'}
+            className={buttonClassName}
             disabled
             aria-disabled
             aria-label={buttonAriaLabel[downloadState]}
@@ -118,6 +121,10 @@ export const DownloadPodcastButton = ({
     <Button
       size={'sm'}
       variant={buttonStyle[downloadState]}
+      className={cn(
+        buttonClassName,
+        downloadState === DownloadState.Downloaded && 'text-muted-foreground',
+      )}
       onClick={handleOnClick[downloadState]}
       disabled={
         downloadState === DownloadState.Downloading ||
