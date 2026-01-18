@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@/components/ui/loadingSpinner';
 import { DownloadState } from '@/components/downloadPodcastButton';
 import type { EpisodeListItem } from '@/components/episodeList/episode';
 import { downloadEpisodeFile } from '@/lib/downloadEpisodeFile';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -60,6 +61,10 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
   const isMountedRef = useRef(true);
 
   const [bulkDialogOpen, setBulkDialogOpen] = useState(false);
+  const [bulkFallback, setBulkFallback] = useState<{
+    key: string;
+    count: number;
+  } | null>(null);
   const maxBulkCount = Math.min(BULK_DOWNLOAD_MAX, episodesToDisplay.length);
   const defaultBulkCount =
     maxBulkCount > 0 ? Math.min(BULK_DOWNLOAD_LIMIT, maxBulkCount) : 0;
@@ -85,7 +90,7 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
   const downloadEpisode = async (
     item: EpisodeListItem,
     signal?: AbortSignal,
-  ) => {
+  ): Promise<{ title: string; url: string } | null> => {
     const { episode, updateDownloadState } = item;
     const filename = `${podcastName}-episode-${episode.title}.mp3`;
 
@@ -97,11 +102,18 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
       url: episode.episodeUrl,
       filename,
       signal,
+      suppressFallbackOpen: true,
     });
 
     if (isMountedRef.current) {
       updateDownloadState(episode.id, nextState);
     }
+
+    if (nextState === DownloadState.downloadedInNewTab) {
+      return { title: episode.title, url: episode.episodeUrl };
+    }
+
+    return null;
   };
 
   const handleBulkDownload = async (requestedCount: number) => {
@@ -112,6 +124,7 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
       setBulkProgress({ active: true, total: requestedCount, current: 0 });
     }
     const items = episodesToDisplay.slice(0, requestedCount);
+    const fallbacks: { title: string; url: string }[] = [];
     for (let i = 0; i < items.length; i += 1) {
       if (bulkCancelRef.current) break;
       if (isMountedRef.current) {
@@ -119,11 +132,23 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
       }
       const controller = new AbortController();
       currentAbortRef.current = controller;
-      await downloadEpisode(items[i], controller.signal);
+      const fallback = await downloadEpisode(items[i], controller.signal);
+      if (fallback) {
+        fallbacks.push(fallback);
+      }
       currentAbortRef.current = null;
     }
     if (isMountedRef.current) {
       setBulkProgress({ active: false, total: 0, current: 0 });
+    }
+
+    if (fallbacks.length > 0 && isMountedRef.current) {
+      const key = `bulk-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(
+        key,
+        JSON.stringify({ createdAt: Date.now(), items: fallbacks }),
+      );
+      setBulkFallback({ key, count: fallbacks.length });
     }
   };
 
@@ -267,6 +292,36 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
           {`${isLoading ? 'Loading' : filteredEpisodes.length} episodes`}
         </div>
       </div>
+      {bulkFallback && (
+        <Alert>
+          <AlertTitle>Manual downloads needed</AlertTitle>
+          <AlertDescription>
+            {bulkFallback.count} episodes need manual download. Open the list in
+            a new tab to finish them.
+          </AlertDescription>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              onClick={() =>
+                window.open(
+                  `/open-audio?batch=${bulkFallback.key}`,
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+            >
+              Open list
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setBulkFallback(null)}
+            >
+              Dismiss
+            </Button>
+          </div>
+        </Alert>
+      )}
       <div className={cn('relative')}>
         {isBulkDownloading && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-md bg-background/80 backdrop-blur-sm">

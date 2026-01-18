@@ -7,6 +7,7 @@ type DownloadEpisodeOptions = {
   url: string;
   filename: string;
   signal?: AbortSignal;
+  suppressFallbackOpen?: boolean;
 };
 
 let isPageUnloading = false;
@@ -26,6 +27,7 @@ export const downloadEpisodeFile = async ({
   url,
   filename,
   signal,
+  suppressFallbackOpen,
 }: DownloadEpisodeOptions): Promise<DownloadState> => {
   ensureUnloadListener();
   const anchor = document.createElement('a');
@@ -59,8 +61,10 @@ export const downloadEpisodeFile = async ({
       return DownloadState.DownloadOnDesktop;
     }
 
-    const fallbackUrl = getOpenAudioUrl(url);
-    window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+    if (!suppressFallbackOpen) {
+      const fallbackUrl = getOpenAudioUrl(url);
+      window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+    }
     anchor.remove();
     return DownloadState.downloadedInNewTab;
   }
