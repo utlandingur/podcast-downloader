@@ -7,9 +7,12 @@ export const OptionsWrapper = ({
   children: React.ReactNode;
   title: string;
 }) => (
-  <div className={cn('flex gap-4 sm:items-center')}>
-    <div className={cn('min-w-16')}>{title}</div>
-
-    {children}
+  <div
+    className={cn(
+      'grid gap-2 sm:grid-cols-[140px_1fr] sm:items-center',
+    )}
+  >
+    <div className={cn('text-sm font-medium text-foreground/90')}>{title}</div>
+    <div className="min-w-0">{children}</div>
   </div>
 );
