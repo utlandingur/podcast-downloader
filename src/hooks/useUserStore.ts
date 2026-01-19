@@ -59,12 +59,17 @@ export const useUserStore = create<UserState & UserStateActions>(
     addDownloadedEpisode: async (podcastId: string, episodeId: string) => {
       const user = get().user;
       if (user) {
-        const updatedUser = await addDownloadedEpisode(
-          user,
-          podcastId,
-          episodeId,
-        );
-        set({ user: updatedUser });
+        try {
+          const updatedUser = await addDownloadedEpisode(
+            user,
+            podcastId,
+            episodeId,
+          );
+          set({ user: updatedUser });
+        } catch (error) {
+          console.error('Failed to persist download:', error);
+          // Don't update state on error - user experience continues normally
+        }
       }
     },
     toggleFavouritePodcast: async (podcastId: string, favourited: boolean) => {
