@@ -214,20 +214,24 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
               </ToggleGroupItem>
             </ToggleGroup>
 
-            <Button
+            <ToggleGroup
+              type="single"
               size="sm"
-              variant={showDownloaded ? 'secondary' : 'outline'}
-              onClick={() => setShowDownloaded((prev) => !prev)}
+              value={showDownloaded ? 'show' : 'hide'}
+              onValueChange={(value) => {
+                if (!value) return;
+                setShowDownloaded(value === 'show');
+              }}
               disabled={isLoading}
-              aria-pressed={showDownloaded}
-              aria-label={
-                showDownloaded
-                  ? 'Hide downloaded episodes'
-                  : 'Show downloaded episodes'
-              }
+              aria-label="Downloaded episodes visibility"
             >
-              {showDownloaded ? 'Hide downloaded' : 'Show downloaded'}
-            </Button>
+              <ToggleGroupItem value="show" aria-label="Show downloaded">
+                Show downloaded
+              </ToggleGroupItem>
+              <ToggleGroupItem value="hide" aria-label="Hide downloaded">
+                Hide downloaded
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
 
         </div>
