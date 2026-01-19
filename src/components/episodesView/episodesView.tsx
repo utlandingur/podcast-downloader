@@ -426,6 +426,7 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
             <EpisodeList
               episodes={episodesToDisplay}
               podcastName={podcastName}
+              podcastId={podcastId}
               isLoading={isLoading}
             />
           )}

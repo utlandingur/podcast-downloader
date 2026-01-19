@@ -68,6 +68,7 @@ export const columns: ColumnDef<PodcastEpisode>[] = [
           existingState={
             row.original.downloadState ?? DownloadState.ReadyToDownload
           }
+          podcastId={row.original.collectionId}
         />
       );
     },

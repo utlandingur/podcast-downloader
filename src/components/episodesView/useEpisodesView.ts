@@ -41,6 +41,7 @@ export const useEpisodesView = (podcastId: string) => {
       // Filter by download state
       const isDownloaded =
         episode.downloadState === DownloadState.Downloaded ||
+        episode.downloadState === DownloadState.PreviouslyDownloaded ||
         downloadedIds.has(episode.id.toString());
       if (!showDownloaded && isDownloaded)
         return false;
@@ -62,8 +63,9 @@ export const useEpisodesView = (podcastId: string) => {
         newData[indexToUpdate].downloadState = state;
         return newData;
       });
-      // TODO - add logic to handle when episode is downloaded in a new tab
-      if (state === 'downloaded' && user) {
+      
+      // Persist download to database when state becomes 'downloaded'
+      if (state === DownloadState.Downloaded && user) {
         addDownloadedEpisode(podcastId, id.toString());
       }
     };
@@ -74,12 +76,13 @@ export const useEpisodesView = (podcastId: string) => {
           episode.id.toString(),
         );
         if (isDownloaded) {
-          episode.downloadState = DownloadState.Downloaded;
+          episode.downloadState = DownloadState.PreviouslyDownloaded;
         }
       }
       return {
         episode,
         updateDownloadState: handleUpdateDownloadState,
+        podcastId,
       };
     });
   }, [
