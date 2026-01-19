@@ -1,6 +1,6 @@
 'use client';
 import { Check, Download, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingSpinner } from './ui/loadingSpinner';
 import { Button } from './ui/button';
 import { isDesktop } from 'react-device-detect';
@@ -32,13 +32,22 @@ export const DownloadPodcastButton = ({
   id,
   fileName,
 }: DownloadPodcastButtonProps) => {
+  const normalizeState = (state?: DownloadState) => {
+    if (!state) return DownloadState.ReadyToDownload;
+    if (state === DownloadState.DownloadOnDesktop && isDesktop) {
+      return DownloadState.ReadyToDownload;
+    }
+    return state;
+  };
+
   const [downloadState, setDownloadState] = useState<DownloadState>(
-    existingState
-      ? existingState === DownloadState.DownloadOnDesktop && isDesktop
-        ? DownloadState.ReadyToDownload
-        : existingState
-      : DownloadState.ReadyToDownload,
+    normalizeState(existingState),
   );
+
+  useEffect(() => {
+    const normalized = normalizeState(existingState);
+    setDownloadState((prev) => (prev === normalized ? prev : normalized));
+  }, [existingState]);
 
   const handleDownload = async () => {
     setDownloadState(DownloadState.Downloading);

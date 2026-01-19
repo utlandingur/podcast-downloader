@@ -57,7 +57,7 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
   const [bulkProgress, setBulkProgress] = useState({
     active: false,
     total: 0,
-    current: 0,
+    completed: 0,
   });
   const bulkCancelRef = useRef(false);
   const currentAbortRef = useRef<AbortController | null>(null);
@@ -128,15 +128,12 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
 
     bulkCancelRef.current = false;
     if (isMountedRef.current) {
-      setBulkProgress({ active: true, total: requestedCount, current: 0 });
+      setBulkProgress({ active: true, total: requestedCount, completed: 0 });
     }
     const items = episodesToDisplay.slice(0, requestedCount);
     const fallbacks: { title: string; url: string }[] = [];
     for (let i = 0; i < items.length; i += 1) {
       if (bulkCancelRef.current) break;
-      if (isMountedRef.current) {
-        setBulkProgress((prev) => ({ ...prev, current: i + 1 }));
-      }
       const controller = new AbortController();
       currentAbortRef.current = controller;
       const fallback = await downloadEpisode(items[i], controller.signal);
@@ -144,9 +141,16 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
         fallbacks.push(fallback);
       }
       currentAbortRef.current = null;
+      if (bulkCancelRef.current) break;
+      if (isMountedRef.current) {
+        setBulkProgress((prev) => ({
+          ...prev,
+          completed: prev.completed + 1,
+        }));
+      }
     }
     if (isMountedRef.current) {
-      setBulkProgress({ active: false, total: 0, current: 0 });
+      setBulkProgress({ active: false, total: 0, completed: 0 });
     }
 
     if (fallbacks.length > 0 && isMountedRef.current) {
@@ -393,7 +397,8 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
               aria-live="polite"
               aria-atomic="true"
             >
-              Downloading {bulkProgress.current} of {bulkProgress.total}
+              Bulk downloading · {bulkProgress.completed} of{' '}
+              {bulkProgress.total} completed
             </div>
             <Button
               variant="ghost"
@@ -404,16 +409,23 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
             </Button>
           </div>
         )}
-        {isLoading && <EpisodeListSkeleton />}
-        {isLoading === false && !filteredEpisodes.length ? (
-          <div>No episodes found</div>
-        ) : (
-          <EpisodeList
-            episodes={episodesToDisplay}
-            podcastName={podcastName}
-            isLoading={isLoading}
-          />
-        )}
+        <div
+          className={cn(
+            isBulkDownloading && 'pointer-events-none select-none opacity-60',
+          )}
+          aria-busy={isBulkDownloading}
+        >
+          {isLoading && <EpisodeListSkeleton />}
+          {isLoading === false && !filteredEpisodes.length ? (
+            <div>No episodes found</div>
+          ) : (
+            <EpisodeList
+              episodes={episodesToDisplay}
+              podcastName={podcastName}
+              isLoading={isLoading}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
