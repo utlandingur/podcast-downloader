@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import DOMPurify from 'dompurify';
 import { CSSProperties } from 'react';
 import { Skeleton } from '../ui/skeleton';
+import { formatEpisodeFilename } from '@/lib/formatEpisodeFilename';
 
 export type EpisodeListItem = {
   episode: PodcastEpisodeV2;
@@ -32,7 +33,11 @@ export const Episode = ({
   const datePublished = new Date(episode.datePublished);
 
   const cleanDescription = DOMPurify.sanitize(description);
-  const filename = `${podcastName}-episode-${title}.mp3`;
+  const filename = formatEpisodeFilename({
+    podcastName,
+    episodeNumber: episode.episodeNumber,
+    episodeTitle: title,
+  });
 
   return (
     <div

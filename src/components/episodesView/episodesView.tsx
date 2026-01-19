@@ -13,6 +13,7 @@ import { DownloadState } from '@/components/downloadPodcastButton';
 import type { EpisodeListItem } from '@/components/episodeList/episode';
 import { downloadEpisodeFile } from '@/lib/downloadEpisodeFile';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { formatEpisodeFilename } from '@/lib/formatEpisodeFilename';
 import {
   Dialog,
   DialogContent,
@@ -94,7 +95,11 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
     signal?: AbortSignal,
   ): Promise<{ title: string; url: string } | null> => {
     const { episode, updateDownloadState } = item;
-    const filename = `${podcastName}-episode-${episode.title}.mp3`;
+    const filename = formatEpisodeFilename({
+      podcastName,
+      episodeNumber: episode.episodeNumber,
+      episodeTitle: episode.title,
+    });
 
     if (isMountedRef.current) {
       updateDownloadState(episode.id, DownloadState.Downloading);
