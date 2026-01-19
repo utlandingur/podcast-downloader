@@ -51,9 +51,9 @@ Ensure you have the following installed:
    git clone https://github.com/utlandingur/podcast-downloader.git
    cd podcast-downloader
    ```
-2. Install dependencies (currently requires `--force` due to React version conflicts, but this does not seem to cause issues):
+2. Install dependencies:
    ```sh
-   npm install --force
+   yarn install
    ```
 3. Set up environment variables: Create a `.env.local` file and add:
    ```env
@@ -64,7 +64,7 @@ Ensure you have the following installed:
    ```
 4. Run the development server:
    ```sh
-   npm run dev
+   yarn dev
    ```
 
 ## Usage
@@ -150,7 +150,7 @@ add to .env.local
 For testing user features (download history, favorites) without Google OAuth setup:
 
 1. The app includes a dev credentials provider that automatically activates in development mode
-2. No additional setup required - just run npm run dev
+2. No additional setup required - just run yarn dev
 3. In the login dialog, you'll see a "Continue as Dev User" option
 4. Dev user email: dev@local.test - automatically created in your local MongoDB
 5. Note: You may need to manually refresh the page after dev login to see auth state changes & also after logout
