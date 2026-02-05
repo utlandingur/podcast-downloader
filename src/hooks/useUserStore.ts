@@ -40,7 +40,7 @@ export const useUserStore = create<UserState & UserStateActions>(
           const user = data.user;
           set({ user });
         } catch (error) {
-          set({ error: 'Error fetching user.' });
+          set({ user: null, error: 'Error fetching user.' });
           console.error('Error fetching user:', error);
         } finally {
           set({ loading: false });

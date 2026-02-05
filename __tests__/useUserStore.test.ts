@@ -53,6 +53,9 @@ describe('useUserStore', () => {
   });
 
   test('should set error when API fetch fails', async () => {
+    useUserStore.setState({
+      user: { email: 'existing@test.com', info: [] },
+    });
     (fetchUser as jest.Mock).mockResolvedValueOnce({
       user: null,
       error: new Error('fail'),
