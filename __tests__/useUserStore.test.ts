@@ -1,15 +1,21 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, waitFor } from '@testing-library/react';
-import { useUserStore } from '@/hooks/useUserStore';
-import { PlainUserType } from '@/models/user';
-import { findOrCreateUser } from '@/serverActions/userActions';
-import { Session } from 'next-auth';
+import { act, renderHook } from '@testing-library/react';
+import { useUserStore } from '../src/hooks/useUserStore';
+import { fetchUser } from '../src/lib/fetchUser';
+import {
+  addDownloadedEpisodeApi,
+  toggleFavouritePodcastApi,
+} from '../src/lib/api/user';
 
-// Mock the serverActions
-jest.mock('../src/serverActions/userActions', () => ({
-  findOrCreateUser: jest.fn(),
+jest.mock('../src/lib/fetchUser', () => ({
+  fetchUser: jest.fn(),
+}));
+
+jest.mock('../src/lib/api/user', () => ({
+  addDownloadedEpisodeApi: jest.fn(),
+  toggleFavouritePodcastApi: jest.fn(),
 }));
 
 describe('useUserStore', () => {
@@ -27,28 +33,76 @@ describe('useUserStore', () => {
     expect(result.current.error).toBeNull();
   });
 
-  test('should fetch user from DB', async () => {
-    const initialLocalUser = { email: 'test@test.com', info: [] };
+  test('should fetch user from API and update state', async () => {
     const dbUser = {
       email: 'test@test.com',
-      info: [{ podcastId: 1, episodeId: 1 }],
+      info: [{ podcast_id: 'pod-1', favourited: true }],
     };
-    const mockSession = { user: dbUser } as unknown as Session;
-    (findOrCreateUser as jest.Mock).mockResolvedValueOnce(dbUser);
+    (fetchUser as jest.Mock).mockResolvedValueOnce({ user: dbUser, error: null });
 
     const { result } = renderHook(() => useUserStore());
 
-    await waitFor(() => {
-      useUserStore.setState({ user: initialLocalUser });
+    await act(async () => {
+      await result.current.syncUser('test@test.com');
     });
 
-    await waitFor(async () => {
-      await result.current.syncUser(mockSession.user?.email || null);
-    });
-
-    expect(findOrCreateUser).toHaveBeenCalledWith('test@test.com');
+    expect(fetchUser).toHaveBeenCalledWith('test@test.com');
     expect(result.current.user).toEqual(dbUser);
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
+  });
+
+  test('should set error when API fetch fails', async () => {
+    (fetchUser as jest.Mock).mockResolvedValueOnce({
+      user: null,
+      error: new Error('fail'),
+    });
+
+    const { result } = renderHook(() => useUserStore());
+
+    await act(async () => {
+      await result.current.syncUser('test@test.com');
+    });
+
+    expect(result.current.user).toBeNull();
+    expect(result.current.error).toBe('Error fetching user.');
+  });
+
+  test('should update user after adding downloaded episode', async () => {
+    const initialUser = { email: 'test@test.com', info: [] };
+    const updatedUser = {
+      email: 'test@test.com',
+      info: [{ podcast_id: 'pod-1', downloaded_episodes: ['ep-1'] }],
+    };
+    (addDownloadedEpisodeApi as jest.Mock).mockResolvedValueOnce(updatedUser);
+
+    useUserStore.setState({ user: initialUser });
+    const { result } = renderHook(() => useUserStore());
+
+    await act(async () => {
+      await result.current.addDownloadedEpisode('pod-1', 'ep-1');
+    });
+
+    expect(addDownloadedEpisodeApi).toHaveBeenCalledWith('pod-1', 'ep-1');
+    expect(result.current.user).toEqual(updatedUser);
+  });
+
+  test('should update user after toggling favourite', async () => {
+    const initialUser = { email: 'test@test.com', info: [] };
+    const updatedUser = {
+      email: 'test@test.com',
+      info: [{ podcast_id: 'pod-2', favourited: true }],
+    };
+    (toggleFavouritePodcastApi as jest.Mock).mockResolvedValueOnce(updatedUser);
+
+    useUserStore.setState({ user: initialUser });
+    const { result } = renderHook(() => useUserStore());
+
+    await act(async () => {
+      await result.current.toggleFavouritePodcast('pod-2', true);
+    });
+
+    expect(toggleFavouritePodcastApi).toHaveBeenCalledWith('pod-2', true);
+    expect(result.current.user).toEqual(updatedUser);
   });
 });

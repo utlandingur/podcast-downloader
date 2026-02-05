@@ -113,6 +113,7 @@ export const DownloadPodcastButton = ({
             disabled
             aria-disabled
             aria-label={buttonAriaLabel[downloadState]}
+            data-testid={`download-${id}`}
             onClick={handleOnClick[downloadState]}
           >
             {downloadIcon[downloadState]}
@@ -144,6 +145,7 @@ export const DownloadPodcastButton = ({
         downloadState === DownloadState.DownloadOnDesktop
       }
       aria-label={buttonAriaLabel[downloadState]}
+      data-testid={`download-${id}`}
     >
       {downloadIcon[downloadState]}
       {downloadState === DownloadState.ReadyToDownload && 'Download'}
