@@ -1,14 +1,13 @@
 'use client';
-import { FixedSizeList, type FixedSizeListProps } from 'react-window';
+import {
+  FixedSizeList,
+  type FixedSizeListProps,
+  type ListChildComponentProps,
+} from 'react-window';
 import type { PodcastV2 } from '@/types/podcasts';
 import { Podcast } from './podcast';
 
-// Row component to render each item in the list
-type RowProps<PodcastV2> = {
-  index: number; // The index of the item in the list.
-  style: React.CSSProperties; // The style object provided by react-window for positioning.
-  data: PodcastV2[]; // The array of items passed as `itemData` to the List.
-};
+type RowProps = ListChildComponentProps<PodcastV2[]>;
 
 type Props = {
   podcasts: PodcastV2[];
@@ -29,7 +28,7 @@ export const PodcastList = ({ podcasts }: Props) => {
       </div>
     );
 
-  const Row = ({ index, style, data }: RowProps<PodcastV2>) => {
+  const Row = ({ index, style, data }: RowProps) => {
     const { title, id, image } = data[index];
 
     const showBorder = index !== numOfPodcasts - 1;

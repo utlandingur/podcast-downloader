@@ -59,13 +59,14 @@ const updateStartUrl = (url) => {
 };
 
 const loadDevice = () => {
-  if (deviceCache) return deviceCache;
+  if (deviceCache !== undefined) return deviceCache;
   try {
     const raw = fs.readFileSync(DEVICE_FILE, 'utf8');
     deviceCache = JSON.parse(raw);
     return deviceCache;
   } catch {
-    return null;
+    deviceCache = null;
+    return deviceCache;
   }
 };
 
@@ -99,14 +100,14 @@ const bodyHash = (bodyString) =>
   crypto.createHash('sha256').update(bodyString).digest('hex');
 
 const buildCanonicalRequest = ({ method, path, timestamp, bodyHashValue }) =>
-  [method, path, timestamp, bodyHashValue].join('\\n');
+  [method, path, timestamp, bodyHashValue].join('\n');
 
 const registerDevice = async () => {
   const device = getDevice();
   if (device.registered) return true;
 
   const timestamp = Math.floor(Date.now() / 1000);
-  const canonical = ['REGISTER', device.deviceId, `${timestamp}`].join('\\n');
+  const canonical = ['REGISTER', device.deviceId, `${timestamp}`].join('\n');
   const signature = signPayload(canonical, device.privateKey);
 
   const response = await mainWindow.webContents.session.fetch(

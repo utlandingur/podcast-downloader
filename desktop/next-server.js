@@ -1,5 +1,4 @@
 const http = require('http');
-const path = require('path');
 const next = require('next');
 
 const dir = process.env.NEXT_SERVER_DIR || process.cwd();

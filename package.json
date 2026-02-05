@@ -5,13 +5,13 @@
   "main": "desktop/main.js",
   "scripts": {
     "dev": "NODE_ENV=development next dev --turbopack",
-    "dev:electron": "ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next dev",
+    "dev:electron": "PORT=${PORT:-3000} ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next dev",
     "build": "next build",
     "build:electron": "ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next build",
     "start": "next start",
-    "start:electron": "ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next start",
-    "electron:dev": "concurrently -k \"yarn dev:electron\" \"wait-on http://localhost:3000 && electron desktop/main.js\"",
-    "electron:start": "concurrently -k \"yarn start:electron\" \"wait-on http://localhost:3000 && electron desktop/main.js\"",
+    "start:electron": "PORT=${PORT:-3000} ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next start",
+    "electron:dev": "concurrently -k \"yarn dev:electron\" \"wait-on http://localhost:${PORT:-3000} && electron desktop/main.js\"",
+    "electron:start": "concurrently -k \"yarn start:electron\" \"wait-on http://localhost:${PORT:-3000} && electron desktop/main.js\"",
     "electron:pack": "yarn build:electron && electron-builder --publish=never",
     "lint": "eslint src --ext .ts,.tsx",
     "test:e2e": "playwright test",
@@ -91,6 +91,8 @@
     "files": [
       "desktop/**",
       ".next/**",
+      "!.next/cache/**",
+      "!**/*.map",
       "public/**",
       "package.json",
       "next.config.*"

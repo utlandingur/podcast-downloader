@@ -53,17 +53,28 @@ const getServerCookies = async () => {
 const buildBody = (
   body: unknown,
   headers: Record<string, string>,
-): BodyInit | undefined => {
-  if (body === undefined || body === null) return undefined;
-  if (typeof body === 'string') return body;
-  if (body instanceof URLSearchParams) return body;
-  if (typeof FormData !== 'undefined' && body instanceof FormData) return body;
-  if (typeof Blob !== 'undefined' && body instanceof Blob) return body;
-
-  if (!headers['Content-Type']) {
-    headers['Content-Type'] = 'application/json';
+): { body: BodyInit | undefined; headers: Record<string, string> } => {
+  const nextHeaders = { ...headers };
+  if (body === undefined || body === null) {
+    return { body: undefined, headers: nextHeaders };
   }
-  return JSON.stringify(body);
+  if (typeof body === 'string') {
+    return { body, headers: nextHeaders };
+  }
+  if (body instanceof URLSearchParams) {
+    return { body, headers: nextHeaders };
+  }
+  if (typeof FormData !== 'undefined' && body instanceof FormData) {
+    return { body, headers: nextHeaders };
+  }
+  if (typeof Blob !== 'undefined' && body instanceof Blob) {
+    return { body, headers: nextHeaders };
+  }
+
+  if (!nextHeaders['Content-Type']) {
+    nextHeaders['Content-Type'] = 'application/json';
+  }
+  return { body: JSON.stringify(body), headers: nextHeaders };
 };
 
 const parseResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
@@ -108,11 +119,14 @@ export const apiRequest = async <T>(
     }
 
     const headers = { ...(options.headers || {}) };
-    const body = buildBody(options.body, headers);
+    const { body, headers: requestHeaders } = buildBody(
+      options.body,
+      headers,
+    );
 
     const response = await fetch(path, {
       method,
-      headers,
+      headers: requestHeaders,
       body,
       cache: options.cache,
       signal: options.signal,
@@ -127,11 +141,11 @@ export const apiRequest = async <T>(
   if (cookies) headers.cookie = cookies;
   if (!headers.origin) headers.origin = base;
   if (!headers.referer) headers.referer = base;
-  const body = buildBody(options.body, headers);
+  const { body, headers: requestHeaders } = buildBody(options.body, headers);
 
   const response = await fetch(url, {
     method,
-    headers,
+    headers: requestHeaders,
     body,
     cache: options.cache,
     signal: options.signal,
