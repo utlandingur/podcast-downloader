@@ -25,13 +25,20 @@
 - Added Electron user store + profile/podcast overview overrides for auth-aware UI.
 - Added packaged-app local Next server auto-start with dynamic port selection.
 - Added electron-builder config + packaging script.
+- Added API request guard for device-signed Electron calls and web origin allowlist.
+- Added device registration/signature verification for desktop builds.
+- Limited localhost origin allowance to non-production unless explicitly enabled.
+- Ran `yarn build` successfully after fixing type/lint issues.
 
 ### Test Results
 | Test | Expected | Actual | Status |
 |------|----------|--------|--------|
-| Not run (not requested) | - | - | skipped |
+| `yarn build:electron` | Build succeeds | Build succeeded | pass |
+| `yarn electron:dev` | Dev server + Electron app start | Next dev started on port 3001; `wait-on http://localhost:3000` never satisfied, Electron not launched | fail |
+| Playwright tests | Tests run | No Playwright config/dependency found | skipped |
 
 ### Errors
 | Error | Resolution |
 |-------|------------|
 | `rg` not available | Used `grep -R` |
+| `yarn electron:dev` | Port 3000 in use, Next dev moved to 3001; wait-on still targets 3000 |

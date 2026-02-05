@@ -6,7 +6,7 @@ import { geistSans, geistMono } from '../fonts';
 import { cn } from '@/lib/utils';
 import { PodcastSearchBar } from '@/components/podcastSearchBar';
 import { ProfileOverview } from '@/components/profileOverview';
-import { lookupPodcastV2 } from '@/serverActions/lookupPodcast';
+import { getPodcastV2 } from '@/lib/api/podcasts';
 import { useSession } from '@/lib/authClient';
 import { useUserStore } from '@/hooks/useUserStore';
 
@@ -43,7 +43,7 @@ export default function ProfilePage() {
       }
       setLoading(true);
       const results = await Promise.allSettled(
-        favouritePodcastIds.map((id) => lookupPodcastV2(id)),
+        favouritePodcastIds.map((id) => getPodcastV2(id)),
       );
       if (cancelled) return;
       const successful = results

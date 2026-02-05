@@ -27,6 +27,8 @@
 | Prefer `.electron.*` modules in Electron builds | Keep Electron-specific code isolated from web builds |
 | Hybrid mode uses remote API + Electron IPC for auth | No secrets locally; auth via remote session cookies |
 | Packaged app starts local Next server | Enables fully local UI with server actions without exposing secrets |
+| Guard API routes by web origin or signed device requests | Prevents third parties from using Podcast Index proxy endpoints |
+| Localhost origin only allowed in dev (or `ALLOW_LOCALHOST_ORIGIN=1`) | Keeps production allowlist focused on podcasttomp3.com |
 
 ## Issues Encountered
 | Issue | Resolution |

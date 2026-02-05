@@ -1,7 +1,7 @@
 import { geistSans, geistMono } from '@/app/fonts';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
-import { lookupPodcastV2 } from '@/serverActions/lookupPodcast';
+import { getPodcastV2 } from '@/lib/api/podcasts';
 import { auth } from '../../../../../auth';
 import { PodcastOverviewV2 } from '@/components/podcastOverviewV2';
 import { ArrowLeft } from 'lucide-react';
@@ -19,7 +19,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const id = (await params).id;
 
-  const podcast = await lookupPodcastV2(id);
+  const podcast = await getPodcastV2(id);
 
   if (!podcast) {
     return {
@@ -42,7 +42,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   if (!decodedId) return <div>Page not found</div>;
 
-  const podcast = await lookupPodcastV2(id);
+  const podcast = await getPodcastV2(id);
 
   const session = await auth();
 

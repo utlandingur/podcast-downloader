@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { geistSans, geistMono } from '../fonts';
 import { ProfileOverview } from '@/components/profileOverview';
 import { fetchUser } from '@/lib/fetchUser';
-import { lookupPodcastV2 } from '@/serverActions/lookupPodcast';
+import { getPodcastV2 } from '@/lib/api/podcasts';
 import { PodcastSearchBar } from '@/components/podcastSearchBar';
 import { cn } from '@/lib/utils';
 
@@ -40,12 +40,12 @@ export default async function PodcastPage() {
     );
   }
 
-  const favouritePodcastIds = dbUser.user?.info
+  const favouritePodcastIds = (dbUser.user?.info ?? [])
     .filter((info) => info.favourited)
     .map((info) => info.podcast_id);
 
   const favouritePodcasts = await Promise.allSettled(
-    favouritePodcastIds.map((id) => lookupPodcastV2(id)),
+    favouritePodcastIds.map((id) => getPodcastV2(id)),
   );
 
   const successfulPodcasts = favouritePodcasts

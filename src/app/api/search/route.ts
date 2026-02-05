@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { lookupPodcastsV1, lookupPodcastsV2 } from '@/serverActions/lookupPodcasts';
+import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const term = searchParams.get('term') || searchParams.get('q');
   const limitParam = searchParams.get('limit');
   const source = (searchParams.get('source') || 'v2').toLowerCase();
+
+  const bodyText = await req.clone().text();
+  const auth = await ensureAuthorizedRequest(req, bodyText);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
 
   if (!term) {
     return NextResponse.json(

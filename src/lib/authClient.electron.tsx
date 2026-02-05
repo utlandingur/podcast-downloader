@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 import type { Session } from 'next-auth';
-import { authGetSession, authSignIn, authSignOut } from '@/lib/electronBridge.electron';
+import { authGetSession, authSignIn, authSignOut } from '@/lib/electronBridge';
 
 export type SessionContextValue = {
   data: Session | null;

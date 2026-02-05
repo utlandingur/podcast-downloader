@@ -4,7 +4,7 @@ import {
   type DownloadEpisodeOptions,
   type DownloadHandlerResult,
 } from '@/lib/downloadEpisodeFile.base';
-import { downloadEpisodeViaElectron } from '@/lib/electronBridge.electron';
+import { downloadEpisodeViaElectron } from '@/lib/electronBridge';
 
 const electronDownloadHandler = async (
   options: DownloadEpisodeOptions,

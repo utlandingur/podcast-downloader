@@ -1,9 +1,17 @@
-import { lookupPodcastEpisodesV2 } from '@/serverActions/lookupPodcastEpisodes';
+import { lookupPodcastEpisodes, lookupPodcastEpisodesV2 } from '@/serverActions/lookupPodcastEpisodes';
 import { NextRequest, NextResponse } from 'next/server';
+import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const podcastId = searchParams.get('id');
+  const source = (searchParams.get('source') || 'v2').toLowerCase();
+
+  const bodyText = await req.clone().text();
+  const auth = await ensureAuthorizedRequest(req, bodyText);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
 
   // Validate the podcastId parameter
   if (!podcastId) {
@@ -14,7 +22,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const episodes = await lookupPodcastEpisodesV2(podcastId);
+    const episodes =
+      source === 'v1'
+        ? await lookupPodcastEpisodes(podcastId)
+        : await lookupPodcastEpisodesV2(podcastId);
     return NextResponse.json(episodes, {
       headers: { 'Cache-Control': 'public, s-maxage=3000, stale-while-revalidate=300' },
     });

@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findOrCreateUser, toggleFavouritePodcast } from '@/serverActions/userActions';
 import { auth } from '../../../../../auth';
+import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
 
 export async function POST(req: NextRequest) {
+  const bodyText = await req.clone().text();
+  const authCheck = await ensureAuthorizedRequest(req, bodyText);
+  if (!authCheck.ok) {
+    return NextResponse.json(
+      { error: authCheck.error },
+      { status: authCheck.status },
+    );
+  }
+
   const session = await auth();
   const email = session?.user?.email;
 

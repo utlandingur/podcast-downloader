@@ -37,6 +37,7 @@ Phase 6
 - [x] Electron overrides for Podcast Index server actions
 - [x] Electron user store to call remote user APIs
 - [x] Electron page/component overrides for auth-dependent pages
+- [x] Guard API routes with web origin allowlist or signed device requests
 - **Status:** complete
 
 ### Phase 6: Testing & Verification
