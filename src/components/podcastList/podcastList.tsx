@@ -1,5 +1,5 @@
 'use client';
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList, type FixedSizeListProps } from 'react-window';
 import type { PodcastV2 } from '@/types/podcasts';
 import { Podcast } from './podcast';
 
@@ -17,6 +17,10 @@ type Props = {
 export const PodcastList = ({ podcasts }: Props) => {
   const ITEM_SIZE = 120;
   const numOfPodcasts = podcasts.length;
+  const VirtualList =
+    FixedSizeList as unknown as React.ComponentType<
+      FixedSizeListProps<PodcastV2[]>
+    >;
 
   if (!podcasts?.length)
     return (
@@ -40,7 +44,7 @@ export const PodcastList = ({ podcasts }: Props) => {
     );
   };
   return (
-    <List
+    <VirtualList
       height={Math.min(1280, ITEM_SIZE * numOfPodcasts)} // Total height of the container in pixels.
       itemCount={numOfPodcasts} // Total number of episodes.
       itemSize={ITEM_SIZE} // Function returning height of each item.
@@ -55,6 +59,6 @@ export const PodcastList = ({ podcasts }: Props) => {
       itemKey={(index, data) => data[index].id}
     >
       {Row}
-    </List>
+    </VirtualList>
   );
 };

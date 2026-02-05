@@ -83,6 +83,7 @@ export const EpisodesView = ({ podcastName, podcastId, isLoggedIn }: Props) => {
   }, [bulkDialogOpen, defaultBulkCount]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
       bulkCancelRef.current = true;

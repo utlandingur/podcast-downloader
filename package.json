@@ -2,10 +2,17 @@
   "name": "podcast-downloader",
   "version": "0.1.0",
   "private": true,
+  "main": "desktop/main.js",
   "scripts": {
     "dev": "NODE_ENV=development next dev --turbopack",
+    "dev:electron": "ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next dev",
     "build": "next build",
+    "build:electron": "ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next build",
     "start": "next start",
+    "start:electron": "ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next start",
+    "electron:dev": "concurrently -k \"yarn dev:electron\" \"wait-on http://localhost:3000 && electron desktop/main.js\"",
+    "electron:start": "concurrently -k \"yarn start:electron\" \"wait-on http://localhost:3000 && electron desktop/main.js\"",
+    "electron:pack": "yarn build:electron && electron-builder --publish=never",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "jest",
     "postbuild": "next-sitemap"
@@ -59,6 +66,9 @@
     "@types/react-window": "^1.8.8",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@typescript-eslint/parser": "^8.15.0",
+    "concurrently": "^9.1.0",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3",
     "eslint": "^8.57.1",
     "eslint-config-next": "15.0.3",
     "jest": "^29.7.0",
@@ -69,6 +79,21 @@
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.podcasttomp3.desktop",
+    "productName": "PodcastToMp3",
+    "files": [
+      "desktop/**",
+      ".next/**",
+      "public/**",
+      "package.json",
+      "next.config.*"
+    ],
+    "directories": {
+      "output": "dist"
+    }
   }
 }

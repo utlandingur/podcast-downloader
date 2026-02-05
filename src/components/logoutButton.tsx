@@ -1,6 +1,6 @@
 'use client';
 import { LogOut } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { signOut } from '@/lib/authClient';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 

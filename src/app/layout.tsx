@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/providers/themeProvider';
 import { Header } from '@/components/header';
 import { SyncUserWrapper } from '@/components/syncUserWrapper';
 import { faqItems } from '@/components/faq';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider } from '@/lib/authClient';
 
 
 export const metadata: Metadata = {

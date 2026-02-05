@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { LoginOutDialog } from './LoginOutDialog';
 import { Coffee, Podcast, User } from 'lucide-react';
 import { Button } from './ui/button';
-import { SessionContextValue, useSession } from 'next-auth/react';
+import { SessionContextValue, useSession } from '@/lib/authClient';
 
 const Spacer = () => <div className="font-thin text-muted-foreground">|</div>;
 
