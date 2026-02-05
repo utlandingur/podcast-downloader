@@ -1,0 +1,45 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { findOrCreateUser, toggleFavouritePodcast } from '@/serverActions/userActions';
+import { auth } from '../../../../../auth';
+import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
+
+export async function POST(req: NextRequest) {
+  const bodyText = await req.clone().text();
+  const authCheck = await ensureAuthorizedRequest(req, bodyText);
+  if (!authCheck.ok) {
+    return NextResponse.json(
+      { error: authCheck.error },
+      { status: authCheck.status },
+    );
+  }
+
+  const session = await auth();
+  const email = session?.user?.email;
+
+  if (!email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await req.json().catch(() => null);
+  const podcastId = body?.podcastId;
+  const favourited = body?.favourited;
+
+  if (!podcastId || typeof favourited !== 'boolean') {
+    return NextResponse.json(
+      { error: 'Missing podcastId or favourited flag' },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const user = await findOrCreateUser(email);
+    const updated = await toggleFavouritePodcast(user, podcastId, favourited);
+    return NextResponse.json({ user: updated });
+  } catch (error) {
+    console.error('Error updating favourite', error);
+    return NextResponse.json(
+      { error: 'Failed to update favourite' },
+      { status: 500 },
+    );
+  }
+}

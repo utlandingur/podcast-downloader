@@ -2,10 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { SearchBar } from '@/components/searchBar';
 import type { SearchResult } from '@/components/searchBar';
-import {
-  lookupPodcastsV1,
-  lookupPodcastsV2,
-} from '@/serverActions/lookupPodcasts';
+import { searchPodcastsV1, searchPodcastsV2 } from '@/lib/api/podcasts';
 import { PodcastsSearchResponseV2 } from '@/types/podcasts';
 
 type Props = {
@@ -27,7 +24,7 @@ export const PodcastSearchBar = ({
 
   const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
     if (!searchTerm) return [];
-    const podcasts = await lookupPodcastsV2(searchTerm, 6);
+    const podcasts = await searchPodcastsV2(searchTerm, 6);
     return podcasts.map((podcast: PodcastsSearchResponseV2) => ({
       name: podcast.title,
       label: podcast.title,
@@ -55,7 +52,7 @@ export const PodcastSearchBarV1 = () => {
 
   const podcastSearch = async (searchTerm: string): Promise<SearchResult[]> => {
     if (!searchTerm) return [];
-    const podcasts = await lookupPodcastsV1(searchTerm, 6);
+    const podcasts = await searchPodcastsV1(searchTerm, 6);
 
     return podcasts.map((podcast) => ({
       name: podcast.collectionName,

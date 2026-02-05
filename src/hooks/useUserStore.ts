@@ -3,9 +3,9 @@ import { fetchUser } from '@/lib/fetchUser';
 import { getFavouriteIds } from '@/lib/getFavouriteIds';
 import type { PlainUserType } from '@/models/user';
 import {
-  addDownloadedEpisode,
-  toggleFavouritePodcast,
-} from '@/serverActions/userActions';
+  addDownloadedEpisodeApi,
+  toggleFavouritePodcastApi,
+} from '@/lib/api/user';
 import { create } from 'zustand';
 
 type UserState = {
@@ -40,7 +40,7 @@ export const useUserStore = create<UserState & UserStateActions>(
           const user = data.user;
           set({ user });
         } catch (error) {
-          set({ error: 'Error fetching user.' });
+          set({ user: null, error: 'Error fetching user.' });
           console.error('Error fetching user:', error);
         } finally {
           set({ loading: false });
@@ -59,23 +59,18 @@ export const useUserStore = create<UserState & UserStateActions>(
     addDownloadedEpisode: async (podcastId: string, episodeId: string) => {
       const user = get().user;
       if (user) {
-        const updatedUser = await addDownloadedEpisode(
-          user,
-          podcastId,
-          episodeId,
-        );
-        set({ user: updatedUser });
+        const updatedUser = await addDownloadedEpisodeApi(podcastId, episodeId);
+        if (updatedUser) set({ user: updatedUser });
       }
     },
     toggleFavouritePodcast: async (podcastId: string, favourited: boolean) => {
       const user = get().user;
       if (user && !get().loading) {
-        const updatedUser = await toggleFavouritePodcast(
-          user,
+        const updatedUser = await toggleFavouritePodcastApi(
           podcastId,
           favourited,
         );
-        set({ user: updatedUser });
+        if (updatedUser) set({ user: updatedUser });
       }
     },
   }),

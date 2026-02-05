@@ -1,35 +1,14 @@
 'use client';
-import { isDesktop } from 'react-device-detect';
-import { DownloadState } from '@/components/downloadPodcastButton';
-import { getOpenAudioUrl } from '@/lib/openAudio';
+import {
+  createDownloadEpisodeFile,
+  type DownloadEpisodeOptions,
+  type DownloadHandlerResult,
+} from '@/lib/downloadEpisodeFile.base';
 
-type DownloadEpisodeOptions = {
-  url: string;
-  filename: string;
-  signal?: AbortSignal;
-  suppressFallbackOpen?: boolean;
-};
-
-let isPageUnloading = false;
-let unloadListenerAttached = false;
-
-const ensureUnloadListener = () => {
-  if (typeof window === 'undefined' || unloadListenerAttached) return;
-  unloadListenerAttached = true;
-  const markUnloading = () => {
-    isPageUnloading = true;
-  };
-  window.addEventListener('beforeunload', markUnloading);
-  window.addEventListener('pagehide', markUnloading);
-};
-
-export const downloadEpisodeFile = async ({
-  url,
-  filename,
-  signal,
-  suppressFallbackOpen,
-}: DownloadEpisodeOptions): Promise<DownloadState> => {
-  ensureUnloadListener();
+const webDownloadHandler = async (
+  options: DownloadEpisodeOptions,
+): Promise<DownloadHandlerResult> => {
+  const { url, filename, signal } = options;
   const anchor = document.createElement('a');
 
   try {
@@ -45,27 +24,17 @@ export const downloadEpisodeFile = async ({
 
     window.URL.revokeObjectURL(blobUrl);
     anchor.remove();
-    return DownloadState.Downloaded;
+    return { success: true };
   } catch (error) {
-    if (isPageUnloading) {
-      anchor.remove();
-      return DownloadState.ReadyToDownload;
-    }
-    if (signal?.aborted || (error as Error).name === 'AbortError') {
-      anchor.remove();
-      return DownloadState.ReadyToDownload;
-    }
-
-    if (!isDesktop) {
-      anchor.remove();
-      return DownloadState.DownloadOnDesktop;
-    }
-
-    if (!suppressFallbackOpen) {
-      const fallbackUrl = getOpenAudioUrl(url);
-      window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
-    }
     anchor.remove();
-    return DownloadState.downloadedInNewTab;
+    if (signal?.aborted || (error as Error).name === 'AbortError') {
+      return { success: false, aborted: true };
+    }
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 };
+
+export const downloadEpisodeFile = createDownloadEpisodeFile(webDownloadHandler);

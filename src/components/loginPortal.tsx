@@ -10,7 +10,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn } from '@/lib/authClient';
 
 import { GoogleIcon } from './ui/icons/googleIcon';
 
@@ -22,7 +22,7 @@ export const LoginPortal = ({ trigger }: Props) => {
 
   const handleSignIn = async () => {
     try {
-      signIn('google');
+      await signIn('google');
     } catch (error) {
       console.error('error', error);
     } finally {

@@ -1,8 +1,15 @@
-import { findOrCreateUser } from '@/serverActions/userActions';
+import { getCurrentUser } from '@/lib/api/user';
 
 export const fetchUser = async (email: string) => {
   try {
-    const user = await findOrCreateUser(email);
+    if (!email) return { user: null, error: null };
+    const user = await getCurrentUser();
+    if (!user) {
+      return {
+        user: null,
+        error: new Error('Unauthorized'),
+      };
+    }
     return { user, error: null };
   } catch (error) {
     return {

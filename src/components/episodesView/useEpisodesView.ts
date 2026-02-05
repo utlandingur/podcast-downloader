@@ -13,6 +13,7 @@ export const useEpisodesView = (podcastId: string) => {
   const [episodeData, setEpisodeData] = useState<PodcastEpisodeV2[]>([]);
   const { user, addDownloadedEpisode } = useUserStore((state) => state);
   const [isLoading, setIsLoading] = useState(true);
+  const [localDownloadedIds, setLocalDownloadedIds] = useState<string[]>([]);
 
   const { data, loading } = usePodcastEpisodesV2(podcastId);
 
@@ -28,8 +29,60 @@ export const useEpisodesView = (podcastId: string) => {
 
   const userPodcastInfo = getUserPodcastInfo(podcastId, user?.info);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const key = `podcast-downloads:${podcastId}`;
+    try {
+      const raw = window.localStorage.getItem(key);
+      if (!raw) {
+        setLocalDownloadedIds([]);
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setLocalDownloadedIds(parsed.map((id) => id.toString()));
+      } else {
+        setLocalDownloadedIds([]);
+      }
+    } catch {
+      setLocalDownloadedIds([]);
+    }
+  }, [podcastId]);
+
+  useEffect(() => {
+    if (!user || localDownloadedIds.length === 0) return;
+    let cancelled = false;
+
+    const syncLocalDownloads = async () => {
+      const already = new Set(userPodcastInfo?.downloaded_episodes ?? []);
+      const toSync = localDownloadedIds.filter((id) => !already.has(id));
+      if (toSync.length === 0) return;
+      try {
+        for (const id of toSync) {
+          await addDownloadedEpisode(podcastId, id);
+        }
+        if (!cancelled && typeof window !== 'undefined') {
+          const key = `podcast-downloads:${podcastId}`;
+          window.localStorage.removeItem(key);
+          setLocalDownloadedIds([]);
+        }
+      } catch (error) {
+        console.error('Failed syncing local downloads', error);
+      }
+    };
+
+    syncLocalDownloads();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, localDownloadedIds, podcastId, addDownloadedEpisode, userPodcastInfo]);
+
   const filteredEpisodes = useMemo(() => {
-    const downloadedIds = new Set(userPodcastInfo?.downloaded_episodes ?? []);
+    const downloadedIds = new Set([
+      ...(userPodcastInfo?.downloaded_episodes ?? []),
+      ...localDownloadedIds,
+    ]);
     const filtered = (episodeData || []).filter((episode) => {
       // Filter by search term
       if (searchTerm) {
@@ -51,7 +104,14 @@ export const useEpisodesView = (podcastId: string) => {
       return filtered.toReversed();
     }
     return filtered;
-  }, [episodeData, searchTerm, isAscending, showDownloaded, userPodcastInfo]);
+  }, [
+    episodeData,
+    searchTerm,
+    isAscending,
+    showDownloaded,
+    userPodcastInfo,
+    localDownloadedIds,
+  ]);
 
   const episodesToDisplay = useMemo(() => {
     const handleUpdateDownloadState = (id: number, state: DownloadState) => {
@@ -63,19 +123,28 @@ export const useEpisodesView = (podcastId: string) => {
         return newData;
       });
       // TODO - add logic to handle when episode is downloaded in a new tab
-      if (state === 'downloaded' && user) {
-        addDownloadedEpisode(podcastId, id.toString());
+      if (state === 'downloaded') {
+        if (user) {
+          addDownloadedEpisode(podcastId, id.toString());
+          return;
+        }
+        if (typeof window !== 'undefined') {
+          const key = `podcast-downloads:${podcastId}`;
+          const next = Array.from(
+            new Set([...localDownloadedIds, id.toString()]),
+          );
+          window.localStorage.setItem(key, JSON.stringify(next));
+          setLocalDownloadedIds(next);
+        }
       }
     };
 
     return filteredEpisodes.map((episode) => {
-      if (userPodcastInfo) {
-        const isDownloaded = userPodcastInfo.downloaded_episodes.includes(
-          episode.id.toString(),
-        );
-        if (isDownloaded) {
-          episode.downloadState = DownloadState.Downloaded;
-        }
+      const isDownloaded = userPodcastInfo
+        ? userPodcastInfo.downloaded_episodes.includes(episode.id.toString())
+        : localDownloadedIds.includes(episode.id.toString());
+      if (isDownloaded) {
+        episode.downloadState = DownloadState.Downloaded;
       }
       return {
         episode,
@@ -88,6 +157,7 @@ export const useEpisodesView = (podcastId: string) => {
     user,
     addDownloadedEpisode,
     userPodcastInfo,
+    localDownloadedIds,
   ]);
 
   return {

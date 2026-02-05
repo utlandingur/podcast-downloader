@@ -1,14 +1,13 @@
 'use client';
-import { FixedSizeList as List } from 'react-window';
+import {
+  FixedSizeList,
+  type FixedSizeListProps,
+  type ListChildComponentProps,
+} from 'react-window';
 import type { PodcastV2 } from '@/types/podcasts';
 import { Podcast } from './podcast';
 
-// Row component to render each item in the list
-type RowProps<PodcastV2> = {
-  index: number; // The index of the item in the list.
-  style: React.CSSProperties; // The style object provided by react-window for positioning.
-  data: PodcastV2[]; // The array of items passed as `itemData` to the List.
-};
+type RowProps = ListChildComponentProps<PodcastV2[]>;
 
 type Props = {
   podcasts: PodcastV2[];
@@ -17,6 +16,10 @@ type Props = {
 export const PodcastList = ({ podcasts }: Props) => {
   const ITEM_SIZE = 120;
   const numOfPodcasts = podcasts.length;
+  const VirtualList =
+    FixedSizeList as unknown as React.ComponentType<
+      FixedSizeListProps<PodcastV2[]>
+    >;
 
   if (!podcasts?.length)
     return (
@@ -25,7 +28,7 @@ export const PodcastList = ({ podcasts }: Props) => {
       </div>
     );
 
-  const Row = ({ index, style, data }: RowProps<PodcastV2>) => {
+  const Row = ({ index, style, data }: RowProps) => {
     const { title, id, image } = data[index];
 
     const showBorder = index !== numOfPodcasts - 1;
@@ -40,7 +43,7 @@ export const PodcastList = ({ podcasts }: Props) => {
     );
   };
   return (
-    <List
+    <VirtualList
       height={Math.min(1280, ITEM_SIZE * numOfPodcasts)} // Total height of the container in pixels.
       itemCount={numOfPodcasts} // Total number of episodes.
       itemSize={ITEM_SIZE} // Function returning height of each item.
@@ -55,6 +58,6 @@ export const PodcastList = ({ podcasts }: Props) => {
       itemKey={(index, data) => data[index].id}
     >
       {Row}
-    </List>
+    </VirtualList>
   );
 };

@@ -1,5 +1,5 @@
 'use client';
-import { FixedSizeList } from 'react-window';
+import { FixedSizeList, type FixedSizeListProps } from 'react-window';
 import {
   Episode,
   EpisodeListItem,
@@ -22,6 +22,10 @@ type RowProps<EpisodeListItem> = {
 export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
   const ITEM_SIZE = 176;
   const numOfEps = episodes.length;
+  const VirtualList =
+    FixedSizeList as unknown as React.ComponentType<
+      FixedSizeListProps<EpisodeListItem[]>
+    >;
 
   const Row = ({ index, style, data }: RowProps<EpisodeListItem>) => {
     const { episode, updateDownloadState } = data[index];
@@ -40,7 +44,7 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
   };
   return (
     <div className="rounded-2xl border border-border/70 bg-muted/30 p-1 sm:p-2 shadow-sm overflow-hidden">
-      <FixedSizeList
+      <VirtualList
         height={Math.min(620, ITEM_SIZE * numOfEps)} // Total height of the container in pixels.
         itemCount={numOfEps} // Total number of episodes.
         itemSize={ITEM_SIZE} // Function returning height of each item.
@@ -55,7 +59,7 @@ export const EpisodeList = ({ episodes, podcastName }: EpisodeListProps) => {
         itemKey={(index, data) => data[index].episode.id}
       >
         {Row}
-      </FixedSizeList>
+      </VirtualList>
     </div>
   );
 };
