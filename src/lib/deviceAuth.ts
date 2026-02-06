@@ -3,15 +3,6 @@ import { createHash, createPublicKey, verify } from 'crypto';
 import { connectToDatabase } from '@/lib/db';
 import { Device } from '@/models/device';
 
-const DEFAULT_ALLOWED_ORIGINS = [
-  'https://podcasttomp3.com',
-  'https://www.podcasttomp3.com',
-];
-
-const LOCAL_ALLOWED_ORIGINS = [
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-];
 
 const toOrigin = (value: string | undefined | null) => {
   if (!value) return null;
@@ -22,44 +13,57 @@ const toOrigin = (value: string | undefined | null) => {
   }
 };
 
+const DEV_ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+];
+
 const getAllowedOrigins = () => {
-  const envOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
-    : [];
-  const extraOrigins = [
-    toOrigin(process.env.NEXT_PUBLIC_SITE_URL),
-    toOrigin(process.env.NEXT_PUBLIC_APP_URL),
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  ].filter(Boolean) as string[];
-  const allowLocalhost =
-    process.env.ALLOW_LOCALHOST_ORIGIN === '1' ||
-    process.env.NODE_ENV !== 'production';
-  const originList = [
-    ...DEFAULT_ALLOWED_ORIGINS,
-    ...extraOrigins,
-    ...envOrigins,
-    ...(allowLocalhost ? LOCAL_ALLOWED_ORIGINS : []),
-  ];
+  const envOrigins = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map(o => o.trim())
+    .filter(Boolean);
 
-  return [...new Set(originList)].filter(Boolean);
-};
+  const origins =
+    process.env.NODE_ENV === "production"
+      ? envOrigins
+      : [...envOrigins, ...DEV_ALLOWED_ORIGINS];
 
-const originMatches = (value: string | null) => {
-  if (!value) return false;
-  try {
-    const origin = new URL(value).origin;
-    return getAllowedOrigins().includes(origin);
-  } catch {
-    return false;
-  }
+  return new Set(origins);
 };
 
 export const isAllowedWebOrigin = (req: NextRequest) => {
-  const origin = req.headers.get('origin');
-  const referer = req.headers.get('referer');
-  if (originMatches(origin)) return true;
-  if (originMatches(referer)) return true;
-  return false;
+  const origin = toOrigin(req.headers.get("origin"));
+  const referer = toOrigin(req.headers.get("referer"));
+  const allowed = getAllowedOrigins();
+
+  return (
+    (origin && allowed.has(origin)) ||
+    (referer && allowed.has(referer))
+  );
+};
+
+const isSameOriginAsHost = (req: NextRequest) => {
+  const host = req.headers.get("host");
+  if (!host) return false;
+
+  // Allow localhost in dev
+  if (process.env.NODE_ENV !== "production") {
+    const origin = toOrigin(req.headers.get("origin"));
+    const referer = toOrigin(req.headers.get("referer"));
+    return (
+      origin === `http://${host}` ||
+      origin === `https://${host}` ||
+      referer === `http://${host}` ||
+      referer === `https://${host}`
+    );
+  }
+
+  // In prod, require https
+  const expected = `https://${host}`;
+  const origin = toOrigin(req.headers.get("origin"));
+  const referer = toOrigin(req.headers.get("referer"));
+  return origin === expected || referer === expected;
 };
 
 const getDeviceHeaders = (req: NextRequest) => {
@@ -119,20 +123,15 @@ export const verifyDeviceRequest = async (
   }
 };
 
-export const ensureAuthorizedRequest = async (
-  req: NextRequest,
-  bodyText: string,
-) => {
-  if (isAllowedWebOrigin(req)) {
+export const ensureAuthorizedRequest = async (req: NextRequest, bodyText: string) => {
+  if (isSameOriginAsHost(req) || isAllowedWebOrigin(req)) {
     return { ok: true };
   }
 
   const deviceOk = await verifyDeviceRequest(req, bodyText);
-  if (deviceOk) {
-    return { ok: true };
-  }
+  if (deviceOk) return { ok: true };
 
-  return { ok: false, status: 401, error: 'Unauthorized' };
+  return { ok: false, status: 401, error: "Unauthorized" };
 };
 
 export const verifyDeviceRegistration = async (payload: {
