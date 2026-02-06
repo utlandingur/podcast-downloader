@@ -17,6 +17,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": false,
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
@@ -25,7 +26,10 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@auth": [
+        "auth"
+      ],
     },
     "forceConsistentCasingInFileNames": true
   },
