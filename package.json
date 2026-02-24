@@ -103,10 +103,14 @@
       "output": "dist"
     },
     "mac": {
-      "icon": "public/web-app-manifest-512x512.png"
+      "icon": "public/web-app-manifest-512x512.png",
+      "target": ["dmg"],
+      "identity": null
     },
     "win": {
-      "icon": "desktop/icon.ico"
+      "icon": "desktop/icon.ico",
+      "target": ["nsis"],
+      "signAndEditExecutable": false
     },
     "linux": {
       "icon": "public/web-app-manifest-512x512.png"

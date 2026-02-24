@@ -18,8 +18,10 @@ jobs:
         include:
           - os: macos-latest
             artifact_name: desktop-macos
+            artifact_glob: dist/*.dmg
           - os: windows-latest
             artifact_name: desktop-windows
+            artifact_glob: dist/*.exe
 
     steps:
       - name: Checkout
@@ -44,14 +46,7 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           if-no-files-found: ignore
-          path: |
-            dist/*.dmg
-            dist/*.exe
-            dist/*.zip
-            dist/*.AppImage
-            dist/*.deb
-            dist/*.yml
-            dist/*.blockmap
+          path: ${{ matrix.artifact_glob }}
 
   publish:
     if: github.event_name == 'release'
@@ -74,8 +69,3 @@ jobs:
           files: |
             artifacts/**/*.dmg
             artifacts/**/*.exe
-            artifacts/**/*.zip
-            artifacts/**/*.AppImage
-            artifacts/**/*.deb
-            artifacts/**/*.yml
-            artifacts/**/*.blockmap
