@@ -43,6 +43,7 @@ Phase 4
 | Return `200 { user: null }` for unauthenticated `/api/user*` | Keeps API non-blocking without inventing anonymous user identity writes |
 | Make session reads fault-tolerant via `getOptionalSession` | Prevents runtime auth config issues from breaking open API/page flows |
 | Remove NextAuth middleware for an open web app | Avoids global auth interception for routes that do not require protection |
+| Route Electron dev API calls to local origin by default | Fixes `electron:dev` search reliability and keeps local testing local |
 
 ## Errors Encountered
 | Error | Attempt | Resolution |

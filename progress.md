@@ -70,6 +70,19 @@
   - Added route/auth-fallback tests:
     - `__tests__/apiUserRoutes.test.ts`
     - `__tests__/optionalSession.test.ts`
+  - Fixed Electron dev API base resolution in `desktop/main.js`:
+    - Dev mode now targets local app origin by default.
+    - `ELECTRON_REMOTE_API_BASE` still overrides for explicit remote targeting.
+  - Fixed Electron auth popup flow:
+    - Auth success now checks exact callback URL marker (`?electron_auth=1`) instead of broad origin match.
+    - Added explicit error throwing in electron auth client when sign-in/sign-out fails.
+  - Refined Electron auth popup flow again:
+    - Reverted to standard callback URL (origin root) for compatibility.
+    - Success now requires navigation on auth origin outside `/api/auth/*`.
+  - Fixed Electron-only download state persistence for bulk-like updates:
+    - `useEpisodesView.electron.ts` now appends IDs via functional state updates.
+  - Added Electron-specific regression test coverage:
+    - `__tests__/useEpisodesView.electron.test.tsx`
 - Files created/modified:
   - `task_plan.md` (updated)
   - `findings.md` (updated)
@@ -81,8 +94,11 @@
 | Unit tests | `yarn test` | All Jest suites pass | 4/4 suites passed | ✓ |
 | E2E tests | `yarn test:e2e` | Search/download/bulk flows pass | 6/6 tests passed | ✓ |
 | Production build | `yarn build` | Build, lint, typecheck succeed | Build succeeded | ✓ |
-| Electron main syntax | `node --check desktop/main.js` | No syntax errors | No errors | ✓ |
 | User route tests | `yarn test` | Unauth/fallback behavior covered | `apiUserRoutes` + `optionalSession` passed | ✓ |
+| Electron main syntax | `node --check desktop/main.js` | No syntax errors after API base changes | No errors | ✓ |
+| Electron auth client behavior | `yarn test` | Existing suite remains green after auth flow updates | 6/6 suites passed | ✓ |
+| Electron main syntax (auth flow v2) | `node --check desktop/main.js` | No syntax errors after auth routing refinement | No errors | ✓ |
+| Electron bulk state regression test | `yarn test` | Sequential download updates keep all IDs | `useEpisodesView.electron` tests passed | ✓ |
 
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |

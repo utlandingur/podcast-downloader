@@ -9,7 +9,7 @@ const DEFAULT_START_URL = 'http://localhost:3000';
 let startUrl = process.env.ELECTRON_START_URL || DEFAULT_START_URL;
 const STORAGE_PARTITION = 'persist:podcasttomp3';
 const USER_DATA_DIR = path.join(app.getPath('appData'), 'PodcastToMp3');
-const REMOTE_API_BASE =
+const DEFAULT_REMOTE_API_BASE =
   process.env.ELECTRON_REMOTE_API_BASE ||
   process.env.NEXT_PUBLIC_REMOTE_API_BASE ||
   'https://podcasttomp3.com';
@@ -30,13 +30,33 @@ let baseOrigin = (() => {
   }
 })();
 
-const remoteOrigin = (() => {
+const getApiBase = () => {
+  if (process.env.ELECTRON_REMOTE_API_BASE) {
+    return process.env.ELECTRON_REMOTE_API_BASE;
+  }
+  if (!app.isPackaged && baseOrigin) {
+    return baseOrigin;
+  }
+  return DEFAULT_REMOTE_API_BASE;
+};
+
+const getApiOrigin = () => {
   try {
-    return new URL(REMOTE_API_BASE).origin;
+    return new URL(getApiBase()).origin;
   } catch {
     return null;
   }
-})();
+};
+
+const getAuthBase = () => process.env.ELECTRON_AUTH_BASE || DEFAULT_REMOTE_API_BASE;
+
+const getAuthOrigin = () => {
+  try {
+    return new URL(getAuthBase()).origin;
+  } catch {
+    return null;
+  }
+};
 
 const isSameOrigin = (url) => {
   if (!baseOrigin) return false;
@@ -146,7 +166,7 @@ let mainWindow;
 let authWindow;
 let nextServerProcess;
 
-const openAuthWindow = ({ url: authUrl, successOrigin }) =>
+const openAuthWindow = ({ url: authUrl, successOrigin, successUrl }) =>
   new Promise((resolve) => {
     if (!mainWindow) {
       resolve({ success: false, error: 'Main window not ready.' });
@@ -195,13 +215,38 @@ const openAuthWindow = ({ url: authUrl, successOrigin }) =>
       }
     };
 
+    const isSuccessUrl = (targetUrl) => {
+      if (!successUrl) return false;
+      try {
+        const target = new URL(targetUrl);
+        const expected = new URL(successUrl);
+        return (
+          target.origin === expected.origin &&
+          target.pathname === expected.pathname &&
+          target.search === expected.search
+        );
+      } catch {
+        return false;
+      }
+    };
+
+    const isPostAuthOrigin = (targetUrl) => {
+      if (!isSuccessOrigin(targetUrl)) return false;
+      try {
+        return !new URL(targetUrl).pathname.startsWith('/api/auth');
+      } catch {
+        return false;
+      }
+    };
+
     const handleNavigate = (url) => {
-      if (isSuccessOrigin(url)) {
+      if (isSuccessUrl(url)) {
         cleanup({ success: true });
         return;
       }
-      if (isSameOrigin(url)) {
+      if (isPostAuthOrigin(url)) {
         cleanup({ success: true });
+        return;
       }
     };
 
@@ -304,7 +349,7 @@ const startLocalServer = async () => {
       NODE_ENV: 'production',
       NEXT_SERVER_DIR: LOCAL_SERVER_DIR,
       NEXT_SERVER_PORT: String(port),
-      NEXT_PUBLIC_REMOTE_API_BASE: REMOTE_API_BASE,
+      NEXT_PUBLIC_REMOTE_API_BASE: getApiBase(),
     },
     stdio: 'inherit',
   });
@@ -312,13 +357,13 @@ const startLocalServer = async () => {
   updateStartUrl(`http://127.0.0.1:${port}`);
 };
 
-const fetchRemote = async ({ path, method, headers, body }) => {
-  if (!mainWindow || !remoteOrigin) {
+const fetchFromBase = async ({ base, origin, path, method, headers, body }) => {
+  if (!mainWindow || !origin) {
     return { ok: false, status: 500, data: { error: 'Remote not available' } };
   }
 
-  const target = new URL(path, REMOTE_API_BASE);
-  if (target.origin !== remoteOrigin) {
+  const target = new URL(path, base);
+  if (target.origin !== origin) {
     return { ok: false, status: 400, data: { error: 'Invalid remote path' } };
   }
 
@@ -360,6 +405,16 @@ const fetchRemote = async ({ path, method, headers, body }) => {
   return { ok: response.ok, status: response.status, data };
 };
 
+const fetchRemote = async (payload) => {
+  const apiBase = getApiBase();
+  const apiOrigin = getApiOrigin();
+  return fetchFromBase({
+    ...payload,
+    base: apiBase,
+    origin: apiOrigin,
+  });
+};
+
 ipcMain.handle('remote-request', async (_event, payload) => {
   if (!payload || typeof payload.path !== 'string') {
     return { ok: false, status: 400, data: { error: 'Invalid payload' } };
@@ -376,17 +431,22 @@ ipcMain.handle('remote-request', async (_event, payload) => {
 });
 
 ipcMain.handle('auth-sign-in', async () => {
-  if (!remoteOrigin) {
+  const authBase = getAuthBase();
+  const authOrigin = getAuthOrigin();
+  if (!authOrigin) {
     return { success: false, error: 'Remote origin not configured.' };
   }
-  const authUrl = `${REMOTE_API_BASE}/api/auth/signin/google?callbackUrl=${encodeURIComponent(
-    REMOTE_API_BASE,
+  const callbackUrl = authBase.replace(/\/$/, '');
+  const authUrl = `${authBase}/api/auth/signin/google?callbackUrl=${encodeURIComponent(
+    callbackUrl,
   )}`;
-  return openAuthWindow({ url: authUrl, successOrigin: remoteOrigin });
+  return openAuthWindow({ url: authUrl, successOrigin: authOrigin });
 });
 
 ipcMain.handle('auth-get-session', async () => {
-  const response = await fetchRemote({
+  const response = await fetchFromBase({
+    base: getAuthBase(),
+    origin: getAuthOrigin(),
     path: '/api/auth/session',
     method: 'GET',
   });
@@ -397,17 +457,18 @@ ipcMain.handle('auth-get-session', async () => {
 });
 
 ipcMain.handle('auth-sign-out', async () => {
-  if (!mainWindow || !remoteOrigin) {
+  const authOrigin = getAuthOrigin();
+  if (!mainWindow || !authOrigin) {
     return { success: false, error: 'Remote origin not available.' };
   }
   try {
     const cookies = await mainWindow.webContents.session.cookies.get({
-      url: remoteOrigin,
+      url: authOrigin,
     });
     await Promise.all(
       cookies.map((cookie) =>
         mainWindow.webContents.session.cookies.remove(
-          remoteOrigin,
+          authOrigin,
           cookie.name,
         ),
       ),
