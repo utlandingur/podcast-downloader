@@ -2,7 +2,6 @@ const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const net = require('net');
-const crypto = require('crypto');
 const { fork } = require('child_process');
 const { pipeline } = require('stream/promises');
 
@@ -14,7 +13,6 @@ const REMOTE_API_BASE =
   process.env.ELECTRON_REMOTE_API_BASE ||
   process.env.NEXT_PUBLIC_REMOTE_API_BASE ||
   'https://podcasttomp3.com';
-const DEVICE_FILE = path.join(USER_DATA_DIR, 'device.json');
 const LOCAL_SERVER_DIR =
   process.env.ELECTRON_APP_DIR ||
   (app.isPackaged ? app.getAppPath() : path.join(__dirname, '..'));
@@ -56,81 +54,6 @@ const updateStartUrl = (url) => {
   } catch {
     baseOrigin = null;
   }
-};
-
-const loadDevice = () => {
-  if (deviceCache !== undefined) return deviceCache;
-  try {
-    const raw = fs.readFileSync(DEVICE_FILE, 'utf8');
-    deviceCache = JSON.parse(raw);
-    return deviceCache;
-  } catch {
-    deviceCache = null;
-    return deviceCache;
-  }
-};
-
-const saveDevice = (device) => {
-  deviceCache = device;
-  fs.mkdirSync(USER_DATA_DIR, { recursive: true });
-  fs.writeFileSync(DEVICE_FILE, JSON.stringify(device, null, 2));
-};
-
-const createDevice = () => {
-  const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
-  const device = {
-    deviceId: crypto.randomUUID(),
-    publicKey: publicKey.export({ type: 'spki', format: 'pem' }),
-    privateKey: privateKey.export({ type: 'pkcs8', format: 'pem' }),
-    registered: false,
-  };
-  saveDevice(device);
-  return device;
-};
-
-const getDevice = () => loadDevice() || createDevice();
-
-const signPayload = (payload, privateKeyPem) => {
-  const key = crypto.createPrivateKey(privateKeyPem);
-  const signature = crypto.sign(null, Buffer.from(payload), key);
-  return signature.toString('base64');
-};
-
-const bodyHash = (bodyString) =>
-  crypto.createHash('sha256').update(bodyString).digest('hex');
-
-const buildCanonicalRequest = ({ method, path, timestamp, bodyHashValue }) =>
-  [method, path, timestamp, bodyHashValue].join('\n');
-
-const registerDevice = async () => {
-  const device = getDevice();
-  if (device.registered) return true;
-
-  const timestamp = Math.floor(Date.now() / 1000);
-  const canonical = ['REGISTER', device.deviceId, `${timestamp}`].join('\n');
-  const signature = signPayload(canonical, device.privateKey);
-
-  const response = await mainWindow.webContents.session.fetch(
-    `${REMOTE_API_BASE}/api/device/register`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        deviceId: device.deviceId,
-        publicKey: device.publicKey,
-        signature,
-        timestamp,
-      }),
-    },
-  );
-
-  if (response.ok) {
-    device.registered = true;
-    saveDevice(device);
-    return true;
-  }
-
-  return false;
 };
 
 const checkPortAvailable = (port) =>
@@ -222,7 +145,6 @@ const downloadEpisode = async (url, filename) => {
 let mainWindow;
 let authWindow;
 let nextServerProcess;
-let deviceCache;
 
 const openAuthWindow = ({ url: authUrl, successOrigin }) =>
   new Promise((resolve) => {
@@ -400,29 +322,12 @@ const fetchRemote = async ({ path, method, headers, body }) => {
     return { ok: false, status: 400, data: { error: 'Invalid remote path' } };
   }
 
-  await registerDevice();
-
-  const device = getDevice();
-  const timestamp = Math.floor(Date.now() / 1000).toString();
   const requestHeaders = { ...(headers || {}) };
 
   let bodyString = '';
   if (body !== undefined) {
     bodyString = typeof body === 'string' ? body : JSON.stringify(body);
   }
-
-  const canonical = buildCanonicalRequest({
-    method: (method || 'GET').toUpperCase(),
-    path: `${target.pathname}${target.search}`,
-    timestamp,
-    bodyHashValue: bodyHash(bodyString),
-  });
-  const signature = signPayload(canonical, device.privateKey);
-
-  requestHeaders['X-PTM3-Desktop'] = '1';
-  requestHeaders['X-PTM3-Device-Id'] = device.deviceId;
-  requestHeaders['X-PTM3-Timestamp'] = timestamp;
-  requestHeaders['X-PTM3-Signature'] = signature;
 
   const requestInit = {
     method: method || 'GET',

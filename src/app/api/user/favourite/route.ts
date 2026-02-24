@@ -1,24 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findOrCreateUser, toggleFavouritePodcast } from '@/serverActions/userActions';
-import { auth } from '../../../../../auth';
-import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
+import { getOptionalSession } from '@/lib/optionalSession';
 
 export async function POST(req: NextRequest) {
-  const bodyText = await req.clone().text();
-  const authCheck = await ensureAuthorizedRequest(req, bodyText);
-  if (!authCheck.ok) {
-    return NextResponse.json(
-      { error: authCheck.error },
-      { status: authCheck.status },
-    );
-  }
-
-  const session = await auth();
+  const session = await getOptionalSession();
   const email = session?.user?.email;
-
-  if (!email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
 
   const body = await req.json().catch(() => null);
   const podcastId = body?.podcastId;
@@ -29,6 +15,10 @@ export async function POST(req: NextRequest) {
       { error: 'Missing podcastId or favourited flag' },
       { status: 400 },
     );
+  }
+
+  if (!email) {
+    return NextResponse.json({ user: null }, { status: 200 });
   }
 
   try {

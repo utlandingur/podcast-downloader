@@ -1,20 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { findOrCreateUser } from '@/serverActions/userActions';
-import { auth } from '../../../../auth';
-import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
+import { getOptionalSession } from '@/lib/optionalSession';
 
-export async function GET(req: NextRequest) {
-  const bodyText = await req.clone().text();
-  const authCheck = await ensureAuthorizedRequest(req, bodyText);
-  if (!authCheck.ok) {
-    return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
-  }
-
-  const session = await auth();
+export async function GET() {
+  const session = await getOptionalSession();
   const email = session?.user?.email;
 
   if (!email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ user: null }, { status: 200 });
   }
 
   try {
