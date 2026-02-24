@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { auth } from '../../../auth';
 import { redirect } from 'next/navigation';
 import { geistSans, geistMono } from '../fonts';
 import { ProfileOverview } from '@/components/profileOverview';
@@ -7,6 +6,7 @@ import { fetchUser } from '@/lib/fetchUser';
 import { getPodcastV2 } from '@/lib/api/podcasts';
 import { PodcastSearchBar } from '@/components/podcastSearchBar';
 import { cn } from '@/lib/utils';
+import { getOptionalSession } from '@/lib/optionalSession';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PodcastPage() {
-  const session = await auth();
+  const session = await getOptionalSession();
   const user = session?.user;
 
   if (!user?.email) {

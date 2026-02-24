@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { lookupPodcastsV1, lookupPodcastsV2 } from '@/serverActions/lookupPodcasts';
-import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
 import { getE2EMockSearchResults } from '@/lib/testMocks';
 
 export async function GET(req: NextRequest) {
@@ -12,12 +11,6 @@ export async function GET(req: NextRequest) {
   if (process.env.E2E_MOCKS === '1') {
     if (!term) return NextResponse.json([], { status: 200 });
     return NextResponse.json(getE2EMockSearchResults(term));
-  }
-
-  const bodyText = await req.clone().text();
-  const auth = await ensureAuthorizedRequest(req, bodyText);
-  if (!auth.ok) {
-    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
   if (!term) {

@@ -16,6 +16,9 @@ const start = async () => {
     server = http.createServer((req, res) => handle(req, res));
     server.listen(port, '127.0.0.1', () => {
       process.stdout.write(`Next server listening on ${port}\n`);
+      if (typeof process.send === 'function') {
+        process.send({ type: 'ready', port });
+      }
     });
   } catch (error) {
     process.stderr.write(`Failed to start Next server: ${error}\n`);

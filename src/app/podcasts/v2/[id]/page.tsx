@@ -2,11 +2,11 @@ import { geistSans, geistMono } from '@/app/fonts';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { getPodcastV2 } from '@/lib/api/podcasts';
-import { auth } from '../../../../../auth';
 import { PodcastOverviewV2 } from '@/components/podcastOverviewV2';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { getOptionalSession } from '@/lib/optionalSession';
 
 type Params = Promise<{
   id: string;
@@ -44,7 +44,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   const podcast = await getPodcastV2(id);
 
-  const session = await auth();
+  const session = await getOptionalSession();
 
   return (
     <main

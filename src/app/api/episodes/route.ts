@@ -1,6 +1,5 @@
 import { lookupPodcastEpisodes, lookupPodcastEpisodesV2 } from '@/serverActions/lookupPodcastEpisodes';
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
 import { getE2EMockEpisodes } from '@/lib/testMocks';
 
 export async function GET(req: NextRequest) {
@@ -19,12 +18,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json([]);
     }
     return NextResponse.json(getE2EMockEpisodes(podcastId));
-  }
-
-  const bodyText = await req.clone().text();
-  const auth = await ensureAuthorizedRequest(req, bodyText);
-  if (!auth.ok) {
-    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
   // Validate the podcastId parameter

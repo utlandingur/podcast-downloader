@@ -2,19 +2,38 @@ const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const net = require('net');
-const crypto = require('crypto');
 const { fork } = require('child_process');
 const { pipeline } = require('stream/promises');
 
 const DEFAULT_START_URL = 'http://localhost:3000';
-let startUrl = process.env.ELECTRON_START_URL || DEFAULT_START_URL;
+const DEFAULT_REMOTE_API_BASE = 'https://podcasttomp3.com';
 const STORAGE_PARTITION = 'persist:podcasttomp3';
+const LOOPBACK_HOST = '127.0.0.1';
+const PORT_SCAN_ATTEMPTS = 20;
+const SERVER_READY_TIMEOUT_MS = 15000;
+const AUTH_HOSTS = new Set(['accounts.google.com']);
+
+const ELECTRON_UA_SEGMENT_REGEX = /\sElectron\/\d+\.\d+\.\d+/;
+
+const toErrorMessage = (error) =>
+  error instanceof Error ? error.message : String(error);
+
+const getOrigin = (value) => {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+};
+
+let startUrl = process.env.ELECTRON_START_URL || DEFAULT_START_URL;
+let baseOrigin = getOrigin(startUrl);
+
 const USER_DATA_DIR = path.join(app.getPath('appData'), 'PodcastToMp3');
-const REMOTE_API_BASE =
+const RESOLVED_REMOTE_API_BASE =
   process.env.ELECTRON_REMOTE_API_BASE ||
   process.env.NEXT_PUBLIC_REMOTE_API_BASE ||
-  'https://podcasttomp3.com';
-const DEVICE_FILE = path.join(USER_DATA_DIR, 'device.json');
+  DEFAULT_REMOTE_API_BASE;
 const LOCAL_SERVER_DIR =
   process.env.ELECTRON_APP_DIR ||
   (app.isPackaged ? app.getAppPath() : path.join(__dirname, '..'));
@@ -24,113 +43,36 @@ const LOCAL_SERVER_PORT = process.env.ELECTRON_SERVER_PORT
 
 app.setPath('userData', USER_DATA_DIR);
 
-let baseOrigin = (() => {
-  try {
-    return new URL(startUrl).origin;
-  } catch {
-    return null;
-  }
-})();
-
-const remoteOrigin = (() => {
-  try {
-    return new URL(REMOTE_API_BASE).origin;
-  } catch {
-    return null;
-  }
-})();
+const updateStartUrl = (nextUrl) => {
+  startUrl = nextUrl;
+  baseOrigin = getOrigin(nextUrl);
+};
 
 const isSameOrigin = (url) => {
   if (!baseOrigin) return false;
+  return getOrigin(url) === baseOrigin;
+};
+
+const getApiBase = () => {
+  if (process.env.ELECTRON_REMOTE_API_BASE) {
+    return process.env.ELECTRON_REMOTE_API_BASE;
+  }
+  if (!app.isPackaged && baseOrigin) {
+    return baseOrigin;
+  }
+  return RESOLVED_REMOTE_API_BASE;
+};
+
+const getApiOrigin = () => getOrigin(getApiBase());
+const getAuthBase = () => process.env.ELECTRON_AUTH_BASE || RESOLVED_REMOTE_API_BASE;
+const getAuthOrigin = () => getOrigin(getAuthBase());
+
+const isAuthUrl = (url) => {
   try {
-    return new URL(url).origin === baseOrigin;
+    return AUTH_HOSTS.has(new URL(url).hostname);
   } catch {
     return false;
   }
-};
-
-const updateStartUrl = (url) => {
-  startUrl = url;
-  try {
-    baseOrigin = new URL(url).origin;
-  } catch {
-    baseOrigin = null;
-  }
-};
-
-const loadDevice = () => {
-  if (deviceCache !== undefined) return deviceCache;
-  try {
-    const raw = fs.readFileSync(DEVICE_FILE, 'utf8');
-    deviceCache = JSON.parse(raw);
-    return deviceCache;
-  } catch {
-    deviceCache = null;
-    return deviceCache;
-  }
-};
-
-const saveDevice = (device) => {
-  deviceCache = device;
-  fs.mkdirSync(USER_DATA_DIR, { recursive: true });
-  fs.writeFileSync(DEVICE_FILE, JSON.stringify(device, null, 2));
-};
-
-const createDevice = () => {
-  const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
-  const device = {
-    deviceId: crypto.randomUUID(),
-    publicKey: publicKey.export({ type: 'spki', format: 'pem' }),
-    privateKey: privateKey.export({ type: 'pkcs8', format: 'pem' }),
-    registered: false,
-  };
-  saveDevice(device);
-  return device;
-};
-
-const getDevice = () => loadDevice() || createDevice();
-
-const signPayload = (payload, privateKeyPem) => {
-  const key = crypto.createPrivateKey(privateKeyPem);
-  const signature = crypto.sign(null, Buffer.from(payload), key);
-  return signature.toString('base64');
-};
-
-const bodyHash = (bodyString) =>
-  crypto.createHash('sha256').update(bodyString).digest('hex');
-
-const buildCanonicalRequest = ({ method, path, timestamp, bodyHashValue }) =>
-  [method, path, timestamp, bodyHashValue].join('\n');
-
-const registerDevice = async () => {
-  const device = getDevice();
-  if (device.registered) return true;
-
-  const timestamp = Math.floor(Date.now() / 1000);
-  const canonical = ['REGISTER', device.deviceId, `${timestamp}`].join('\n');
-  const signature = signPayload(canonical, device.privateKey);
-
-  const response = await mainWindow.webContents.session.fetch(
-    `${REMOTE_API_BASE}/api/device/register`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        deviceId: device.deviceId,
-        publicKey: device.publicKey,
-        signature,
-        timestamp,
-      }),
-    },
-  );
-
-  if (response.ok) {
-    device.registered = true;
-    saveDevice(device);
-    return true;
-  }
-
-  return false;
 };
 
 const checkPortAvailable = (port) =>
@@ -141,12 +83,12 @@ const checkPortAvailable = (port) =>
       .once('listening', () => {
         tester.close(() => resolve(true));
       })
-      .listen(port, '127.0.0.1');
+      .listen(port, LOOPBACK_HOST);
   });
 
 const findAvailablePort = async (startPort) => {
   let port = startPort;
-  for (let i = 0; i < 20; i += 1) {
+  for (let attempt = 0; attempt < PORT_SCAN_ATTEMPTS; attempt += 1) {
     // eslint-disable-next-line no-await-in-loop
     const available = await checkPortAvailable(port);
     if (available) return port;
@@ -155,16 +97,57 @@ const findAvailablePort = async (startPort) => {
   return startPort;
 };
 
+const waitForServerReady = (child, timeoutMs = SERVER_READY_TIMEOUT_MS) =>
+  new Promise((resolve, reject) => {
+    if (!child) {
+      reject(new Error('Next server process was not created.'));
+      return;
+    }
 
-const AUTH_HOSTS = new Set(['accounts.google.com']);
-const isAuthUrl = (url) => {
-  try {
-    const { hostname } = new URL(url);
-    return AUTH_HOSTS.has(hostname);
-  } catch {
-    return false;
-  }
-};
+    let settled = false;
+    const timeout = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(new Error('Timed out waiting for local Next server to start.'));
+    }, timeoutMs);
+
+    const cleanup = () => {
+      clearTimeout(timeout);
+      child.off('message', onMessage);
+      child.off('exit', onExit);
+      child.off('error', onError);
+    };
+
+    const onMessage = (message) => {
+      if (settled) return;
+      if (!message || message.type !== 'ready') return;
+      settled = true;
+      cleanup();
+      resolve();
+    };
+
+    const onExit = (code, signal) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(
+        new Error(
+          `Local Next server exited before ready (code=${code ?? 'null'}, signal=${signal ?? 'null'}).`,
+        ),
+      );
+    };
+
+    const onError = (error) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    };
+
+    child.on('message', onMessage);
+    child.on('exit', onExit);
+    child.on('error', onError);
+  });
 
 const sanitizeFilename = (name) => {
   const trimmed = String(name || '')
@@ -212,19 +195,15 @@ const downloadEpisode = async (url, filename) => {
     await pipeline(response.body, fs.createWriteStream(targetPath));
     return { success: true, path: targetPath };
   } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
+    return { success: false, error: toErrorMessage(error) };
   }
 };
 
 let mainWindow;
 let authWindow;
 let nextServerProcess;
-let deviceCache;
 
-const openAuthWindow = ({ url: authUrl, successOrigin }) =>
+const openAuthWindow = ({ url: authUrl, successOrigin, successUrl }) =>
   new Promise((resolve) => {
     if (!mainWindow) {
       resolve({ success: false, error: 'Main window not ready.' });
@@ -250,8 +229,11 @@ const openAuthWindow = ({ url: authUrl, successOrigin }) =>
       },
     });
 
-    const cleanup = (result) => {
-      if (authWindow && !authWindow.isDestroyed()) {
+    let settled = false;
+    const finish = (result, shouldClose = true) => {
+      if (settled) return;
+      settled = true;
+      if (shouldClose && authWindow && !authWindow.isDestroyed()) {
         authWindow.close();
       }
       authWindow = null;
@@ -260,40 +242,51 @@ const openAuthWindow = ({ url: authUrl, successOrigin }) =>
 
     authWindow.once('ready-to-show', () => authWindow?.show());
     authWindow.on('closed', () => {
-      authWindow = null;
-      resolve({ success: false, error: 'Auth window closed.' });
+      finish({ success: false, error: 'Auth window closed.' }, false);
     });
 
-    const isSuccessOrigin = (targetUrl) => {
+    const matchesSuccessOrigin = (targetUrl) => {
       if (!successOrigin) return false;
+      return getOrigin(targetUrl) === successOrigin;
+    };
+
+    const matchesSuccessUrl = (targetUrl) => {
+      if (!successUrl) return false;
       try {
-        return new URL(targetUrl).origin === successOrigin;
+        const target = new URL(targetUrl);
+        const expected = new URL(successUrl);
+        return (
+          target.origin === expected.origin &&
+          target.pathname === expected.pathname &&
+          target.search === expected.search
+        );
+      } catch {
+        return false;
+      }
+    };
+
+    const isPostAuthPage = (targetUrl) => {
+      if (!matchesSuccessOrigin(targetUrl)) return false;
+      try {
+        return !new URL(targetUrl).pathname.startsWith('/api/auth');
       } catch {
         return false;
       }
     };
 
     const handleNavigate = (url) => {
-      if (isSuccessOrigin(url)) {
-        cleanup({ success: true });
-        return;
-      }
-      if (isSameOrigin(url)) {
-        cleanup({ success: true });
+      if (matchesSuccessUrl(url) || isPostAuthPage(url)) {
+        finish({ success: true });
       }
     };
 
     authWindow.webContents.on('will-navigate', (event, url) => {
-      if (isSuccessOrigin(url)) {
-        event.preventDefault();
-        handleNavigate(url);
-        return;
-      }
-      if (isSameOrigin(url)) {
+      if (matchesSuccessOrigin(url) || isSameOrigin(url)) {
         event.preventDefault();
         handleNavigate(url);
       }
     });
+
     authWindow.webContents.on('did-navigate', (_event, url) => {
       handleNavigate(url);
     });
@@ -304,9 +297,8 @@ const openAuthWindow = ({ url: authUrl, successOrigin }) =>
     });
 
     const currentUA = mainWindow.webContents.getUserAgent();
-    const sanitizedUA = currentUA.replace(/\sElectron\/\d+\.\d+\.\d+/, '');
+    const sanitizedUA = currentUA.replace(ELECTRON_UA_SEGMENT_REGEX, '');
     authWindow.webContents.setUserAgent(sanitizedUA);
-
     authWindow.loadURL(authUrl);
   });
 
@@ -324,45 +316,29 @@ const createWindow = () => {
 
   mainWindow.loadURL(startUrl);
 
+  const handleExternalNavigation = (url) => {
+    if (isAuthUrl(url)) {
+      openAuthWindow({ url, successOrigin: baseOrigin });
+      return;
+    }
+    shell.openExternal(url);
+  };
+
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (isSameOrigin(url)) {
       mainWindow.loadURL(url);
       return { action: 'deny' };
     }
-    if (isAuthUrl(url)) {
-      openAuthWindow({ url, successOrigin: baseOrigin });
-      return { action: 'deny' };
-    }
-    shell.openExternal(url);
+    handleExternalNavigation(url);
     return { action: 'deny' };
   });
 
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    if (!isSameOrigin(url)) {
-      event.preventDefault();
-      if (isAuthUrl(url)) {
-        openAuthWindow({ url, successOrigin: baseOrigin });
-      } else {
-        shell.openExternal(url);
-      }
-    }
+    if (isSameOrigin(url)) return;
+    event.preventDefault();
+    handleExternalNavigation(url);
   });
 };
-
-ipcMain.handle('download-episode', async (_event, payload) => {
-  if (!payload) return { success: false, error: 'Missing payload.' };
-  return downloadEpisode(payload.url, payload.filename);
-});
-
-ipcMain.handle('open-auth-window', async (_event, authUrl) => {
-  if (!authUrl || typeof authUrl.url !== 'string') {
-    return { success: false, error: 'Invalid auth URL.' };
-  }
-  return openAuthWindow({
-    url: authUrl.url,
-    successOrigin: authUrl.successOrigin,
-  });
-});
 
 const startLocalServer = async () => {
   if (process.env.ELECTRON_START_URL) {
@@ -376,154 +352,169 @@ const startLocalServer = async () => {
 
   const port = await findAvailablePort(LOCAL_SERVER_PORT);
   const serverScript = path.join(__dirname, 'next-server.js');
+
   nextServerProcess = fork(serverScript, [], {
     env: {
       ...process.env,
       NODE_ENV: 'production',
       NEXT_SERVER_DIR: LOCAL_SERVER_DIR,
       NEXT_SERVER_PORT: String(port),
-      NEXT_PUBLIC_REMOTE_API_BASE: REMOTE_API_BASE,
+      NEXT_PUBLIC_REMOTE_API_BASE: getApiBase(),
     },
-    stdio: 'inherit',
+    stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
   });
 
-  updateStartUrl(`http://127.0.0.1:${port}`);
+  updateStartUrl(`http://${LOOPBACK_HOST}:${port}`);
+  await waitForServerReady(nextServerProcess);
 };
 
-const fetchRemote = async ({ path, method, headers, body }) => {
-  if (!mainWindow || !remoteOrigin) {
+const parseSessionResponse = async (response) => {
+  const contentType = response.headers.get('content-type') || '';
+  const text = await response.text();
+  if (!contentType.includes('application/json')) {
+    return text;
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+};
+
+const fetchFromBase = async ({ base, origin, path, method, headers, body }) => {
+  if (!mainWindow || !origin) {
     return { ok: false, status: 500, data: { error: 'Remote not available' } };
   }
 
-  const target = new URL(path, REMOTE_API_BASE);
-  if (target.origin !== remoteOrigin) {
+  const target = new URL(path, base);
+  if (target.origin !== origin) {
     return { ok: false, status: 400, data: { error: 'Invalid remote path' } };
   }
 
-  await registerDevice();
-
-  const device = getDevice();
-  const timestamp = Math.floor(Date.now() / 1000).toString();
   const requestHeaders = { ...(headers || {}) };
-
-  let bodyString = '';
-  if (body !== undefined) {
-    bodyString = typeof body === 'string' ? body : JSON.stringify(body);
-  }
-
-  const canonical = buildCanonicalRequest({
-    method: (method || 'GET').toUpperCase(),
-    path: `${target.pathname}${target.search}`,
-    timestamp,
-    bodyHashValue: bodyHash(bodyString),
-  });
-  const signature = signPayload(canonical, device.privateKey);
-
-  requestHeaders['X-PTM3-Desktop'] = '1';
-  requestHeaders['X-PTM3-Device-Id'] = device.deviceId;
-  requestHeaders['X-PTM3-Timestamp'] = timestamp;
-  requestHeaders['X-PTM3-Signature'] = signature;
-
   const requestInit = {
     method: method || 'GET',
     headers: requestHeaders,
   };
 
   if (body !== undefined) {
-    requestInit.body = bodyString;
+    requestInit.body = typeof body === 'string' ? body : JSON.stringify(body);
     if (!requestInit.headers['Content-Type']) {
       requestInit.headers['Content-Type'] = 'application/json';
     }
   }
 
-  const response = await mainWindow.webContents.session.fetch(
-    target.toString(),
-    { ...requestInit, credentials: 'include' },
-  );
+  const response = await mainWindow.webContents.session.fetch(target.toString(), {
+    ...requestInit,
+    credentials: 'include',
+  });
 
-  const contentType = response.headers.get('content-type') || '';
-  const text = await response.text();
-  let data = text;
-  if (contentType.includes('application/json')) {
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = null;
-    }
-  }
-
-  return { ok: response.ok, status: response.status, data };
+  return {
+    ok: response.ok,
+    status: response.status,
+    data: await parseSessionResponse(response),
+  };
 };
 
-ipcMain.handle('remote-request', async (_event, payload) => {
-  if (!payload || typeof payload.path !== 'string') {
-    return { ok: false, status: 400, data: { error: 'Invalid payload' } };
-  }
-  try {
-    return await fetchRemote(payload);
-  } catch (error) {
-    return {
-      ok: false,
-      status: 500,
-      data: { error: error instanceof Error ? error.message : String(error) },
-    };
-  }
-});
-
-ipcMain.handle('auth-sign-in', async () => {
-  if (!remoteOrigin) {
-    return { success: false, error: 'Remote origin not configured.' };
-  }
-  const authUrl = `${REMOTE_API_BASE}/api/auth/signin/google?callbackUrl=${encodeURIComponent(
-    REMOTE_API_BASE,
-  )}`;
-  return openAuthWindow({ url: authUrl, successOrigin: remoteOrigin });
-});
-
-ipcMain.handle('auth-get-session', async () => {
-  const response = await fetchRemote({
-    path: '/api/auth/session',
-    method: 'GET',
+const fetchRemote = async (payload) =>
+  fetchFromBase({
+    ...payload,
+    base: getApiBase(),
+    origin: getApiOrigin(),
   });
-  if (!response.ok) {
-    return { session: null, error: response.data?.error || 'Unauthorized' };
-  }
-  return { session: response.data ?? null };
-});
 
-ipcMain.handle('auth-sign-out', async () => {
-  if (!mainWindow || !remoteOrigin) {
-    return { success: false, error: 'Remote origin not available.' };
-  }
-  try {
-    const cookies = await mainWindow.webContents.session.cookies.get({
-      url: remoteOrigin,
+const registerIpcHandlers = () => {
+  ipcMain.handle('download-episode', async (_event, payload) => {
+    if (!payload) return { success: false, error: 'Missing payload.' };
+    return downloadEpisode(payload.url, payload.filename);
+  });
+
+  ipcMain.handle('open-auth-window', async (_event, authUrl) => {
+    if (!authUrl || typeof authUrl.url !== 'string') {
+      return { success: false, error: 'Invalid auth URL.' };
+    }
+    return openAuthWindow({
+      url: authUrl.url,
+      successOrigin: authUrl.successOrigin,
     });
-    await Promise.all(
-      cookies.map((cookie) =>
-        mainWindow.webContents.session.cookies.remove(
-          remoteOrigin,
-          cookie.name,
-        ),
-      ),
-    );
-    return { success: true };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
-  }
-});
+  });
 
-app.whenReady().then(async () => {
+  ipcMain.handle('remote-request', async (_event, payload) => {
+    if (!payload || typeof payload.path !== 'string') {
+      return { ok: false, status: 400, data: { error: 'Invalid payload' } };
+    }
+    try {
+      return await fetchRemote(payload);
+    } catch (error) {
+      return { ok: false, status: 500, data: { error: toErrorMessage(error) } };
+    }
+  });
+
+  ipcMain.handle('auth-sign-in', async () => {
+    const authBase = getAuthBase();
+    const authOrigin = getAuthOrigin();
+    if (!authOrigin) {
+      return { success: false, error: 'Remote origin not configured.' };
+    }
+    const callbackUrl = authBase.replace(/\/$/, '');
+    const authUrl = `${authBase}/api/auth/signin/google?callbackUrl=${encodeURIComponent(
+      callbackUrl,
+    )}`;
+    return openAuthWindow({ url: authUrl, successOrigin: authOrigin });
+  });
+
+  ipcMain.handle('auth-get-session', async () => {
+    const response = await fetchFromBase({
+      base: getAuthBase(),
+      origin: getAuthOrigin(),
+      path: '/api/auth/session',
+      method: 'GET',
+    });
+    if (!response.ok) {
+      return { session: null, error: response.data?.error || 'Unauthorized' };
+    }
+    return { session: response.data ?? null };
+  });
+
+  ipcMain.handle('auth-sign-out', async () => {
+    const authOrigin = getAuthOrigin();
+    if (!mainWindow || !authOrigin) {
+      return { success: false, error: 'Remote origin not available.' };
+    }
+    try {
+      const cookies = await mainWindow.webContents.session.cookies.get({
+        url: authOrigin,
+      });
+      await Promise.all(
+        cookies.map((cookie) =>
+          mainWindow.webContents.session.cookies.remove(authOrigin, cookie.name),
+        ),
+      );
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: toErrorMessage(error) };
+    }
+  });
+};
+
+const boot = async () => {
   await startLocalServer();
   createWindow();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-});
+};
+
+registerIpcHandlers();
+
+app
+  .whenReady()
+  .then(boot)
+  .catch((error) => {
+    console.error('Failed to start Electron app', error);
+    app.quit();
+  });
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();

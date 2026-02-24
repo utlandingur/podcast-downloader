@@ -99,6 +99,15 @@
     ],
     "directories": {
       "output": "dist"
+    },
+    "mac": {
+      "icon": "public/web-app-manifest-512x512.png"
+    },
+    "win": {
+      "icon": "public/favicon.ico"
+    },
+    "linux": {
+      "icon": "public/web-app-manifest-512x512.png"
     }
   }
 }

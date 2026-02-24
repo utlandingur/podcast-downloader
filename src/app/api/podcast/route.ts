@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { lookupPodcastV2 } from '@/serverActions/lookupPodcast';
-import { ensureAuthorizedRequest } from '@/lib/deviceAuth';
 import { getE2EMockPodcast } from '@/lib/testMocks';
 
 export async function GET(req: NextRequest) {
@@ -17,12 +16,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Podcast not found' }, { status: 404 });
     }
     return NextResponse.json(mock);
-  }
-
-  const bodyText = await req.clone().text();
-  const auth = await ensureAuthorizedRequest(req, bodyText);
-  if (!auth.ok) {
-    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
   try {

@@ -42,8 +42,9 @@ const ButtonsToRender = ({ status, loggedIn }: { status: SessionContextValue["st
     return (
        <>
             <Link href={'https://buymeacoffee.com/utlandingur'} target="_blank">
-              <Button variant="ghost" className="rounded-full" size="icon">
+              <Button variant="ghost" className="rounded-full px-3">
                 <Coffee className="fill-yellow-300" />
+                <span>Support</span>
               </Button>
             </Link>
             <Spacer />
