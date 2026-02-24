@@ -7,7 +7,7 @@
     "dev": "NODE_ENV=development next dev --turbopack",
     "dev:electron": "PORT=${PORT:-3000} ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next dev",
     "build": "next build",
-    "build:electron": "ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next build",
+    "build:electron": "node scripts/build-electron.js",
     "start": "next start",
     "start:electron": "PORT=${PORT:-3000} ELECTRON_BUILD=1 NEXT_PUBLIC_ELECTRON=1 next start",
     "electron:dev": "concurrently -k \"yarn dev:electron\" \"wait-on http://localhost:${PORT:-3000} && electron desktop/main.js\"",
