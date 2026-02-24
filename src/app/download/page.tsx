@@ -18,15 +18,20 @@ export default function DownloadPage() {
           Alpha
         </p>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Download the desktop app
+          Download the desktop app for faster bulk downloads
         </h1>
         <p className="text-muted-foreground">
-          The desktop app is in alpha. Things may break. Please report issues on
-          GitHub.
+          Built for people downloading lots of episodes. The desktop app avoids
+          browser download issues and keeps everything local on your computer.
         </p>
+      </section>
+
+      <section className="space-y-4 rounded-xl border border-border bg-card p-5">
+        <h2 className="text-xl font-semibold">Why download the desktop app?</h2>
         <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-          <li>Downloads are stored locally on your computer.</li>
           <li>Bulk downloads are faster and more reliable.</li>
+          <li>No browser pop-up/tab/download blocking problems.</li>
+          <li>All files are downloaded and stored locally on your computer.</li>
         </ul>
       </section>
 
@@ -63,6 +68,13 @@ export default function DownloadPage() {
             <li>If SmartScreen appears, click `More info` then `Run anyway`.</li>
           </ol>
         </div>
+      </section>
+
+      <section className="rounded-xl border border-amber-300/30 bg-amber-200/10 p-5 text-sm text-amber-100">
+        <p>
+          The app is still in alpha and not signed/notarized yet, so your OS
+          may show an untrusted app warning. Follow the steps above to open it.
+        </p>
       </section>
     </main>
   );
