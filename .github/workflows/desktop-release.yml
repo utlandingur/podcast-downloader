@@ -1,0 +1,81 @@
+name: Desktop Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Desktop (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            artifact_name: desktop-macos
+          - os: windows-latest
+            artifact_name: desktop-windows
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build unsigned installers
+        run: yarn electron:pack
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          if-no-files-found: ignore
+          path: |
+            dist/*.dmg
+            dist/*.exe
+            dist/*.zip
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.yml
+            dist/*.blockmap
+
+  publish:
+    if: github.event_name == 'release'
+    name: Publish Release Assets
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Upload assets to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: |
+            artifacts/**/*.dmg
+            artifacts/**/*.exe
+            artifacts/**/*.zip
+            artifacts/**/*.AppImage
+            artifacts/**/*.deb
+            artifacts/**/*.yml
+            artifacts/**/*.blockmap

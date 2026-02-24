@@ -74,6 +74,26 @@ Ensure you have the following installed:
 - Download episodes directly from the interface.
 - All fetching and downloading of episodes is done locally on the machine to minimize running costs.
 
+## Desktop Release Automation
+
+- The homepage "Download Desktop App" button links to:
+  - `https://github.com/utlandingur/podcast-downloader/releases/latest`
+- Unsigned desktop installers are built automatically by:
+  - `.github/workflows/desktop-release.yml`
+
+### Publish a new desktop release
+
+1. Push your changes to `main`.
+2. Create and publish a GitHub Release (for example tag `v1.2.3`).
+3. GitHub Actions builds installers for macOS and Windows and uploads them to that release.
+4. Users can always use the stable latest link from the homepage.
+
+### Manual test build (without publishing)
+
+1. Open GitHub Actions.
+2. Run `Desktop Release` via **Run workflow**.
+3. Download installer artifacts from the workflow run.
+
 ## Contributing
 
 This project is completely free and open-source, and contributions are highly encouraged! If you'd like to help:

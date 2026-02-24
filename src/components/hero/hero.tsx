@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { PodcastSearchBar } from '../podcastSearchBar';
 import { CanScrollIcon } from './canScrollIcon';
+import { DesktopDownloadButton } from './desktopDownloadButton';
 
 export function Hero() {
   return (
@@ -38,6 +39,8 @@ export function Hero() {
               buttonClassName="h-12 sm:h-14 rounded-full px-6 sm:text-lg"
             />
           </div>
+
+          <DesktopDownloadButton />
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Badge
