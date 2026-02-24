@@ -1,6 +1,8 @@
 {
   "name": "podcast-downloader",
   "version": "0.1.0",
+  "description": "Desktop app for downloading podcast episodes as MP3 files.",
+  "author": "Luke Hening <152434106+utlandingur@users.noreply.github.com>",
   "private": true,
   "main": "desktop/main.js",
   "scripts": {
@@ -104,7 +106,7 @@
       "icon": "public/web-app-manifest-512x512.png"
     },
     "win": {
-      "icon": "public/favicon.ico"
+      "icon": "desktop/icon.ico"
     },
     "linux": {
       "icon": "public/web-app-manifest-512x512.png"
