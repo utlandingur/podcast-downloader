@@ -21,7 +21,7 @@ export const Header = () => {
         </span>
       </Link>
       <div className="flex items-center gap-2">
-        <Link href="/download">
+        <Link href="/download" className="hidden sm:block">
           <Button variant="outline" className="rounded-full px-3">
             <span>Download App</span>
           </Button>

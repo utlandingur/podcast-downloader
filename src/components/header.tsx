@@ -41,7 +41,7 @@ const ButtonsToRender = ({ status, loggedIn }: { status: SessionContextValue["st
   if (loggedIn) {
     return (
        <>
-            <Link href={'/download'}>
+            <Link href={'/download'} className="hidden sm:block">
               <Button variant="outline" className="rounded-full px-3">
                 <span>Download App</span>
               </Button>
@@ -65,7 +65,7 @@ const ButtonsToRender = ({ status, loggedIn }: { status: SessionContextValue["st
   } else {
     return (
       <>
-        <Link href={'/download'}>
+        <Link href={'/download'} className="hidden sm:block">
           <Button variant="outline" className="rounded-full px-3">
             <span>Download App</span>
           </Button>
