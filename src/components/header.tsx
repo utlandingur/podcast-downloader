@@ -41,6 +41,12 @@ const ButtonsToRender = ({ status, loggedIn }: { status: SessionContextValue["st
   if (loggedIn) {
     return (
        <>
+            <Link href={'/download'}>
+              <Button variant="outline" className="rounded-full px-3">
+                <span>Download App</span>
+              </Button>
+            </Link>
+            <Spacer />
             <Link href={'https://buymeacoffee.com/utlandingur'} target="_blank">
               <Button variant="ghost" className="rounded-full px-3">
                 <Coffee className="fill-yellow-300" />
@@ -57,6 +63,16 @@ const ButtonsToRender = ({ status, loggedIn }: { status: SessionContextValue["st
             <LoginOutDialog mode="logout" />
       </>);
   } else {
-    return <LoginOutDialog mode="login" />;
+    return (
+      <>
+        <Link href={'/download'}>
+          <Button variant="outline" className="rounded-full px-3">
+            <span>Download App</span>
+          </Button>
+        </Link>
+        <Spacer />
+        <LoginOutDialog mode="login" />
+      </>
+    );
   }
 };

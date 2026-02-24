@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const DESKTOP_DOWNLOAD_URL =
-  'https://github.com/utlandingur/podcast-downloader/releases/latest';
+const DESKTOP_DOWNLOAD_URL = '/download';
 
 type NavigatorWithUAData = Navigator & {
   userAgentData?: {
@@ -43,7 +42,7 @@ export const DesktopDownloadButton = () => {
   if (!isVisible) return null;
 
   return (
-    <Link href={DESKTOP_DOWNLOAD_URL} target="_blank" rel="noreferrer">
+    <Link href={DESKTOP_DOWNLOAD_URL}>
       <Button variant="outline" className="rounded-full px-6">
         <Download className="h-4 w-4" />
         Download Desktop App

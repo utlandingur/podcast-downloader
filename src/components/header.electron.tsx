@@ -20,12 +20,19 @@ export const Header = () => {
           PodcastToMP3
         </span>
       </Link>
-      <Link href="https://buymeacoffee.com/utlandingur" target="_blank">
-        <Button variant="ghost" className="rounded-full px-3">
-          <Coffee className="fill-yellow-300" />
-          <span>Support</span>
-        </Button>
-      </Link>
+      <div className="flex items-center gap-2">
+        <Link href="/download">
+          <Button variant="outline" className="rounded-full px-3">
+            <span>Download App</span>
+          </Button>
+        </Link>
+        <Link href="https://buymeacoffee.com/utlandingur" target="_blank">
+          <Button variant="ghost" className="rounded-full px-3">
+            <Coffee className="fill-yellow-300" />
+            <span>Support</span>
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };
