@@ -15,8 +15,31 @@ type ApiRequestOptions = {
 };
 
 const getServerBaseUrl = async () => {
+  const isElectronBuild =
+    process.env.ELECTRON_BUILD === '1' ||
+    process.env.NEXT_PUBLIC_ELECTRON === '1';
   const remoteBase = process.env.NEXT_PUBLIC_REMOTE_API_BASE;
-  if (remoteBase) return remoteBase;
+  if (isElectronBuild && remoteBase) return remoteBase;
+
+  try {
+    const { headers } = await import('next/headers');
+    const incoming = await headers();
+    const hostHeader =
+      incoming.get('x-forwarded-host') || incoming.get('host') || '';
+    const host = hostHeader.split(',')[0]?.trim() || '';
+    const proto = incoming.get('x-forwarded-proto') || 'http';
+    if (host) {
+      const isLoopbackHost =
+        /^(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(host);
+      if (remoteBase && isLoopbackHost) {
+        return remoteBase;
+      }
+      return `${proto}://${host}`;
+    }
+  } catch {
+    // ignore if headers not available
+  }
+
 
   const publicBase =
     process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL;
@@ -24,17 +47,6 @@ const getServerBaseUrl = async () => {
 
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
-  }
-
-  try {
-    const { headers } = await import('next/headers');
-    const incoming = await headers();
-    const host =
-      incoming.get('x-forwarded-host') || incoming.get('host') || '';
-    const proto = incoming.get('x-forwarded-proto') || 'http';
-    if (host) return `${proto}://${host}`;
-  } catch {
-    // ignore if headers not available
   }
 
   return 'http://localhost:3000';
